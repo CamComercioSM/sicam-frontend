@@ -29,3 +29,5 @@
 <!-- END: app CSS-->
 
 @livewireStyles
+
+@livewireStyles

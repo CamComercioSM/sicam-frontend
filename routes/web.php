@@ -163,7 +163,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
   ->group(function () {
     Route::get('/', [Analytics::class, 'index'])->name('dashboard-analytics');
     Route::get('/dashboard/analytics', [Analytics::class, 'index'])->name('dashboard-analytics');
-    Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-crm');
+    Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-crm')->middleware(['password.confirm']);
   });
 
 // locale
