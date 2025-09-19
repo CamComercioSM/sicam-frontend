@@ -1,6 +1,24 @@
 {
   "menu": [
     {
+      "url": "pages/testPage",
+      "name": "Test Page",
+      "icon": "menu-icon tf-icons ri-home-smile-line",
+      "slug": "pages-testpage"
+    },
+    {
+      "name": "Pages",
+      "icon": "menu-icon tf-icons ri-file-copy-line",
+      "slug": "pages-testpage",
+      "submenu": [
+        {
+          "url": "/pages/testPage",
+          "name": "Test Page",
+          "slug": "pages-testpage"
+        }
+      ]
+    },
+    {
       "name": "Dashboards",
       "icon": "menu-icon icon-base ri ri-home-smile-line",
       "slug": "dashboard",
@@ -8,11 +26,15 @@
         "danger",
         "5"
       ],
+      "role": [
+        "Soporte"
+      ],
       "submenu": [
         {
           "url": "dashboard/crm",
           "name": "CRM",
-          "slug": "dashboard-crm"
+          "slug": "dashboard-crm",
+          "role": "Soporte"
         },
         {
           "url": "/",

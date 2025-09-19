@@ -158,12 +158,20 @@ use App\Http\Controllers\charts\ApexCharts;
 use App\Http\Controllers\charts\ChartJs;
 use App\Http\Controllers\maps\Leaflet;
 
+use App\Http\Controllers\pruebas\TestPage;
+Route::get('/pages/testPage', [TestPage::class, 'index'])->name('pagina_prueba');
+
+
+
 // Main Page Route
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])
   ->group(function () {
-    Route::get('/', [Analytics::class, 'index'])->name('dashboard-analytics');
-    Route::get('/dashboard/analytics', [Analytics::class, 'index'])->name('dashboard-analytics');
-    Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-crm')->middleware(['password.confirm']);
+    Route::get('/', [Analytics::class, 'index'])->name('home');
+    // Rutas para soporte
+    Route::group(['middleware' => ['role:Soporte']], function () {
+      Route::get('/dashboard/analytics', [Analytics::class, 'index'])->name('dashboard-analytics');
+      Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-crm')->middleware(['password.confirm']);
+    });
   });
 
 // locale
@@ -173,8 +181,8 @@ Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
 Route::get('/layouts/collapsed-menu', [CollapsedMenu::class, 'index'])->name('layouts-collapsed-menu');
 Route::get('/layouts/content-navbar', [ContentNavbar::class, 'index'])->name('layouts-content-navbar');
 Route::get('/layouts/content-nav-sidebar', [ContentNavSidebar::class, 'index'])->name('layouts-content-nav-sidebar');
-Route::get('/layouts/horizontal', [Horizontal::class, 'index'])->name('dashboard-analytics');
-Route::get('/layouts/vertical', [Vertical::class, 'index'])->name('dashboard-analytics');
+#Route::get('/layouts/horizontal', [Horizontal::class, 'index'])->name('dashboard-analytics');
+#Route::get('/layouts/vertical', [Vertical::class, 'index'])->name('dashboard-analytics');
 Route::get('/layouts/without-menu', [WithoutMenu::class, 'index'])->name('layouts-without-menu');
 Route::get('/layouts/without-navbar', [WithoutNavbar::class, 'index'])->name('layouts-without-navbar');
 Route::get('/layouts/fluid', [Fluid::class, 'index'])->name('layouts-fluid');
@@ -251,16 +259,16 @@ Route::get('/pages/misc-not-authorized', [MiscNotAuthorized::class, 'index'])->n
 Route::get('/pages/misc-server-error', [MiscServerError::class, 'index'])->name('pages-misc-server-error');
 
 // authentication
-Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
+#Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
 Route::get('/auth/login-cover', [LoginCover::class, 'index'])->name('auth-login-cover');
-Route::get('/auth/register-basic', [RegisterBasic::class, 'index'])->name('auth-register-basic');
+#Route::get('/auth/register-basic', [RegisterBasic::class, 'index'])->name('auth-register-basic');
 Route::get('/auth/register-cover', [RegisterCover::class, 'index'])->name('auth-register-cover');
 Route::get('/auth/register-multisteps', [RegisterMultiSteps::class, 'index'])->name('auth-register-multisteps');
-Route::get('/auth/verify-email-basic', [VerifyEmailBasic::class, 'index'])->name('auth-verify-email-basic');
+#Route::get('/auth/verify-email-basic', [VerifyEmailBasic::class, 'index'])->name('auth-verify-email-basic');
 Route::get('/auth/verify-email-cover', [VerifyEmailCover::class, 'index'])->name('auth-verify-email-cover');
-Route::get('/auth/reset-password-basic', [ResetPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
+#Route::get('/auth/reset-password-basic', [ResetPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
 Route::get('/auth/reset-password-cover', [ResetPasswordCover::class, 'index'])->name('auth-reset-password-cover');
-Route::get('/auth/forgot-password-basic', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
+#Route::get('/auth/forgot-password-basic', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
 Route::get('/auth/forgot-password-cover', [ForgotPasswordCover::class, 'index'])->name('auth-forgot-password-cover');
 Route::get('/auth/two-steps-basic', [TwoStepsBasic::class, 'index'])->name('auth-two-steps-basic');
 Route::get('/auth/two-steps-cover', [TwoStepsCover::class, 'index'])->name('auth-two-steps-cover');

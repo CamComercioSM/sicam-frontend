@@ -62,27 +62,21 @@ use Illuminate\Support\Facades\Route;
       </a>
       <ul class="dropdown-menu dropdown-menu-end">
         <li>
+          <a class="dropdown-item {{ app()->getLocale() === 'es' ? 'active' : '' }}" href="{{ url('lang/es') }}"
+            data-language="es" data-text-direction="ltr">
+            <span>Español</span>
+          </a>
+        </li>
+        <li>
           <a class="dropdown-item {{ app()->getLocale() === 'en' ? 'active' : '' }}" href="{{ url('lang/en') }}"
             data-language="en" data-text-direction="ltr">
             <span>English</span>
           </a>
         </li>
         <li>
-          <a class="dropdown-item {{ app()->getLocale() === 'fr' ? 'active' : '' }}" href="{{ url('lang/fr') }}"
-            data-language="fr" data-text-direction="ltr">
-            <span>French</span>
-          </a>
-        </li>
-        <li>
           <a class="dropdown-item {{ app()->getLocale() === 'ar' ? 'active' : '' }}" href="{{ url('lang/ar') }}"
             data-language="ar" data-text-direction="rtl">
             <span>Arabic</span>
-          </a>
-        </li>
-        <li>
-          <a class="dropdown-item {{ app()->getLocale() === 'de' ? 'active' : '' }}" href="{{ url('lang/de') }}"
-            data-language="de" data-text-direction="ltr">
-            <span>German</span>
           </a>
         </li>
       </ul>
