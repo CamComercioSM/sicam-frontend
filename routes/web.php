@@ -171,8 +171,6 @@ Route::middleware([
   Route::get('/usuarios', [UserManagement::class, 'UserManagement'])
   ->name('app-user-gestion');
 
-
-
 });
 
 
@@ -379,5 +377,5 @@ Route::get('/charts/chartjs', [ChartJs::class, 'index'])->name('charts-chartjs')
 Route::get('/maps/leaflet', [Leaflet::class, 'index'])->name('maps-leaflet');
 
 // laravel example
-Route::get('/laravel/user-management', [UserManagement::class, 'UserManagement'])->name('laravel-example-user-management');
+Route::get('/laravel/user-management', [App\Http\Controllers\laravel_example\UserManagement::class, 'UserManagement'])->name('laravel-example-user-management');
 

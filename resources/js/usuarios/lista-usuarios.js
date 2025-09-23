@@ -15,17 +15,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
     // Variable declaration for table
     const dt_user_table = document.querySelector('.datatables-users'),
         userView = baseUrl + 'app/user/view/account',
-        statusObj = {
-            1: { title: 'Pending', class: 'bg-label-warning' },
-            2: { title: 'Active', class: 'bg-label-success' },
-            3: { title: 'Inactive', class: 'bg-label-secondary' }
-        };
+        offCanvasForm = document.getElementById('offcanvasAddUser');
     var select2 = $('.select2');
 
     if (select2.length) {
         var $this = select2;
         select2Focus($this);
-        $this.select2({
+        $this.wrap('<div class="position-relative"></div>').select2({
             placeholder: 'Select Country',
             dropdownParent: $this.parent()
         });
@@ -103,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                     }
                 },
                 {
-                    // User email
+                    // User id
                     targets: 2,
                     render: function (data, type, full, meta) {
                         let id = full['id'];
@@ -158,8 +154,14 @@ document.addEventListener('DOMContentLoaded', function (e) {
                     // User email
                     targets: 4,
                     render: function (data, type, full, meta) {
+                        let iconHTML = '<i class="icon-base ri ri-mail-line me-2"></i>';
                         let email = full['email'];
-                        return '<span >' + email + '</span>';
+                        return (
+                            '<span class="d-flex align-items-center">' +
+                            iconHTML +
+                            '<span>' + email + '</span>' +
+                            '</span>'
+                        );
                     }
                 },
                 {
@@ -168,28 +170,33 @@ document.addEventListener('DOMContentLoaded', function (e) {
                     render: function (data, type, full, meta) {
                         let email_verified_at = full['email_verified_at'];
                         let iconHtml, formattedDate;
-
-                        if (email_verified_at) {
+                        // Considera cualquier valor vacío, null o string "null"
+                        if (email_verified_at && email_verified_at !== 'null') {
                             // Formato dd/mm/aaaa
                             let dateObj = new Date(email_verified_at);
                             let day = String(dateObj.getDate()).padStart(2, '0');
                             let month = String(dateObj.getMonth() + 1).padStart(2, '0');
                             let year = dateObj.getFullYear();
                             formattedDate = `${day}/${month}/${year}`;
-                            iconHtml = '<i class="ri-checkbox-circle-fill text-success me-1"></i>';
+                            iconHtml = '<i class="icon-base ri ri-mail-check-fill text-success icon-22px text-primary me-2"></i>';
+                            return (
+                                '<span class="d-flex align-items-center">' +
+                                iconHtml +
+                                '<span>' + formattedDate + '</span>' +
+                                '</span>'
+                            );
                         } else {
-                            formattedDate = '';
-                            iconHtml = '<i class="ri-close-circle-fill text-danger me-1"></i>';
+                            iconHtml = '<i class="icon-base ri fs-4 ri-shield-line text-danger icon-22px text-primary me-2"></i>';
+                            return (
+                                '<span class="d-flex align-items-center">' +
+                                iconHtml +
+                                '<span>No verificado</span>' +
+                                '</span>'
+                            );
                         }
-
-                        return (
-                            '<span class="d-flex align-items-center">' +
-                            iconHtml +
-                            (formattedDate ? '<span>' + formattedDate + '</span>' : '<span>No verificado</span>') +
-                            '</span>'
-                        );
                     }
                 },
+
                 {
                     targets: 6,
                     render: function (data, type, full, meta) {
@@ -259,10 +266,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
                     }
                 }
             ],
-            select: {
-                style: 'multi',
-                selector: 'td:nth-child(2)'
-            },
             order: [[2, 'desc']],
             layout: {
                 topStart: {
@@ -417,7 +420,219 @@ document.addEventListener('DOMContentLoaded', function (e) {
                         {
                             buttons: [
                                 {
-                                    text: '<i class="icon-base ri ri-add-line icon-sm me-0 me-sm-2 d-sm-none d-inline-block"></i><span class="d-inline-block">Add New User</span>',
+                                    extend: 'collection',
+                                    className: 'btn btn-label-secondary dropdown-toggle',
+                                    text: '<i class="icon-base ri ri-upload-2-line me-2 icon-sm"></i>Export',
+                                    buttons: [
+                                        {
+                                            extend: 'print',
+                                            title: 'Users',
+                                            text: '<i class="icon-base ri ri-printer-line me-2" ></i>Print',
+                                            className: 'dropdown-item',
+                                            exportOptions: {
+                                                columns: [1, 2, 3, 4, 5],
+                                                // prevent avatar to be print
+                                                format: {
+                                                    body: function (inner, coldex, rowdex) {
+                                                        if (inner.length <= 0) return inner;
+
+                                                        // Check if inner is HTML content
+                                                        if (inner.indexOf('<') > -1) {
+                                                            const parser = new DOMParser();
+                                                            const doc = parser.parseFromString(inner, 'text/html');
+
+                                                            // Get all text content
+                                                            let text = '';
+
+                                                            // Handle specific elements
+                                                            const userNameElements = doc.querySelectorAll('.user-name');
+                                                            if (userNameElements.length > 0) {
+                                                                userNameElements.forEach(el => {
+                                                                    // Get text from nested structure
+                                                                    const nameText =
+                                                                        el.querySelector('.fw-medium')?.textContent ||
+                                                                        el.querySelector('.d-block')?.textContent ||
+                                                                        el.textContent;
+                                                                    text += nameText.trim() + ' ';
+                                                                });
+                                                            } else {
+                                                                // Get regular text content
+                                                                text = doc.body.textContent || doc.body.innerText;
+                                                            }
+
+                                                            return text.trim();
+                                                        }
+
+                                                        return inner;
+                                                    }
+                                                }
+                                            },
+                                            customize: function (win) {
+                                                win.document.body.style.color = config.colors.headingColor;
+                                                win.document.body.style.borderColor = config.colors.borderColor;
+                                                win.document.body.style.backgroundColor = config.colors.bodyBg;
+                                                const table = win.document.body.querySelector('table');
+                                                table.classList.add('compact');
+                                                table.style.color = 'inherit';
+                                                table.style.borderColor = 'inherit';
+                                                table.style.backgroundColor = 'inherit';
+                                            }
+                                        },
+                                        {
+                                            extend: 'csv',
+                                            title: 'Users',
+                                            text: '<i class="icon-base ri ri-file-text-line me-2" ></i>Csv',
+                                            className: 'dropdown-item',
+                                            exportOptions: {
+                                                columns: [1, 2, 3, 4, 5],
+                                                format: {
+                                                    body: function (inner, coldex, rowdex) {
+                                                        if (inner.length <= 0) return inner;
+
+                                                        // Parse HTML content
+                                                        const parser = new DOMParser();
+                                                        const doc = parser.parseFromString(inner, 'text/html');
+
+                                                        let text = '';
+
+                                                        // Handle user-name elements specifically
+                                                        const userNameElements = doc.querySelectorAll('.user-name');
+                                                        if (userNameElements.length > 0) {
+                                                            userNameElements.forEach(el => {
+                                                                // Get text from nested structure - try different selectors
+                                                                const nameText =
+                                                                    el.querySelector('.fw-medium')?.textContent ||
+                                                                    el.querySelector('.d-block')?.textContent ||
+                                                                    el.textContent;
+                                                                text += nameText.trim() + ' ';
+                                                            });
+                                                        } else {
+                                                            // Handle other elements (status, role, etc)
+                                                            text = doc.body.textContent || doc.body.innerText;
+                                                        }
+
+                                                        return text.trim();
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            extend: 'excel',
+                                            text: '<i class="icon-base ri ri-file-excel-line me-2"></i>Excel',
+                                            className: 'dropdown-item',
+                                            exportOptions: {
+                                                columns: [1, 2, 3, 4, 5],
+                                                format: {
+                                                    body: function (inner, coldex, rowdex) {
+                                                        if (inner.length <= 0) return inner;
+
+                                                        // Parse HTML content
+                                                        const parser = new DOMParser();
+                                                        const doc = parser.parseFromString(inner, 'text/html');
+
+                                                        let text = '';
+
+                                                        // Handle user-name elements specifically
+                                                        const userNameElements = doc.querySelectorAll('.user-name');
+                                                        if (userNameElements.length > 0) {
+                                                            userNameElements.forEach(el => {
+                                                                // Get text from nested structure - try different selectors
+                                                                const nameText =
+                                                                    el.querySelector('.fw-medium')?.textContent ||
+                                                                    el.querySelector('.d-block')?.textContent ||
+                                                                    el.textContent;
+                                                                text += nameText.trim() + ' ';
+                                                            });
+                                                        } else {
+                                                            // Handle other elements (status, role, etc)
+                                                            text = doc.body.textContent || doc.body.innerText;
+                                                        }
+
+                                                        return text.trim();
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            extend: 'pdf',
+                                            title: 'Users',
+                                            text: '<i class="icon-base ri ri-file-pdf-line me-2"></i>Pdf',
+                                            className: 'dropdown-item',
+                                            exportOptions: {
+                                                columns: [1, 2, 3, 4, 5],
+                                                format: {
+                                                    body: function (inner, coldex, rowdex) {
+                                                        if (inner.length <= 0) return inner;
+
+                                                        // Parse HTML content
+                                                        const parser = new DOMParser();
+                                                        const doc = parser.parseFromString(inner, 'text/html');
+
+                                                        let text = '';
+
+                                                        // Handle user-name elements specifically
+                                                        const userNameElements = doc.querySelectorAll('.user-name');
+                                                        if (userNameElements.length > 0) {
+                                                            userNameElements.forEach(el => {
+                                                                // Get text from nested structure - try different selectors
+                                                                const nameText =
+                                                                    el.querySelector('.fw-medium')?.textContent ||
+                                                                    el.querySelector('.d-block')?.textContent ||
+                                                                    el.textContent;
+                                                                text += nameText.trim() + ' ';
+                                                            });
+                                                        } else {
+                                                            // Handle other elements (status, role, etc)
+                                                            text = doc.body.textContent || doc.body.innerText;
+                                                        }
+
+                                                        return text.trim();
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            extend: 'copy',
+                                            title: 'Users',
+                                            text: '<i class="icon-base ri ri-file-copy-line me-2" ></i>Copy',
+                                            className: 'dropdown-item',
+                                            exportOptions: {
+                                                columns: [1, 2, 3, 4, 5],
+                                                format: {
+                                                    body: function (inner, coldex, rowdex) {
+                                                        if (inner.length <= 0) return inner;
+
+                                                        // Parse HTML content
+                                                        const parser = new DOMParser();
+                                                        const doc = parser.parseFromString(inner, 'text/html');
+
+                                                        let text = '';
+
+                                                        // Handle user-name elements specifically
+                                                        const userNameElements = doc.querySelectorAll('.user-name');
+                                                        if (userNameElements.length > 0) {
+                                                            userNameElements.forEach(el => {
+                                                                // Get text from nested structure - try different selectors
+                                                                const nameText =
+                                                                    el.querySelector('.fw-medium')?.textContent ||
+                                                                    el.querySelector('.d-block')?.textContent ||
+                                                                    el.textContent;
+                                                                text += nameText.trim() + ' ';
+                                                            });
+                                                        } else {
+                                                            // Handle other elements (status, role, etc)
+                                                            text = doc.body.textContent || doc.body.innerText;
+                                                        }
+
+                                                        return text.trim();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    text: '<i class="icon-base ri ri-add-line icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add New User</span>',
                                     className: 'add-new btn btn-primary',
                                     attr: {
                                         'data-bs-toggle': 'offcanvas',
@@ -430,7 +645,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 },
                 bottomStart: {
                     rowClass: 'row mx-3 justify-content-between',
-                    features: ['info']
+                    features: [
+                        {
+                            info: {
+                                text: 'Showing _START_ to _END_ of _TOTAL_ entries'
+                            }
+                        }
+                    ]
                 },
                 bottomEnd: 'paging'
             },
@@ -480,6 +701,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 }
             },
             initComplete: function () {
+                // Remove btn-secondary from export buttons
+                document.querySelectorAll('.dt-buttons .btn').forEach(btn => {
+                    btn.classList.remove('btn-secondary');
+                });
                 // const api = this.api();
 
                 // // Helper function to create a select dropdown and append options
@@ -547,47 +772,82 @@ document.addEventListener('DOMContentLoaded', function (e) {
             }
         }
 
-        function bindDeleteEvent() {
-            const userListTable = document.querySelector('.datatables-users');
-            const modal = document.querySelector('.dtr-bs-modal');
+        // function bindDeleteEvent() {
+        //     const userListTable = document.querySelector('.datatables-users');
+        //     const modal = document.querySelector('.dtr-bs-modal');
+        //     if (userListTable && userListTable.classList.contains('collapsed')) {
+        //         if (modal) {
+        //             modal.addEventListener('click', function (event) {
+        //                 if (event.target.parentElement.classList.contains('delete-record')) {
+        //                     deleteRecord();
+        //                     const closeButton = modal.querySelector('.btn-close');
+        //                     if (closeButton) closeButton.click(); // Simulates a click on the close button
+        //                 }
+        //             });
+        //         }
+        //     } else {
+        //         const tableBody = userListTable?.querySelector('tbody');
+        //         if (tableBody) {
+        //             tableBody.addEventListener('click', function (event) {
+        //                 if (event.target.parentElement.classList.contains('delete-record')) {
+        //                     deleteRecord(event);
+        //                 }
+        //             });
+        //         }
+        //     }
+        // }
 
-            if (userListTable && userListTable.classList.contains('collapsed')) {
-                if (modal) {
-                    modal.addEventListener('click', function (event) {
-                        if (event.target.parentElement.classList.contains('delete-record')) {
-                            deleteRecord();
-                            const closeButton = modal.querySelector('.btn-close');
-                            if (closeButton) closeButton.click(); // Simulates a click on the close button
-                        }
-                    });
+        // edit record
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.edit-record')) {
+                const editBtn = e.target.closest('.edit-record');
+                const user_id = editBtn.dataset.id;
+                const dtrModal = document.querySelector('.dtr-bs-modal.show');
+
+                // hide responsive modal in small screen
+                if (dtrModal) {
+                    const bsModal = bootstrap.Modal.getInstance(dtrModal);
+                    bsModal.hide();
                 }
-            } else {
-                const tableBody = userListTable?.querySelector('tbody');
-                if (tableBody) {
-                    tableBody.addEventListener('click', function (event) {
-                        if (event.target.parentElement.classList.contains('delete-record')) {
-                            deleteRecord(event);
-                        }
+
+                // changing the title of offcanvas
+                document.getElementById('offcanvasAddUserLabel').innerHTML = 'Edit User';
+
+                // get data
+                fetch(`${baseUrl}user-list/${user_id}/edit`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('user_id').value = data.id;
+                        document.getElementById('add-user-fullname').value = data.name;
+                        document.getElementById('add-user-email').value = data.email;
                     });
-                }
             }
+        });
+
+        // changing the title
+        const addNewBtn = document.querySelector('.add-new');
+        if (addNewBtn) {
+            addNewBtn.addEventListener('click', function () {
+                document.getElementById('user_id').value = ''; //resetting input field
+                document.getElementById('offcanvasAddUserLabel').innerHTML = 'Add User';
+            });
         }
 
         // Initial event binding
-        bindDeleteEvent();
+        // bindDeleteEvent();
 
         // Re-bind events when modal is shown or hidden
-        document.addEventListener('show.bs.modal', function (event) {
-            if (event.target.classList.contains('dtr-bs-modal')) {
-                bindDeleteEvent();
-            }
-        });
+        // document.addEventListener('show.bs.modal', function (event) {
+        //     if (event.target.classList.contains('dtr-bs-modal')) {
+        //         bindDeleteEvent();
+        //     }
+        // });
 
-        document.addEventListener('hide.bs.modal', function (event) {
-            if (event.target.classList.contains('dtr-bs-modal')) {
-                bindDeleteEvent();
-            }
-        });
+        // document.addEventListener('hide.bs.modal', function (event) {
+        //     if (event.target.classList.contains('dtr-bs-modal')) {
+        //         bindDeleteEvent();
+        //     }
+        // });
     }
 
     // Filter form control to default size
@@ -629,53 +889,62 @@ document.addEventListener('DOMContentLoaded', function (e) {
         });
     }, 100);
 
+
     // Validation & Phone mask
-    const phoneMaskList = document.querySelectorAll('.phone-mask'),
-        addNewUserForm = document.getElementById('addNewUserForm');
+    const addNewUserForm = document.getElementById('addNewUserForm');
 
     // Phone Number
-    if (phoneMaskList) {
-        phoneMaskList.forEach(function (phoneMask) {
-            phoneMask.addEventListener('input', event => {
-                const cleanValue = event.target.value.replace(/\D/g, '');
-                phoneMask.value = formatGeneral(cleanValue, {
-                    blocks: [3, 3, 4],
-                    delimiters: [' ', ' ']
-                });
-            });
-            registerCursorTracker({
-                input: phoneMask,
-                delimiter: ' '
-            });
-        });
-    }
+    // if (phoneMaskList) {
+    //     phoneMaskList.forEach(function (phoneMask) {
+    //         phoneMask.addEventListener('input', event => {
+    //             const cleanValue = event.target.value.replace(/\D/g, '');
+    //             phoneMask.value = formatGeneral(cleanValue, {
+    //                 blocks: [3, 3, 4],
+    //                 delimiters: [' ', ' ']
+    //             });
+    //         });
+    //         registerCursorTracker({
+    //             input: phoneMask,
+    //             delimiter: ' '
+    //         });
+    //     });
+    // }
     // Add New User Form Validation
     const fv = FormValidation.formValidation(addNewUserForm, {
-        fields: {
-            userContact: {
+                fields: {
+            name: {
                 validators: {
-                    notEmpty: {
-                        message: 'Faltaron los datos de contacto '
-                    }
+                notEmpty: {
+                    message: 'Por favor ingrese el nombre completo'
+                }
                 }
             },
-            userFullname: {
+            email: {
                 validators: {
-                    notEmpty: {
-                        message: 'Please enter fullname '
-                    }
+                notEmpty: {
+                    message: 'Por favor ingrese el correo'
+                },
+                emailAddress: {
+                    message: 'La dirección de correo no es válida'
+                }
                 }
             },
-            userEmail: {
+            personaIDENTIFICACION: {
                 validators: {
-                    notEmpty: {
-                        message: 'Please enter your email'
-                    },
-                    emailAddress: {
-                        message: 'The value is not a valid email address'
-                    }
+                notEmpty: {
+                    message: 'Por favor ingrese la identificacion'
+                }
+                }
+            },
+            userRole: {
+                validators: {
+                notEmpty: {
+                    message: 'Por favor seleccione un rol'
+                }
                 }
             }
+            
+            
         },
         plugins: {
             trigger: new FormValidation.plugins.Trigger(),
@@ -688,9 +957,73 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 }
             }),
             submitButton: new FormValidation.plugins.SubmitButton(),
-            // Submit the form when all fields are valid
-            // defaultSubmit: new FormValidation.plugins.DefaultSubmit(),
             autoFocus: new FormValidation.plugins.AutoFocus()
         }
+    }).on('core.form.valid', function () {
+      // adding or updating user when form successfully validate
+      const formData = new FormData(addNewUserForm);
+      const formDataObj = {};
+
+      // Convert FormData to URL-encoded string
+      formData.forEach((value, key) => {
+        formDataObj[key] = value;
+      });
+
+      const searchParams = new URLSearchParams();
+      for (const [key, value] of Object.entries(formDataObj)) {
+        searchParams.append(key, value);
+      }
+
+      fetch(`${baseUrl}user-list`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: searchParams.toString()
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.text();
+        })
+        .then(status => {
+          // Refresh DataTable
+          dt_user_table && new DataTable(dt_user_table).draw();
+
+          // Hide offcanvas
+          const offcanvasInstance = bootstrap.Offcanvas.getInstance(offCanvasForm);
+          offcanvasInstance && offcanvasInstance.hide();
+
+          // sweetalert
+          Swal.fire({
+            icon: 'success',
+            title: `Successfully ${status}!`,
+            text: `User ${status} Successfully.`,
+            customClass: {
+              confirmButton: 'btn btn-success'
+            }
+          });
+        })
+        .catch(err => {
+          // Hide offcanvas
+          const offcanvasInstance = bootstrap.Offcanvas.getInstance(offCanvasForm);
+          offcanvasInstance && offcanvasInstance.hide();
+
+          Swal.fire({
+            title: 'Duplicate Entry!',
+            text: 'Your email should be unique.',
+            icon: 'error',
+            customClass: {
+              confirmButton: 'btn btn-success'
+            }
+          });
+        });
+    });
+
+    // clearing form data when offcanvas hidden
+    offCanvasForm.addEventListener('hidden.bs.offcanvas', function () {
+      fv.resetForm(true);
     });
 });

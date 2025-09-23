@@ -21,18 +21,20 @@ class UserManagement extends Controller
   {
     // dd('UserManagement');
     $users = User::all();
+    $roles = Role::all(['id', 'name']);
     $userCount = $users->count();
     $verified = User::whereNotNull('email_verified_at')->get()->count();
     $notVerified = User::whereNull('email_verified_at')->get()->count();
     $usersUnique = $users->unique(['email']);
     $userDuplicates = $users->diff($usersUnique)->count();
-        
+
     // ¿Cuántos usuarios activos?
     $totalSesiones = (Session::all())->count();
 
     //$sesiones = 
     return view('superuser.usuarios.gestion', [
       'totalUser' => $userCount,
+      'roles' => $roles,
       'verified' => $verified,
       'notVerified' => $notVerified,
       'userDuplicates' => $userDuplicates,
@@ -80,7 +82,7 @@ class UserManagement extends Controller
     }
 
     $users = $query->with('roles')
-    ->offset($start)
+      ->offset($start)
       ->limit($limit)
       ->orderBy($order, $dir)
       ->get();
@@ -89,7 +91,7 @@ class UserManagement extends Controller
     $ids = $start;
 
     foreach ($users as $user) {
-      $roleName = $user->roles->pluck('name')->first() ?? '-'; 
+      $roleName = $user->roles->pluck('name')->first() ?? '-';
       $data[] = [
         'id' => $user->id,
         'fake_id' => ++$ids,
@@ -130,12 +132,23 @@ class UserManagement extends Controller
   {
     $userID = $request->id;
 
+    if (!$request->filled('userRole')) {
+      return response()->json(['message' => 'El rol es obligatorio.'], 422);
+    }
+
+
     if ($userID) {
       // update the value
-      $users = User::updateOrCreate(
+      $user = User::updateOrCreate(
         ['id' => $userID],
         ['name' => $request->name, 'email' => $request->email]
       );
+
+
+      // Asignar el rol (solo si el campo viene en el request)
+      if ($request->has('userRole')) {
+        $user->syncRoles($request->userRole); // Reemplaza los roles previos por el nuevo
+      }
 
       // user updated
       return response()->json('Updated');
@@ -144,11 +157,21 @@ class UserManagement extends Controller
       $userEmail = User::where('email', $request->email)->first();
 
       if (empty($userEmail)) {
-        $users = User::updateOrCreate(
+        $user = User::updateOrCreate(
           ['id' => $userID],
-          ['name' => $request->name, 'email' => $request->email, 'password' => bcrypt(Str::random(10))]
+          [
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->personaIDENTIFICACION)
+          ]
         );
 
+        // Asignar el rol si se seleccionó
+        if ($request->has('userRole')) {
+          $user->syncRoles($request->userRole);
+        } else {
+          return response()->json(['message' => "pailas sin rol"], 500);
+        }
         // user created
         return response()->json('Created');
       } else {
