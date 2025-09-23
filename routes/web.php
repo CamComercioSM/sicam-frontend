@@ -1,7 +1,5 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\laravel_example\UserManagement;
 use App\Http\Controllers\dashboard\Analytics;
 use App\Http\Controllers\dashboard\Crm;
 use App\Http\Controllers\language\LanguageController;
@@ -158,21 +156,38 @@ use App\Http\Controllers\charts\ApexCharts;
 use App\Http\Controllers\charts\ChartJs;
 use App\Http\Controllers\maps\Leaflet;
 
+use App\Http\Controllers\usuarios\UserManagement;
+
+Route::resource('/user-list', UserManagement::class);
+
+Route::middleware([
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
+])->group(function () {
+  Route::get('/dashboard', [Analytics::class, 'index'])->name('dashboard-analiyc');
+
+  //Gestion de usuario
+  Route::get('/usuarios', [UserManagement::class, 'UserManagement'])
+  ->name('app-user-gestion');
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
 use App\Http\Controllers\pruebas\TestPage;
 Route::get('/pages/testPage', [TestPage::class, 'index'])->name('pagina_prueba');
 
-
-
-// Main Page Route
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])
-  ->group(function () {
-    Route::get('/', [Analytics::class, 'index'])->name('home');
-    // Rutas para soporte
-    Route::group(['middleware' => ['role:Soporte']], function () {
-      Route::get('/dashboard/analytics', [Analytics::class, 'index'])->name('dashboard-analytics');
-      Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-crm')->middleware(['password.confirm']);
-    });
-  });
 
 // locale
 Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
@@ -365,11 +380,4 @@ Route::get('/maps/leaflet', [Leaflet::class, 'index'])->name('maps-leaflet');
 
 // laravel example
 Route::get('/laravel/user-management', [UserManagement::class, 'UserManagement'])->name('laravel-example-user-management');
-Route::resource('/user-list', UserManagement::class);
-Route::middleware([
-  'auth:sanctum',
-  config('jetstream.auth_session'),
-  'verified',
-])->group(function () {
-  Route::get('/dashboard', [Analytics::class, 'index'])->name('dashboard-analiyc');
-});
+

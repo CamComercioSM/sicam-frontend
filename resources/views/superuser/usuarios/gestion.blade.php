@@ -11,7 +11,7 @@
 @endsection
 
 @section('page-script')
-@vite('resources/assets/js/app-user-list.js')
+@vite('resources/js/usuarios/lista-usuarios.js')
 @endsection
 
 @section('content')
@@ -23,7 +23,28 @@
           <div class="me-1">
             <p class="text-heading mb-1">Session</p>
             <div class="d-flex align-items-center">
-              <h4 class="mb-1 me-2">21,459</h4>
+              <h4 class="mb-1 me-2">{{ $totalSesiones }}</h4>
+              <p class="text-success mb-1">(+29%)</p>
+            </div>
+            <small class="mb-0">Active Sesions</small>
+          </div>
+          <div class="avatar">
+            <div class="avatar-initial bg-label-primary rounded">
+              <div class="icon-base ri ri-group-line icon-26px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div class="me-1">
+            <p class="text-heading mb-1">Usuarios</p>
+            <div class="d-flex align-items-center">
+              <h4 class="mb-1 me-2">{{ $totalUser }}</h4>
               <p class="text-success mb-1">(+29%)</p>
             </div>
             <small class="mb-0">Total Users</small>
@@ -117,11 +138,11 @@
         <tr>
           <th></th>
           <th></th>
+          <th>Id</th>
           <th>User</th>
           <th>Email</th>
+          <th>Verified</th>
           <th>Role</th>
-          <th>Plan</th>
-          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>

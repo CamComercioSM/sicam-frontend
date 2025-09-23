@@ -1,5 +1,30 @@
 {
   "menu": [
+
+
+     {
+      "menuHeader": "Configuración del Sistema"
+    },
+    {
+      "name": "Usuarios",
+      "icon": "menu-icon icon-base ri ri-user-line",
+      "slug": "user",
+      "submenu": [
+        {
+          "url": "app/user/list",
+          "name": "Listado de Ejemplo - JSON",
+          "slug": "user-list"
+        },
+        {
+          "url": "usuarios",
+          "name": "Listados CRUD - BAse de datos",
+          "slug": "user-gestion-usuario"
+        }
+      ]
+    },
+
+
+
     {
       "name": "Dashboards",
       "icon": "menu-icon icon-base ri ri-home-smile-line",

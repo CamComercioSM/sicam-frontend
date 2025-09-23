@@ -120,7 +120,7 @@ class TemplateCustomizer {
         this.settings.controls = this.settings.controls.slice(0, i).concat(this.settings.controls.slice(i + 1))
       }
     }
-    this.settings.onSettingsChange = typeof onSettingsChange === 'function' ? onSettingsChange : () => { }
+    this.settings.onSettingsChange = typeof onSettingsChange === 'function' ? onSettingsChange : () => {}
 
     this._loadSettings()
 

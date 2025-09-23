@@ -1,6 +1,34 @@
 {
   "menu": [
     {
+      "menuHeader": "Configuración del Sistema"
+    },
+    {
+      "name": "Users",
+      "icon": "menu-icon icon-base ri ri-user-line",
+      "slug": "app-user",
+      "submenu": [
+        {
+          "url": "app/user/list",
+          "name": "Listado de Ejemplo - JSON",
+          "slug": "app-user-list"
+        },
+        {
+          "url": "usuarios",
+          "name": "Listados CRUD - BAse de datos",
+          "slug": "app-user-gestion"
+        }
+      ]
+    },
+
+
+
+
+    {
+      "menuHeader": "Ejemplos y Vistas de la Plantilla"
+    },
+
+    {
       "url": "pages/testPage",
       "name": "Test Page",
       "icon": "menu-icon tf-icons ri-home-smile-line",
