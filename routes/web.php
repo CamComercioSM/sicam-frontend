@@ -155,7 +155,6 @@ use App\Http\Controllers\tables\DatatableExtensions;
 use App\Http\Controllers\charts\ApexCharts;
 use App\Http\Controllers\charts\ChartJs;
 use App\Http\Controllers\maps\Leaflet;
-
 use App\Http\Controllers\usuarios\UserManagement;
 
 Route::resource('/user-list', UserManagement::class);
@@ -165,7 +164,7 @@ Route::middleware([
   config('jetstream.auth_session'),
   'verified',
 ])->group(function () {
-  Route::get('/dashboard', [Analytics::class, 'index'])->name('dashboard-analiyc');
+  Route::get('/', [Analytics::class, 'index'])->name('dashboard-analiyc');
 
   //Gestion de usuario
   Route::get('/usuarios', [UserManagement::class, 'UserManagement'])
@@ -174,18 +173,8 @@ Route::middleware([
 });
 
 
-
-
-
-
-
-
-
-
-
 use App\Http\Controllers\pruebas\TestPage;
 Route::get('/pages/testPage', [TestPage::class, 'index'])->name('pagina_prueba');
-
 
 // locale
 Route::get('/lang/{locale}', [LanguageController::class, 'swap']);

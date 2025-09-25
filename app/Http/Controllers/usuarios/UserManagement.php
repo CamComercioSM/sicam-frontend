@@ -8,8 +8,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
-use Illuminate\Support\Str;
+use App\Models\Team;
+
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\View\View;
+
 
 class UserManagement extends Controller
 {
@@ -68,6 +71,19 @@ class UserManagement extends Controller
 
     $query = User::query();
 
+    // FILTRO POR ROL
+    $roleFilter = $request->input('columns')[6]['search']['value'] ?? null;
+    if ($roleFilter) {
+      $roleFilter = trim($roleFilter, '^$');
+      if ($roleFilter === 'Sin Rol') {
+        // Usuarios que NO tienen roles
+        $query->whereDoesntHave('roles');
+      } else {
+        $query->whereHas('roles', function ($q) use ($roleFilter) {
+          $q->where('name', $roleFilter);
+        });
+      }
+    }
     // Search handling
     if (!empty($request->input('search.value'))) {
       $search = $request->input('search.value');
@@ -75,9 +91,10 @@ class UserManagement extends Controller
       $query->where(function ($q) use ($search) {
         $q->where('id', 'LIKE', "%{$search}%")
           ->orWhere('name', 'LIKE', "%{$search}%")
-          ->orWhere('email', 'LIKE', "%{$search}%");
+          ->orWhere('email', 'LIKE', "%{$search}%")
+          ->orWhere('email_verified_at', 'LIKE', "%{$search}%")
+          ->orWhere('role', 'LIKE', "%{$search}%");
       });
-
       $totalFiltered = $query->count();
     }
 
@@ -91,7 +108,7 @@ class UserManagement extends Controller
     $ids = $start;
 
     foreach ($users as $user) {
-      $roleName = $user->roles->pluck('name')->first() ?? '-';
+      $roleName = $user->roles->pluck('name')->first() ?? 'Sin Rol';
       $data[] = [
         'id' => $user->id,
         'fake_id' => ++$ids,
@@ -131,11 +148,13 @@ class UserManagement extends Controller
   public function store(Request $request)
   {
     $userID = $request->id;
-
-    if (!$request->filled('userRole')) {
-      return response()->json(['message' => 'El rol es obligatorio.'], 422);
-    }
-
+    // Validación rápida
+    $request->validate([
+      'name'      => 'required|string|max:255',
+      'email'     => 'required|email|unique:users,email',
+      'userRole'  => 'required|string|exists:roles,name',
+      'personaIDENTIFICACION' => 'required|string|min:4',
+    ]);
 
     if ($userID) {
       // update the value
@@ -144,40 +163,44 @@ class UserManagement extends Controller
         ['name' => $request->name, 'email' => $request->email]
       );
 
-
       // Asignar el rol (solo si el campo viene en el request)
       if ($request->has('userRole')) {
         $user->syncRoles($request->userRole); // Reemplaza los roles previos por el nuevo
       }
-
       // user updated
       return response()->json('Updated');
     } else {
-      // create new one if email is unique
-      $userEmail = User::where('email', $request->email)->first();
 
-      if (empty($userEmail)) {
-        $user = User::updateOrCreate(
-          ['id' => $userID],
-          [
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->personaIDENTIFICACION)
-          ]
-        );
+      $team = Team::find(1);
+      // Crear usuario
+      $user = User::create([
+        'name'              => $request->name,
+        'email'             => $request->email,
+        'password'          => bcrypt($request->personaIDENTIFICACION),
+        'current_team_id'   => $team->id
+      ]);
 
-        // Asignar el rol si se seleccionó
-        if ($request->has('userRole')) {
-          $user->syncRoles($request->userRole);
-        } else {
-          return response()->json(['message' => "pailas sin rol"], 500);
-        }
-        // user created
-        return response()->json('Created');
-      } else {
-        // user already exist
-        return response()->json(['message' => "already exits"], 422);
+      // Asignar rol
+      $user->syncRoles($request->userRole);
+
+      // Asociar equipo y cambiar equipo activo
+      if ($team && !$user->teams->contains($team->id)) {
+        $user->teams()->attach($team->id);
+        $user->refresh();
+        $user->switchTeam($team);
       }
+
+      // Lanzar evento de registro (para disparar listeners como verificación, etc)
+      event(new Registered($user));
+
+      // (Opcional) Loguear al usuario automáticamente después de crear
+      // Auth::login($user);
+
+      // Enviar correo de verificación explícitamente
+      //$user->sendEmailVerificationNotification();
+
+      // user created
+      return response()->json('Created');
     }
   }
 

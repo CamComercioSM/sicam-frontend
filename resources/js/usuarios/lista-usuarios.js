@@ -202,12 +202,15 @@ document.addEventListener('DOMContentLoaded', function (e) {
                     render: function (data, type, full, meta) {
                         var userRole = full['userRole'];
                         var roleBadgeObj = {
-                            Administrador: '<i class="icon-base ri ri-user-line icon-22px text-primary me-2"></i>',
-                            Asesor: '<i class="icon-base ri ri-vip-crown-line icon-22px text-warning me-2"></i>',
-                            Soporte: '<i class="icon-base ri ri-pie-chart-line icon-22px text-success me-2"></i>',
+                            Asesor: '<i class="icon-base ri ri-user-line icon-22px text-primary me-2"></i>',
+                            Administrador: '<i class="icon-base ri ri-vip-crown-line icon-22px text-warning me-2"></i>',
+                            Presidencia: '<i class="icon-base ri ri-pie-chart-line icon-22px text-success me-2"></i>',
                             Editor: '<i class="icon-base ri ri-edit-box-line icon-22px text-info me-2"></i>',
-                            Presidencia: '<i class="icon-base ri ri-computer-line icon-22px text-danger me-2"></i>'
+                            Soporte: '<i class="icon-base ri ri-computer-line icon-22px text-danger me-2"></i>'
                         };
+                        if (!userRole || userRole === 'null') {
+                        return "<span class='text-truncate d-flex align-items-center text-heading'>-</span>";
+                        }
                         return (
                             "<span class='text-truncate d-flex align-items-center text-heading'>" +
                             (roleBadgeObj[userRole] || '') + // Ensures badge exists for the role
@@ -705,35 +708,35 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 document.querySelectorAll('.dt-buttons .btn').forEach(btn => {
                     btn.classList.remove('btn-secondary');
                 });
-                // const api = this.api();
+                const api = this.api();
 
                 // // Helper function to create a select dropdown and append options
-                // const createFilter = (columnIndex, containerClass, selectId, defaultOptionText) => {
-                //   const column = api.column(columnIndex);
-                //   const select = document.createElement('select');
-                //   select.id = selectId;
-                //   select.className = 'form-select text-capitalize';
-                //   select.innerHTML = `<option value="">${defaultOptionText}</option>`;
-                //   document.querySelector(containerClass).appendChild(select);
+                const createFilter = (columnIndex, containerClass, selectId, defaultOptionText) => {
+                  const column = api.column(columnIndex);
+                  const select = document.createElement('select');
+                  select.id = selectId;
+                  select.className = 'form-select text-capitalize';
+                  select.innerHTML = `<option value="">${defaultOptionText}</option>`;
+                  document.querySelector(containerClass).appendChild(select);
 
-                //   // Add event listener for filtering
-                //   select.addEventListener('change', () => {
-                //     const val = select.value ? `^${select.value}$` : '';
-                //     column.search(val, true, false).draw();
-                //   });
+                  // Add event listener for filtering
+                  select.addEventListener('change', () => {
+                    const val = select.value ? `^${select.value}$` : '';
+                    column.search(val, true, false).draw();
+                  });
 
-                //   // Populate options based on unique column data
-                //   const uniqueData = Array.from(new Set(column.data().toArray())).sort();
-                //   uniqueData.forEach(d => {
-                //     const option = document.createElement('option');
-                //     option.value = d;
-                //     option.textContent = d;
-                //     select.appendChild(option);
-                //   });
-                // };
+                  // Populate options based on unique column data
+                  const uniqueData = Array.from(new Set(column.data().toArray())).sort();
+                  uniqueData.forEach(d => {
+                    const option = document.createElement('option');
+                    option.value = d;
+                    option.textContent = d;
+                    select.appendChild(option);
+                  });
+                 };
 
                 // // Role filter
-                // createFilter(4, '.user_role', 'UserRole', 'Select Role');
+                createFilter(6, '.user_role', 'UserRole', 'Select Role');
 
                 // // Plan filter
                 // createFilter(5, '.user_plan', 'UserPlan', 'Select Plan');
