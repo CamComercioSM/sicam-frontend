@@ -38,22 +38,23 @@ class RolesAndPermissionsSeeder extends Seeder
         $soporte = Role::firstOrCreate(['name' => 'Soporte', 'guard_name' => $guard]);
         $invitado= Role::firstOrCreate(['name' => 'Invitado', 'guard_name' => $guard]);
 
-        // Admin: todo
-        $admin->syncPermissions(Permission::all());
+        // Soporte: todo
+        $soporte->syncPermissions(Permission::all());
 
-        // Soporte: permisos básicos de gestión
-        $soportePerms = [
+        // Admin:permisos básicos de gestión
+        $admin->syncPermissions([
             'usuario.ver', 'usuario.crear', 'usuario.editar',
             'rol.ver', 'permiso.ver',
             'perfil.ver', 'perfil.editar',
-            'contraseña.restablecer', 'correo.reenviar-verificacion',
+            'contraseña.restablecer',
+            'correo.reenviar-verificacion',
             '2fa.activar', '2fa.desactivar',
-        ];
-        $soporte->syncPermissions(Permission::whereIn('name', $soportePerms)->get());
+        ]);
 
         // Invitado: solo perfil
-        $invitadoPerms = ['perfil.ver', 'perfil.editar'];
-        $invitado->syncPermissions(Permission::whereIn('name', $invitadoPerms)->get());
+        $invitado->syncPermissions([
+            'perfil.ver', 'perfil.editar',
+        ]);
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
     }

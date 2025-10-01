@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use App\Models\Team;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -16,77 +15,53 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $teamGeneral  = Team::where('name', 'CCSM')->first();
-        $teamInvitados = Team::where('name', 'Invitados')->first();
+        // Limpia caché de permisos/roles
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        // Roles (con guard_name consistente)
-        $roles = ['Administrador', 'Invitado', 'Soporte'];
+        $guard = 'web';
+
+        // Aseguramos que los roles existan
+        $roles = ['Administrador', 'Soporte', 'Invitado'];
         foreach ($roles as $role) {
-            Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
+            Role::firstOrCreate(['name' => $role, 'guard_name' => $guard]);
         }
 
-        // --- ADMIN (team CCSM) ---
+        // --- SOPORTE ---
+        $soporte = User::firstOrCreate(
+            ['email' => 'centro.soporte@ccsm.org.co'],
+            [
+                'name'              => 'Soporte',
+                'password'          => Hash::make('password123'),
+                'email_verified_at' => now(),
+            ]
+        );
+        $soporte->syncRoles(['Soporte']);
+
+        // --- ADMIN ---
         $admin = User::firstOrCreate(
             ['email' => 'sicam32@ccsm.org.co'],
             [
-                'name' => 'Administrador',
-                'password' => Hash::make('password123'),
+                'name'              => 'Administrador',
+                'password'          => Hash::make('password123'),
                 'email_verified_at' => now(),
-                'current_team_id' => $teamGeneral->id,
             ]
         );
-
-        // Asociar al team (forma segura de contains)
-        if ($teamGeneral && !$admin->teams->contains('id', $teamGeneral->id)) {
-            $admin->teams()->attach($teamGeneral->id);
-            $admin->refresh();
-            $admin->switchTeam($teamGeneral);
-        }
-
-        // Asignar rol en contexto de team CCSM
-        app(PermissionRegistrar::class)->setPermissionsTeamId($teamGeneral->id);
-        $admin->syncRoles(['Administrador']);
+        $admin->syncRoles(['Administrador']); // reemplaza los roles actuales
 
 
-        // --- SOPORTE (team CCSM) ---
-        $support = User::firstOrCreate(
-            ['email' => 'centro.soporte@ccsm.org.co'],
-            [
-                'name' => 'Soporte',
-                'password' => Hash::make('password123'),
-                'email_verified_at' => now(),
-                'current_team_id' => $teamGeneral->id,
-            ]
-        );
 
-        if ($teamGeneral && !$support->teams->contains('id', $teamGeneral->id)) {
-            $support->teams()->attach($teamGeneral->id);
-            $support->refresh();
-            $support->switchTeam($teamGeneral);
-        }
-
-        app(PermissionRegistrar::class)->setPermissionsTeamId($teamGeneral->id);
-        $support->syncRoles(['Soporte']);
-
-
-        // --- INVITADO (team Invitados) ---
+        // --- INVITADO ---
         $guest = User::firstOrCreate(
             ['email' => 'pruebas@ccsm.org.co'],
             [
-                'name' => 'Invitado',
-                'password' => Hash::make('password123'),
+                'name'              => 'Invitado',
+                'password'          => Hash::make('password123'),
                 'email_verified_at' => now(),
-                'current_team_id' => $teamInvitados->id,
             ]
         );
-
-        if ($teamInvitados && !$guest->teams->contains('id', $teamInvitados->id)) {
-            $guest->teams()->attach($teamInvitados->id);
-            $guest->refresh();
-            $guest->switchTeam($teamInvitados);
-        }
-
-        app(PermissionRegistrar::class)->setPermissionsTeamId($teamInvitados->id);
         $guest->syncRoles(['Invitado']);
+
+        // Limpia caché otra vez al final
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }
