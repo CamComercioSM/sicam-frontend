@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 @php
-use Illuminate\Support\Str;
-use App\Helpers\Helpers;
+  use Illuminate\Support\Str;
+  use App\Helpers\Helpers;
 
-$menuFixed =
-$configData['layout'] === 'vertical'
-? $menuFixed ?? ''
-: ($configData['layout'] === 'front'
-? ''
-: $configData['headerType']);
-$navbarType =
-$configData['layout'] === 'vertical'
-? $configData['navbarType']
-: ($configData['layout'] === 'front'
-? 'layout-navbar-fixed'
-: '');
-$isFront = ($isFront ?? '') == true ? 'Front' : '';
-$contentLayout = isset($container) ? ($container === 'container-xxl' ? 'layout-compact' : 'layout-wide') : '';
+  $menuFixed =
+      $configData['layout'] === 'vertical'
+          ? $menuFixed ?? ''
+          : ($configData['layout'] === 'front'
+              ? ''
+              : $configData['headerType']);
+  $navbarType =
+      $configData['layout'] === 'vertical'
+          ? $configData['navbarType']
+          : ($configData['layout'] === 'front'
+              ? 'layout-navbar-fixed'
+              : '');
+  $isFront = ($isFront ?? '') == true ? 'Front' : '';
+  $contentLayout = isset($container) ? ($container === 'container-xxl' ? 'layout-compact' : 'layout-wide') : '';
 
-// Get skin name from configData - only applies to admin layouts
-$isAdminLayout = !Str::contains($configData['layout'] ?? '', 'front');
-$skinName = $isAdminLayout ? $configData['skinName'] ?? 'default' : 'default';
+  // Get skin name from configData - only applies to admin layouts
+  $isAdminLayout = !Str::contains($configData['layout'] ?? '', 'front');
+  $skinName = $isAdminLayout ? $configData['skinName'] ?? 'default' : 'default';
 
-// Get semiDark value from configData - only applies to admin layouts
-$semiDarkEnabled = $isAdminLayout && filter_var($configData['semiDark'] ?? false, FILTER_VALIDATE_BOOLEAN);
+  // Get semiDark value from configData - only applies to admin layouts
+  $semiDarkEnabled = $isAdminLayout && filter_var($configData['semiDark'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
-// Generate primary color CSS if color is set
-$primaryColorCSS = '';
-if (isset($configData['color']) && $configData['color']) {
-$primaryColorCSS = Helpers::generatePrimaryColorCSS($configData['color']);
-}
+  // Generate primary color CSS if color is set
+  $primaryColorCSS = '';
+  if (isset($configData['color']) && $configData['color']) {
+      $primaryColorCSS = Helpers::generatePrimaryColorCSS($configData['color']);
+  }
 
 @endphp
 
@@ -73,14 +73,14 @@ $primaryColorCSS = Helpers::generatePrimaryColorCSS($configData['color']);
   @include('layouts/sections/styles' . $isFront)
 
   @if (
-  $primaryColorCSS &&
-  (config('custom.custom.primaryColor') ||
-  isset($_COOKIE['admin-primaryColor']) ||
-  isset($_COOKIE['front-primaryColor'])))
-  <!-- Primary Color Style -->
-  <style id="primary-color-style">
-    {!! $primaryColorCSS !!}
-  </style>
+      $primaryColorCSS &&
+          (config('custom.custom.primaryColor') ||
+              isset($_COOKIE['admin-primaryColor']) ||
+              isset($_COOKIE['front-primaryColor'])))
+    <!-- Primary Color Style -->
+    <style id="primary-color-style">
+      {!! $primaryColorCSS !!}
+    </style>
   @endif
 
   <!-- Include Scripts for customizer, helper, analytics, config -->

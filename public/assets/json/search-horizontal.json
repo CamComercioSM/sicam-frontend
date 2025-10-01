@@ -1,19 +1,6 @@
 {
   "navigation": {
-    "Pruebas": [
-      {
-        "name": "Test Page",
-        "icon": "ri-home-smile-line",
-        "url": "pages/testPage"
-      }
-    ],
     "Dashboards": [
-      
-      {
-        "name": "Test Page",
-        "icon": "ri-home-smile-line",
-        "url": "pages/testPage"
-      },
       {
         "name": "Dashboard Analytics",
         "icon": "ri-bar-chart-line",

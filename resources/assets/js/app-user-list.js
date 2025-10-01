@@ -586,13 +586,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
   // Add New User Form Validation
   const fv = FormValidation.formValidation(addNewUserForm, {
     fields: {
-      userContact: {
-        validators: {
-          notEmpty: {
-            message: 'Faltaron los datos de contacto '
-          }
-        }
-      },
       userFullname: {
         validators: {
           notEmpty: {

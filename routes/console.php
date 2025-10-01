@@ -6,5 +6,8 @@ use Illuminate\Support\Facades\Artisan;
 
 Artisan::command('inspire', function () {
     /** @var ClosureCommand $this */
-    $this->comment(Inspiring::quote());
+    while(true){
+        $this->comment(Inspiring::quote());
+        sleep(2);
+    }
 })->purpose('Display an inspiring quote');

@@ -134,7 +134,7 @@
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body mx-0 flex-grow-0 h-100">
-      <form class="add-new-user pt-0" id="addNewUserForm">
+      <form class="add-new-user pt-0" id="addNewUserForm" onsubmit="return false">
         <div class="form-floating form-floating-outline mb-5 form-control-validation">
           <input type="text" class="form-control" id="add-user-fullname" placeholder="John Doe" name="userFullname" aria-label="John Doe" />
           <label for="add-user-fullname">Full Name</label>

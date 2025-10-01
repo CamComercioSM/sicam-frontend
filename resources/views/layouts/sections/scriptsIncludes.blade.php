@@ -30,9 +30,6 @@
   @vite(['resources/assets/vendor/js/template-customizer.js'])
 @endif
 
-@vite([
-'resources/assets/vendor/libs/sweetalert2/sweetalert2.js'
-])
   <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
   @vite(['resources/assets/js/config.js'])
 
@@ -47,7 +44,7 @@
 
         window.templateCustomizer = new TemplateCustomizer({
           defaultTextDir: "{{ $configData['textDirection'] }}",
-          @if($primaryColor)
+          @if ($primaryColor)
             defaultPrimaryColor: "{{ $primaryColor }}",
           @endif
           defaultTheme: "{{ $configData['themeOpt'] }}",

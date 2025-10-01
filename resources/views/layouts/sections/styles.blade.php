@@ -19,12 +19,7 @@
 
 <!-- Vendor Styles -->
 @vite(['resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.scss', 'resources/assets/vendor/libs/typeahead-js/typeahead.scss'])
-@vite([
-'resources/assets/vendor/libs/sweetalert2/sweetalert2.scss'
-])
 @yield('vendor-style')
-
-
 
 <!-- Page Styles -->
 @yield('page-style')
@@ -32,7 +27,5 @@
 <!-- app CSS -->
 @vite(['resources/css/app.css'])
 <!-- END: app CSS-->
-
-@livewireStyles
 
 @livewireStyles
