@@ -133,8 +133,8 @@
           <th>Email</th>
           <th>Verified</th>
           <th>Roles</th>
-          <th>Fecha de actualizacion</th>
-          <th>Fecha de eliminacion</th>
+          <th>Actualizacion</th>
+          <th>Eliminacion</th>
           <th>Actions</th>
         </tr>
       </thead>

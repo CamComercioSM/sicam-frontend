@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\laravel_example;
 
+use App\Actions\Fortify\PasswordValidationRules;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Str;
 use Illuminate\Contracts\View\View;
 
 class UserManagement extends Controller
 {
+
   /**
    * Redirect to user-management view.
    *
@@ -47,21 +50,21 @@ class UserManagement extends Controller
       1 => 'id',
       2 => 'name',
       3 => 'email',
-      4 => 'email_verified_at',
-      5 => 'profile_photo_path',
+      4 => 'userRole',
+      5 => 'email_verified_at',
     ];
 
     $totalData = User::count(); // Total records without filtering
-      $totalFiltered = $totalData;
+    $totalFiltered = $totalData;
 
-      $limit = $request->input('length');
-      $start = $request->input('start');
-      $order = $columns[$request->input('order.0.column')] ?? 'id';
-      $dir = $request->input('order.0.dir') ?? 'desc';
+    $limit = $request->input('length');
+    $start = $request->input('start');
+    $order = $columns[$request->input('order.0.column')] ?? 'id';
+    $dir = $request->input('order.0.dir') ?? 'desc';
 
-      $query = User::query();
+    $query = User::query();
 
-      // Search handling
+    // Search handling
     if (!empty($request->input('search.value'))) {
       $search = $request->input('search.value');
 
@@ -83,7 +86,7 @@ class UserManagement extends Controller
     $ids = $start;
 
     foreach ($users as $user) {
-      $userRole = $user->getRoleNames();
+      $userRole = $user->getRoleNames()->first() ?? 'Sin Rol';
       $data[] = [
         'id' => $user->id,
         'fake_id' => ++$ids,
@@ -91,6 +94,8 @@ class UserManagement extends Controller
         'email' => $user->email,
         'userRole' => $userRole,
         'email_verified_at' => $user->email_verified_at,
+        'updated_at' => $user->updated_at,
+        'delete_at' => $user->delete_at,
         'userProfilePhoto' => $user->profile_photo_path,
       ];
     }
@@ -122,33 +127,66 @@ class UserManagement extends Controller
    */
   public function store(Request $request)
   {
+
     $userID = $request->id;
-
     if ($userID) {
-      // update the value
-      $users = User::updateOrCreate(
-        ['id' => $userID],
-        ['name' => $request->name, 'email' => $request->email]
-      );
+      $request->validate([
+        'name'      => 'required|string|max:255',
+        'email'     => 'required|email',
+        'userRole'  => 'required|string|exists:roles,name',
+        'personaIDENTIFICACION' => 'required|string|min:4',
+      ]);
 
-      // user updated
-      return response()->json('Updated');
-    } else {
-      // create new one if email is unique
+      // update the value
       $userEmail = User::where('email', $request->email)->first();
 
       if (empty($userEmail)) {
-        $users = User::updateOrCreate(
-          ['id' => $userID],
-          ['name' => $request->name, 'email' => $request->email, 'password' => bcrypt(Str::random(10))]
-        );
 
-        // user created
-        return response()->json('Created');
+        $userOLD1 = User::find($userID);
+        $user = User::updateOrCreate(
+          ['id' => $userID],
+          ['name' => $request->name, 'email' => $request->email]
+        );
+        // Asignar el rol (solo si el campo viene en el request)
+        if ($request->has('userRole')) {
+          $user->syncRoles($request->userRole); // Reemplaza los roles previos por el nuevo
+        }
+
+        if ($userOLD1->email !== $user->email) {
+          // Son distintos
+          event(new Registered($user));
+        }
+        // user updated
+        return response()->json('Updated');
       } else {
         // user already exist
-        return response()->json(['message' => "already exits"], 422);
+        return response()->json(['message' => "el correo ya exite, para el usuario {$userEmail->name} "], 422);
       }
+    } else {
+
+
+      $request->validate([
+        'name'      => 'required|string|max:255',
+        'email'     => 'required|email|unique:users,email',
+        'userRole'  => 'required|string|exists:roles,name',
+        'personaIDENTIFICACION' => 'required|string|min:4',
+      ]);
+
+      // Crear usuario
+      $user = User::create([
+        'name'              => $request->name,
+        'email'             => $request->email,
+        'password'          => bcrypt($request->personaIDENTIFICACION),
+      ]);
+
+      // Asignar rol
+      $user->syncRoles($request->userRole);
+
+      // Lanzar evento de registro (para disparar listeners como verificación, etc)
+      event(new Registered($user));
+
+      // user created
+      return response()->json('Created');
     }
   }
 
@@ -182,7 +220,13 @@ class UserManagement extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id) {}
+  public function update(Request $request, $id)
+  {
+
+
+
+    return response()->json('Updated 2');
+  }
 
   /**
    * Remove the specified resource from storage.
@@ -192,6 +236,9 @@ class UserManagement extends Controller
    */
   public function destroy($id)
   {
-    $users = User::where('id', $id)->delete();
+    $oBJuSER = User::find($id);
+    if ($oBJuSER) {
+      $oBJuSER->delete();
+    }
   }
 }

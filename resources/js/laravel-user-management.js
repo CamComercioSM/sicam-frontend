@@ -3,7 +3,7 @@
  */
 
 'use strict';
-
+import { formatDate } from '../js/utils/date.js';
 // Datatable (js)
 document.addEventListener('DOMContentLoaded', function (e) {
   let borderColor, bodyBg, headingColor;
@@ -66,8 +66,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
         { data: 'email' },
         { data: 'email_verified_at' },
         { data: 'userRole' },
-        { data: 'userRole' },
-        { data: 'userRole' },
+        { data: 'updated_at' },
+        { data: 'delete_at' },
         { data: 'action' }
       ],
       columnDefs: [
@@ -162,15 +162,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
           className: 'text-center',
           render: function (data, type, full, meta) {
             let email_verified_at = full['email_verified_at'];
-            let iconHtml, formattedDate;
-            // Considera cualquier valor vacío, null o string "null"
+            let iconHtml;
             if (email_verified_at && email_verified_at !== 'null') {
               // Formato dd/mm/aaaa
-              let dateObj = new Date(email_verified_at);
-              let day = String(dateObj.getDate()).padStart(2, '0');
-              let month = String(dateObj.getMonth() + 1).padStart(2, '0');
-              let year = dateObj.getFullYear();
-              formattedDate = `${day}/${month}/${year}`;
+              let formattedDate = formatDate(email_verified_at);
               iconHtml = '<i class="icon-base ri ri-mail-check-fill text-success icon-22px text-primary me-2"></i>';
               return (
                 '<span class="d-flex align-items-center">' +
@@ -190,6 +185,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         },
         {
+          //User Role
           targets: 6,
           render: function (data, type, full, meta) {
             var userRole = full['userRole'];
@@ -209,6 +205,52 @@ document.addEventListener('DOMContentLoaded', function (e) {
               userRole +
               '</span>'
             );
+          }
+        },
+        {
+          // updated_at
+          targets: 7,
+          className: 'text-center',
+          render: function (data, type, full, meta) {
+            let updated_at = full['updated_at'];
+            if (updated_at && updated_at !== 'null') {
+              // Formato dd/mm/aaaa
+              let formattedDate = formatDate(updated_at);
+              return (
+                '<span class="d-flex align-items-center">' +
+                '<span>' + formattedDate + '</span>' +
+                '</span>'
+              );
+            } else {
+              return (
+                '<span class="d-flex align-items-center">' +
+                '<span>No verificado</span>' +
+                '</span>'
+              );
+            }
+          }
+        },
+        {
+          // updated_at
+          targets: 8,
+          className: 'text-center',
+          render: function (data, type, full, meta) {
+            let delete_at = full['delete_at'];
+            if (delete_at && delete_at !== 'null') {
+              // Formato dd/mm/aaaa
+              let formattedDate = formatDate(delete_at);
+              return (
+                '<span class="d-flex align-items-center">' +
+                '<span>' + formattedDate + '</span>' +
+                '</span>'
+              );
+            } else {
+              return (
+                '<span class="d-flex align-items-center">' +
+                '<span>Activo</span>' +
+                '</span>'
+              );
+            }
           }
         },
         {
@@ -577,10 +619,18 @@ document.addEventListener('DOMContentLoaded', function (e) {
     });
 
     // Delete Record
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', function (e, o) {
+
+      console.log(e.target);
+      console.log(e);
+
       if (e.target.closest('.delete-record')) {
         const deleteBtn = e.target.closest('.delete-record');
         const user_id = deleteBtn.dataset.id;
+        
+
+      console.log(deleteBtn.dataset);
+      console.log(deleteBtn);
         const dtrModal = document.querySelector('.dtr-bs-modal.show');
 
         // hide responsive modal in small screen

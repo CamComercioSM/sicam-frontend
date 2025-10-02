@@ -13,16 +13,21 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
+
+
 // Nuestro 
 use App\Models\Concerns\WithUserStamps;
 
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, AuditableContract
 {
     use HasApiTokens;
     use HasRoles;
     use SoftDeletes; // habilita soft delete
     use WithUserStamps;
+    use Auditable;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;

@@ -354,7 +354,7 @@ Route::get('/maps/leaflet', [Leaflet::class, 'index'])->name('maps-leaflet');
 // laravel example
 Route::get('/laravel/user-management', [UserManagement::class, 'UserManagement'])->name('laravel-example-user-management');
 Route::resource('/user-list', UserManagement::class);
-
+ 
 Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
