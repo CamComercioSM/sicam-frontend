@@ -60,10 +60,14 @@ document.addEventListener('DOMContentLoaded', function (e) {
       columns: [
         // columns according to JSON
         { data: 'id' },
+        { data: 'id', orderable: false, render: DataTable.render.select() },
         { data: 'id' },
         { data: 'name' },
         { data: 'email' },
         { data: 'email_verified_at' },
+        { data: 'userRole' },
+        { data: 'userRole' },
+        { data: 'userRole' },
         { data: 'action' }
       ],
       columnDefs: [
@@ -79,72 +83,132 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         },
         {
-          searchable: false,
-          orderable: false,
+          // For Checkboxes
           targets: 1,
-          render: function (data, type, full, meta) {
-            return `<span>${full.fake_id}</span>`;
+          orderable: false,
+          searchable: false,
+          responsivePriority: 4,
+          checkboxes: true,
+          render: function () {
+            return '<input type="checkbox" class="dt-checkboxes form-check-input">';
+          },
+          checkboxes: {
+            selectAllRender: '<input type="checkbox" class="form-check-input">'
           }
         },
         {
-          // User full name
+          searchable: false,
+          orderable: false,
           targets: 2,
+          render: function (data, type, full, meta) {
+            return `<span>${full.id}</span>`;
+          }
+        },
+        {
+          targets: 3,
           responsivePriority: 4,
           render: function (data, type, full, meta) {
-            const { name } = full; // Destructuring to get 'name' from the 'full' object
+            var name = full['name'];
+            var email = full['email'];
+            var image = full['userProfilePhoto'];
+            var output;
 
-            // For Avatar badge
-            const stateNum = Math.floor(Math.random() * 6);
-            const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
-            const state = states[stateNum];
+            if (image) {
+              // For Avatar image
+              output = '<img src="'+ baseUrl + "storage/" + image + '" alt="Foto de perfil" class="rounded-circle">';
+            } else {
+              // For Avatar badge
+              var stateNum = Math.floor(Math.random() * 6);
+              var states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
+              var state = states[stateNum];
+              var initials = (name.match(/\b\w/g) || []).map(char => char.toUpperCase());
+              initials = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
+              output = '<span class="avatar-initial rounded-circle bg-label-' + state + '">' + initials + '</span>';
+            }
 
-            // Extract initials from the name
-            const initials = (name.match(/\b\w/g) || []).shift() + (name.match(/\b\w/g) || []).pop();
-            const initialsUpper = initials.toUpperCase();
-
-            // Create avatar badge using template literals
-            const avatar = `<span class="avatar-initial rounded-circle bg-label-${state}">${initialsUpper}</span>`;
-
-            // Create full output for row using template literals
-            const rowOutput = `
-              <div class="d-flex justify-content-start align-items-center user-name">
-                <div class="avatar-wrapper">
-                  <div class="avatar avatar-sm me-4">
-                    ${avatar}
-                  </div>
-                </div>
-                <div class="d-flex flex-column">
-                  <a href="${userView}" class="text-truncate text-heading">
-                    <span class="fw-medium">${name}</span>
-                  </a>
-                </div>
-              </div>
-            `;
-
-            // Return the final output as HTML string
-            return rowOutput;
+            // Creates full output for row
+            var row_output =
+              '<div class="d-flex justify-content-start align-items-center user-name">' +
+              '<div class="avatar-wrapper">' +
+              '<div class="avatar avatar-sm me-4">' +
+              output +
+              '</div>' +
+              '</div>' +
+              '<div class="d-flex flex-column">' +
+              '<a href="' +
+              userView +
+              '" class="text-heading text-truncate"><span class="fw-medium">' +
+              name +
+              '</span></a>' +
+              '<small>' +
+              email +
+              '</small>' +
+              '</div>' +
+              '</div>';
+            return row_output;
           }
         },
         {
           // User email
-          targets: 3,
+          targets: 4,
           render: function (data, type, full, meta) {
             const email = full['email'];
-
             return '<span class="user-email">' + email + '</span>';
           }
         },
         {
           // email verify
-          targets: 4,
+          targets: 5,
           className: 'text-center',
           render: function (data, type, full, meta) {
-            const verified = full['email_verified_at'];
-            return `${
-              verified
-                ? '<i class="icon-base ri fs-4 ri-shield-check-line text-success"></i>'
-                : '<i class="icon-base ri fs-4 ri-shield-line text-danger" ></i>'
-            }`;
+            let email_verified_at = full['email_verified_at'];
+            let iconHtml, formattedDate;
+            // Considera cualquier valor vacío, null o string "null"
+            if (email_verified_at && email_verified_at !== 'null') {
+              // Formato dd/mm/aaaa
+              let dateObj = new Date(email_verified_at);
+              let day = String(dateObj.getDate()).padStart(2, '0');
+              let month = String(dateObj.getMonth() + 1).padStart(2, '0');
+              let year = dateObj.getFullYear();
+              formattedDate = `${day}/${month}/${year}`;
+              iconHtml = '<i class="icon-base ri ri-mail-check-fill text-success icon-22px text-primary me-2"></i>';
+              return (
+                '<span class="d-flex align-items-center">' +
+                iconHtml +
+                '<span>' + formattedDate + '</span>' +
+                '</span>'
+              );
+            } else {
+              iconHtml = '<i class="icon-base ri fs-4 ri-shield-line text-danger icon-22px text-primary me-2"></i>';
+              return (
+                '<span class="d-flex align-items-center">' +
+                iconHtml +
+                '<span>No verificado</span>' +
+                '</span>'
+              );
+            }
+          }
+        },
+        {
+          targets: 6,
+          render: function (data, type, full, meta) {
+            var userRole = full['userRole'];
+            var roleBadgeObj = {
+              Asesor: '<i class="icon-base ri ri-user-line icon-22px text-primary me-2"></i>',
+              Administrador: '<i class="icon-base ri ri-vip-crown-line icon-22px text-warning me-2"></i>',
+              Presidencia: '<i class="icon-base ri ri-pie-chart-line icon-22px text-success me-2"></i>',
+              Invitado: '<i class="icon-base ri ri-edit-box-line icon-22px text-info me-2"></i>',
+              Soporte: '<i class="icon-base ri ri-computer-line icon-22px text-danger me-2"></i>'
+            };
+            if (!userRole || userRole === 'null') {
+              return "<span class='text-truncate d-flex align-items-center text-heading'>-</span>";
+            }
+            return (
+              "<span class='text-truncate d-flex align-items-center text-heading'>" +
+              (roleBadgeObj[userRole] || '') + // Ensures badge exists for the role
+              userRole +
+              '</span>'
+            );
           }
         },
         {
@@ -480,6 +544,35 @@ document.addEventListener('DOMContentLoaded', function (e) {
         document.querySelectorAll('.dt-buttons .btn').forEach(btn => {
           btn.classList.remove('btn-secondary');
         });
+        const api = this.api();
+
+        // // Helper function to create a select dropdown and append options
+        const createFilter = (columnIndex, containerClass, selectId, defaultOptionText) => {
+          const column = api.column(columnIndex);
+          const select = document.createElement('select');
+          select.id = selectId;
+          select.className = 'form-select text-capitalize';
+          select.innerHTML = `<option value="">${defaultOptionText}</option>`;
+          document.querySelector(containerClass).appendChild(select);
+
+          // Add event listener for filtering
+          select.addEventListener('change', () => {
+            const val = select.value ? `^${select.value}$` : '';
+            column.search(val, true, false).draw();
+          });
+
+          // Populate options based on unique column data
+          const uniqueData = Array.from(new Set(column.data().toArray())).sort();
+          uniqueData.forEach(d => {
+            const option = document.createElement('option');
+            option.value = d;
+            option.textContent = d;
+            select.appendChild(option);
+          });
+        };
+
+        // // Role filter
+        createFilter(6, '.user_role', 'UserRole', 'Select Role');
       }
     });
 
@@ -575,6 +668,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
             document.getElementById('user_id').value = data.id;
             document.getElementById('add-user-fullname').value = data.name;
             document.getElementById('add-user-email').value = data.email;
+            document.getElementById('add-user-userRole').value = data.userRole;
           });
       }
     });
@@ -651,14 +745,14 @@ document.addEventListener('DOMContentLoaded', function (e) {
             }
           }
         },
-        userContact: {
+        personaIDENTIFICACION: {
           validators: {
             notEmpty: {
-              message: 'Please enter your contact'
+              message: 'Por favor ingresar la cedula'
             }
           }
         },
-        company: {
+        userRole: {
           validators: {
             notEmpty: {
               message: 'Please enter your company'
@@ -741,30 +835,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
           });
         });
     });
-
     // clearing form data when offcanvas hidden
     offCanvasForm.addEventListener('hidden.bs.offcanvas', function () {
       fv.resetForm(true);
-    });
-  }
-
-  // Phone mask initialization
-  const phoneMaskList = document.querySelectorAll('.phone-mask');
-
-  // Phone Number
-  if (phoneMaskList) {
-    phoneMaskList.forEach(function (phoneMask) {
-      phoneMask.addEventListener('input', event => {
-        const cleanValue = event.target.value.replace(/\D/g, '');
-        phoneMask.value = formatGeneral(cleanValue, {
-          blocks: [3, 3, 4],
-          delimiters: [' ', ' ']
-        });
-      });
-      registerCursorTracker({
-        input: phoneMask,
-        delimiter: ' '
-      });
     });
   }
 });

@@ -13,7 +13,13 @@ use App\Http\Controllers\pruebas\RolesPermisos;
   Route::post('prueba/rolesypermisos', [RolesPermisos::class, 'crear_y_asignar']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
-  // Protected Routes
+  // Protected Routes  
+  Route::post('crear_usuario', [AuthController::class, 'register']);
+  Route::post('borrar_usuario', [AuthController::class, 'borrar_usuario']);
+  Route::post('eliminar_usuario', [AuthController::class, 'eliminar_usuario']);
+
+
+
   Route::get('profile', [AuthController::class, 'profile']);
   Route::get('logout', [AuthController::class, 'logout']);  
   Route::post('prueba/permisosusuario', [RolesPermisos::class, 'asignar_permisos_usuario']);

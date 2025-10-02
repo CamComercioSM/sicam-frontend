@@ -103,4 +103,38 @@ class AuthController extends Controller
             "data" => []
         ]);
     }
+
+    function borrar_usuario(Request $request)
+    {
+
+        $oBJuSER = User::find($request->xxxx);
+
+
+        if ($oBJuSER) {
+            $oBJuSER->delete();
+        }
+
+
+        return response()->json([
+            "message" => "usuario borrado",
+            "data" => [$oBJuSER, $oBJuSER->id]
+        ]);
+    }
+
+    function eliminar_usuario(Request $request)
+    {
+
+        $oBJuSER = User::withTrashed()->where('id', $request->xxxx )->first();
+
+
+        if ($oBJuSER) {
+            $oBJuSER->forceDelete();
+        }
+
+
+        return response()->json([
+            "message" => "usuario borrado",
+            "data" => [$oBJuSER]
+        ]);
+    }
 }

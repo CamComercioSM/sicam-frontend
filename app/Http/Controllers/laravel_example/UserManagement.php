@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Str;
 use Illuminate\Contracts\View\View;
 
@@ -19,6 +20,7 @@ class UserManagement extends Controller
   {
     // dd('UserManagement');
     $users = User::all();
+    $roles = Role::all();
     $userCount = $users->count();
     $verified = User::whereNotNull('email_verified_at')->get()->count();
     $notVerified = User::whereNull('email_verified_at')->get()->count();
@@ -27,6 +29,7 @@ class UserManagement extends Controller
 
     return view('content.laravel-example.user-management', [
       'totalUser' => $userCount,
+      'roles' => $roles,
       'verified' => $verified,
       'notVerified' => $notVerified,
       'userDuplicates' => $userDuplicates,
@@ -45,6 +48,7 @@ class UserManagement extends Controller
       2 => 'name',
       3 => 'email',
       4 => 'email_verified_at',
+      5 => 'profile_photo_path',
     ];
 
     $totalData = User::count(); // Total records without filtering
@@ -79,12 +83,15 @@ class UserManagement extends Controller
     $ids = $start;
 
     foreach ($users as $user) {
+      $userRole = $user->getRoleNames();
       $data[] = [
         'id' => $user->id,
         'fake_id' => ++$ids,
         'name' => $user->name,
         'email' => $user->email,
+        'userRole' => $userRole,
         'email_verified_at' => $user->email_verified_at,
+        'userProfilePhoto' => $user->profile_photo_path,
       ];
     }
 

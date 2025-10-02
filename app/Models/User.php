@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -13,10 +12,17 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
+
+// Nuestro 
+use App\Models\Concerns\WithUserStamps;
+
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens;
     use HasRoles;
+    use SoftDeletes; // habilita soft delete
+    use WithUserStamps;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
@@ -33,6 +39,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     /**
@@ -67,5 +76,23 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+
+    /**
+     * Relaciones convenientes (opcional)
+     */
+    public function createdByUser()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+    public function updatedByUser()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+    public function deletedByUser()
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
     }
 }
