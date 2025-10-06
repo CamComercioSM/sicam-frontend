@@ -134,7 +134,7 @@
           <th>Verified</th>
           <th>Roles</th>
           <th>Actualizacion</th>
-          <th>Eliminacion</th>
+          <th>Acrtualizado por</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -166,7 +166,7 @@
         </div>
           <div class="form-floating form-floating-outline mb-5 form-control-validation">
             <select id="add-user-userRole" name="userRole" class="form-select">
-              <option value="">Selecciona un rol...</option>
+              <option id="add-user-userRole-select" value="">Selecciona un rol...</option>
               @foreach($roles as $role)
               <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
               @endforeach

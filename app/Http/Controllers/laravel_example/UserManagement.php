@@ -49,9 +49,10 @@ class UserManagement extends Controller
     $columns = [
       1 => 'id',
       2 => 'name',
-      3 => 'email',
-      4 => 'userRole',
+      3 => 'user',
+      4 => 'email',
       5 => 'email_verified_at',
+      6 => 'userRole',
     ];
 
     $totalData = User::count(); // Total records without filtering
@@ -60,9 +61,11 @@ class UserManagement extends Controller
     $limit = $request->input('length');
     $start = $request->input('start');
     $order = $columns[$request->input('order.0.column')] ?? 'id';
+    $orderRole = $request->input('columns')[6]['search']['value'] ?? null;
     $dir = $request->input('order.0.dir') ?? 'desc';
 
     $query = User::query();
+
 
     // Search handling
     if (!empty($request->input('search.value'))) {
@@ -73,9 +76,22 @@ class UserManagement extends Controller
           ->orWhere('name', 'LIKE', "%{$search}%")
           ->orWhere('email', 'LIKE', "%{$search}%");
       });
-
-      $totalFiltered = $query->count();
     }
+
+    if ($orderRole) {
+      $orderRole = trim($orderRole, '^$');
+      if (strtolower($orderRole) === 'sin rol') {
+        // Usuarios sin roles asignados
+        $query->whereDoesntHave('roles');
+      } else {
+        // Usuarios con un rol específico
+        $query->whereHas('roles', function ($q) use ($orderRole) {
+          $q->where('name', 'LIKE', "%{$orderRole}%");
+        });
+      }
+    }
+
+    $totalFiltered = $query->count();
 
     $users = $query->offset($start)
       ->limit($limit)
@@ -95,7 +111,7 @@ class UserManagement extends Controller
         'userRole' => $userRole,
         'email_verified_at' => $user->email_verified_at,
         'updated_at' => $user->updated_at,
-        'delete_at' => $user->delete_at,
+        'updated_by' => User::find($user->updated_by)?->name ?? 'N/A',
         'userProfilePhoto' => $user->profile_photo_path,
       ];
     }
@@ -127,7 +143,6 @@ class UserManagement extends Controller
    */
   public function store(Request $request)
   {
-
     $userID = $request->id;
     if ($userID) {
       $request->validate([
@@ -136,34 +151,41 @@ class UserManagement extends Controller
         'userRole'  => 'required|string|exists:roles,name',
         'personaIDENTIFICACION' => 'required|string|min:4',
       ]);
+      $user = User::findOrFail($userID);
 
-      // update the value
-      $userEmail = User::where('email', $request->email)->first();
+      $emailExists = User::where('email', $request->email)
+        ->where('id', '!=', $userID)
+        ->exists();
 
-      if (empty($userEmail)) {
-
-        $userOLD1 = User::find($userID);
-        $user = User::updateOrCreate(
-          ['id' => $userID],
-          ['name' => $request->name, 'email' => $request->email]
-        );
-        // Asignar el rol (solo si el campo viene en el request)
-        if ($request->has('userRole')) {
-          $user->syncRoles($request->userRole); // Reemplaza los roles previos por el nuevo
-        }
-
-        if ($userOLD1->email !== $user->email) {
-          // Son distintos
-          event(new Registered($user));
-        }
-        // user updated
-        return response()->json('Updated');
-      } else {
-        // user already exist
-        return response()->json(['message' => "el correo ya exite, para el usuario {$userEmail->name} "], 422);
+      if ($emailExists) {
+        return response()->json([
+          'message' => "El correo ya existe, está asignado a otro usuario."
+        ], 422);
       }
-    } else {
 
+      $oldEmail = $user->email;
+      $oldIdentificacion = $user->identificacion;
+
+      $user->update([
+        'name'  => $request->name,
+        'email' => $request->email,
+        'identificacion'   => Str::upper($request->personaIDENTIFICACION),
+    ]);
+    // 🔹 Actualizar rol
+    $user->syncRoles($request->userRole);
+    // 🔹 Si cambió el correo, volver a disparar el evento Registered
+    if ($oldEmail !== $user->email) {
+        event(new Registered($user));
+    }
+    if ($oldIdentificacion !== $user->identificacion) {
+        // Aquí puedes agregar cualquier lógica adicional que necesites
+        // cuando la identificación del usuario cambie.
+        $user->password = bcrypt($request->personaIDENTIFICACION);
+        $user->save();
+    }
+      return response()->json('Updated');
+
+    } else {
 
       $request->validate([
         'name'      => 'required|string|max:255',
@@ -177,6 +199,7 @@ class UserManagement extends Controller
         'name'              => $request->name,
         'email'             => $request->email,
         'password'          => bcrypt($request->personaIDENTIFICACION),
+        'identificacion'   => Str::upper($request->personaIDENTIFICACION),
       ]);
 
       // Asignar rol
@@ -210,6 +233,7 @@ class UserManagement extends Controller
   public function edit($id): JsonResponse
   {
     $user = User::findOrFail($id);
+    $user->userRole = $user->getRoleNames()->first() ?? 'Sin Rol';
     return response()->json($user);
   }
 
@@ -222,10 +246,7 @@ class UserManagement extends Controller
    */
   public function update(Request $request, $id)
   {
-
-
-
-    return response()->json('Updated 2');
+    //
   }
 
   /**
@@ -238,7 +259,11 @@ class UserManagement extends Controller
   {
     $oBJuSER = User::find($id);
     if ($oBJuSER) {
+      $oBJuSER->estado = 'borrado';
+      $oBJuSER->save();
       $oBJuSER->delete();
     }
+
+    return response()->json('Deleted');
   }
 }

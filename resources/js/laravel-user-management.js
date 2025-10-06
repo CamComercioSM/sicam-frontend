@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         { data: 'email_verified_at' },
         { data: 'userRole' },
         { data: 'updated_at' },
-        { data: 'delete_at' },
+        { data: 'updated_by' },
         { data: 'action' }
       ],
       columnDefs: [
@@ -235,10 +235,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
           targets: 8,
           className: 'text-center',
           render: function (data, type, full, meta) {
-            let delete_at = full['delete_at'];
-            if (delete_at && delete_at !== 'null') {
+            let updated_by = full['updated_by'];
+            if (updated_by && updated_by !== 'N/A') {
               // Formato dd/mm/aaaa
-              let formattedDate = formatDate(delete_at);
+              let formattedDate = updated_by;
               return (
                 '<span class="d-flex align-items-center">' +
                 '<span>' + formattedDate + '</span>' +
@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
             } else {
               return (
                 '<span class="d-flex align-items-center">' +
-                '<span>Activo</span>' +
+                '<span>N/A</span>' +
                 '</span>'
               );
             }
@@ -620,17 +620,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
     // Delete Record
     document.addEventListener('click', function (e, o) {
-
-      console.log(e.target);
-      console.log(e);
-
       if (e.target.closest('.delete-record')) {
         const deleteBtn = e.target.closest('.delete-record');
         const user_id = deleteBtn.dataset.id;
-        
-
-      console.log(deleteBtn.dataset);
-      console.log(deleteBtn);
         const dtrModal = document.querySelector('.dtr-bs-modal.show');
 
         // hide responsive modal in small screen
@@ -718,6 +710,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
             document.getElementById('user_id').value = data.id;
             document.getElementById('add-user-fullname').value = data.name;
             document.getElementById('add-user-email').value = data.email;
+            document.getElementById('add-user-personaIDENTIFICACION').value = data.identificacion;
             document.getElementById('add-user-userRole').value = data.userRole;
           });
       }

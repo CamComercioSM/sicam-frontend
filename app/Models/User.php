@@ -44,6 +44,9 @@ class User extends Authenticatable implements MustVerifyEmail, AuditableContract
         'name',
         'email',
         'password',
+        'identificacion',
+        'estado',
+        'token_sican32',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -57,6 +60,7 @@ class User extends Authenticatable implements MustVerifyEmail, AuditableContract
     protected $hidden = [
         'password',
         'remember_token',
+        'token_sican32',
         'two_factor_recovery_codes',
         'two_factor_secret',
     ];
