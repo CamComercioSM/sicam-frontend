@@ -3,8 +3,11 @@
  */
 
 'use strict';
-import { formatDate } from '../js/utils/date.js';
+import { functions } from 'lodash';
+import { act } from 'react';
 // Datatable (js)
+var dt_user_table;
+
 document.addEventListener('DOMContentLoaded', function (e) {
   let borderColor, bodyBg, headingColor;
 
@@ -13,8 +16,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
   headingColor = config.colors.headingColor;
 
   // Variable declaration for table
-  const dt_user_table = document.querySelector('.datatables-users'),
-    userView = baseUrl + 'app/user/view/account',
+  dt_user_table = document.querySelector('.datatables-users');
+  const userView = baseUrl + 'app/user/view/account',
     offCanvasForm = document.getElementById('offcanvasAddUser');
 
   // Select2 initialization
@@ -37,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   // Users datatable
   if (dt_user_table) {
+
     const dt_user = new DataTable(dt_user_table, {
       processing: true,
       serverSide: true,
@@ -63,9 +67,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
         { data: 'id', orderable: false, render: DataTable.render.select() },
         { data: 'id' },
         { data: 'name' },
-        { data: 'email' },
+        { data: 'identificacion' },
         { data: 'email_verified_at' },
         { data: 'userRole' },
+        { data: 'estado' },
         { data: 'updated_at' },
         { data: 'updated_by' },
         { data: 'action' }
@@ -115,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
             if (image) {
               // For Avatar image
-              output = '<img src="'+ baseUrl + "storage/" + image + '" alt="Foto de perfil" class="rounded-circle">';
+              output = '<img src="' + baseUrl + "storage/" + image + '" alt="Foto de perfil" class="rounded-circle">';
             } else {
               // For Avatar badge
               var stateNum = Math.floor(Math.random() * 6);
@@ -152,8 +157,11 @@ document.addEventListener('DOMContentLoaded', function (e) {
           // User email
           targets: 4,
           render: function (data, type, full, meta) {
-            const email = full['email'];
-            return '<span class="user-email">' + email + '</span>';
+            const identificacion = full['identificacion'];
+            return '<span class="d-flex align-items-center">' +
+              '<i class="icon-base ri ri-id-card-line"></i> ' +
+              '<span>' + identificacion + '</span>' +
+              '</span>';
           }
         },
         {
@@ -208,8 +216,29 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         },
         {
-          // updated_at
+          //User Status
           targets: 7,
+          render: function (data, type, full, meta) {
+            var estado = full['estado'];
+            var roleBadgeObj = {
+              activo: '<i class="icon-base ri ri-user-line icon-22px text-primary me-2"></i>',
+              desactivo: '<i class="icon-base ri ri-vip-crown-line icon-22px text-warning me-2"></i>',
+              borrado: '<i class="icon-base ri ri-pie-chart-line icon-22px text-success me-2"></i>',
+            };
+            if (!estado || estado === 'null') {
+              return "<span class='text-truncate d-flex align-items-center text-heading'>-</span>";
+            }
+            return (
+              "<span class='text-truncate d-flex align-items-center text-heading'>" +
+              (roleBadgeObj[estado] || '') + // Ensures badge exists for the role
+              estado +
+              '</span>'
+            );
+          }
+        },
+        {
+          // updated_at
+          targets: 8,
           className: 'text-center',
           render: function (data, type, full, meta) {
             let updated_at = full['updated_at'];
@@ -232,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         },
         {
           // updated_at
-          targets: 8,
+          targets: 9,
           className: 'text-center',
           render: function (data, type, full, meta) {
             let updated_by = full['updated_by'];
@@ -260,19 +289,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           searchable: false,
           orderable: false,
           render: function (data, type, full, meta) {
-            return (
-              '<div class="d-flex align-items-center gap-4">' +
-              `<button class="btn btn-icon btn-text-secondary btn-sm rounded-pill edit-record" data-id="${full['id']}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><i class="icon-base ri ri-edit-box-line icon-22px"></i></button>` +
-              `<button class="btn btn-icon btn-text-secondary btn-sm rounded-pill delete-record" data-id="${full['id']}"><i class="icon-base ri ri-delete-bin-7-line icon-22px"></i></button>` +
-              '<button class="btn btn-icon btn-text-secondary btn-sm rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base ri ri-more-2-line icon-22px"></i></button>' +
-              '<div class="dropdown-menu dropdown-menu-end m-0">' +
-              '<a href="' +
-              userView +
-              '" class="dropdown-item">View</a>' +
-              '<a href="javascript:;" class="dropdown-item">Suspend</a>' +
-              '</div>' +
-              '</div>'
-            );
+            return accionesTablaUsuarios(full);
           }
         }
       ],
@@ -283,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           features: [
             {
               pageLength: {
-                menu: [7, 10, 20, 50, 70, 100],
+                menu: [10, 20, 50, 70, 100, 200, 500],
                 text: '_MENU_'
               }
             }
@@ -293,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           features: [
             {
               search: {
-                placeholder: 'Search User',
+                placeholder: 'Escribe la identificacion o el correo para buscar...',
                 text: '_INPUT_'
               }
             },
@@ -623,67 +640,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       if (e.target.closest('.delete-record')) {
         const deleteBtn = e.target.closest('.delete-record');
         const user_id = deleteBtn.dataset.id;
-        const dtrModal = document.querySelector('.dtr-bs-modal.show');
-
-        // hide responsive modal in small screen
-        if (dtrModal) {
-          const bsModal = bootstrap.Modal.getInstance(dtrModal);
-          bsModal.hide();
-        }
-
-        // sweetalert for confirmation of delete
-        Swal.fire({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Yes, delete it!',
-          customClass: {
-            confirmButton: 'btn btn-primary me-3',
-            cancelButton: 'btn btn-label-secondary'
-          },
-          buttonsStyling: false
-        }).then(function (result) {
-          if (result.value) {
-            // delete the data
-            fetch(`${baseUrl}user-list/${user_id}`, {
-              method: 'DELETE',
-              headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json'
-              }
-            })
-              .then(response => {
-                if (response.ok) {
-                  dt_user.draw();
-
-                  // success sweetalert
-                  Swal.fire({
-                    icon: 'success',
-                    title: 'Deleted!',
-                    text: 'The user has been deleted!',
-                    customClass: {
-                      confirmButton: 'btn btn-success'
-                    }
-                  });
-                } else {
-                  throw new Error('Delete failed');
-                }
-              })
-              .catch(error => {
-                console.log(error);
-              });
-          } else if (result.dismiss === Swal.DismissReason.cancel) {
-            Swal.fire({
-              title: 'Cancelled',
-              text: 'The User is not deleted!',
-              icon: 'error',
-              customClass: {
-                confirmButton: 'btn btn-success'
-              }
-            });
-          }
-        });
+        confirmarBorrarUsuario(user_id);
       }
     });
 
@@ -692,27 +649,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       if (e.target.closest('.edit-record')) {
         const editBtn = e.target.closest('.edit-record');
         const user_id = editBtn.dataset.id;
-        const dtrModal = document.querySelector('.dtr-bs-modal.show');
-
-        // hide responsive modal in small screen
-        if (dtrModal) {
-          const bsModal = bootstrap.Modal.getInstance(dtrModal);
-          bsModal.hide();
-        }
-
-        // changing the title of offcanvas
-        document.getElementById('offcanvasAddUserLabel').innerHTML = 'Edit User';
-
-        // get data
-        fetch(`${baseUrl}user-list/${user_id}/edit`)
-          .then(response => response.json())
-          .then(data => {
-            document.getElementById('user_id').value = data.id;
-            document.getElementById('add-user-fullname').value = data.name;
-            document.getElementById('add-user-email').value = data.email;
-            document.getElementById('add-user-personaIDENTIFICACION').value = data.identificacion;
-            document.getElementById('add-user-userRole').value = data.userRole;
-          });
+        abrirOffCanvasUsuariosParaEditar(user_id);
       }
     });
 
@@ -721,7 +658,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     if (addNewBtn) {
       addNewBtn.addEventListener('click', function () {
         document.getElementById('user_id').value = ''; //resetting input field
-        document.getElementById('offcanvasAddUserLabel').innerHTML = 'Add User';
+        cambiarTituloOffCanvasUsuarios('Creando Nuevo Usuario');
       });
     }
 
@@ -817,70 +754,233 @@ document.addEventListener('DOMContentLoaded', function (e) {
         autoFocus: new FormValidation.plugins.AutoFocus()
       }
     }).on('core.form.valid', function () {
-      // adding or updating user when form successfully validate
-      const formData = new FormData(addNewUserForm);
-      const formDataObj = {};
-
-      // Convert FormData to URL-encoded string
-      formData.forEach((value, key) => {
-        formDataObj[key] = value;
-      });
-
-      const searchParams = new URLSearchParams();
-      for (const [key, value] of Object.entries(formDataObj)) {
-        searchParams.append(key, value);
-      }
-
-      fetch(`${baseUrl}user-list`, {
-        method: 'POST',
-        headers: {
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: searchParams.toString()
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.text();
-        })
-        .then(status => {
-          // Refresh DataTable
-          dt_user_table && new DataTable(dt_user_table).draw();
-
-          // Hide offcanvas
-          const offcanvasInstance = bootstrap.Offcanvas.getInstance(offCanvasForm);
-          offcanvasInstance && offcanvasInstance.hide();
-
-          // sweetalert
-          Swal.fire({
-            icon: 'success',
-            title: `Successfully ${status}!`,
-            text: `User ${status} Successfully.`,
-            customClass: {
-              confirmButton: 'btn btn-success'
-            }
-          });
-        })
-        .catch(err => {
-          // Hide offcanvas
-          const offcanvasInstance = bootstrap.Offcanvas.getInstance(offCanvasForm);
-          offcanvasInstance && offcanvasInstance.hide();
-
-          Swal.fire({
-            title: 'Duplicate Entry!',
-            text: 'Your email should be unique.',
-            icon: 'error',
-            customClass: {
-              confirmButton: 'btn btn-success'
-            }
-          });
-        });
+      enviarDatosUsuario();
     });
     // clearing form data when offcanvas hidden
     offCanvasForm.addEventListener('hidden.bs.offcanvas', function () {
       fv.resetForm(true);
     });
   }
+
+
+  function cambiarTituloOffCanvasUsuarios(titulo) {
+    document.getElementById('offcanvasAddUserLabel').innerHTML = titulo;
+  }
+
+  function accionesTablaUsuarios(full) {
+
+    let accionButtons = '<a href="' + userView + '/' + full['id'] + '" class="dropdown-item">Ver Detalles</a>';
+    switch (full['estado']) {
+      case 'activo':
+        // Acciones para usuario activo
+        accionButtons += '<a href="javascript:confirmarDesactivarUsuario(' + full['id'] + ');"  class="dropdown-item">Desactivar</a>';
+        break;
+      case 'desactivo':
+        // Acciones para usuario desactivado
+        accionButtons += '<a href="javascript:confirmarActivarUsuario(' + full['id'] + ');"  class="dropdown-item">Activar</a>';
+        break;
+      case 'borrado':
+        // Acciones para usuario borrado
+        accionButtons += '<a href="javascript:confirmarRestaurarUsuario(' + full['id'] + ');"  class="dropdown-item">Restaurar</a>';
+        break;
+      default:
+        // Acciones por defecto si el estado no coincide con ninguno de los casos anteriores
+        break;
+    }
+
+    return (
+      '<div class="d-flex align-items-center gap-4">' +
+      `<button class="btn btn-icon btn-text-secondary btn-sm rounded-pill edit-record" data-id="${full['id']}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><i class="icon-base ri ri-edit-box-line icon-22px"></i></button>` +
+      `<button class="btn btn-icon btn-text-secondary btn-sm rounded-pill delete-record" data-id="${full['id']}"><i class="icon-base ri ri-delete-bin-7-line icon-22px"></i></button>` +
+      '<button class="btn btn-icon btn-text-secondary btn-sm rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base ri ri-more-2-line icon-22px"></i></button>' +
+      '<div class="dropdown-menu dropdown-menu-end m-0">' + accionButtons + '</div>' +
+      '</div>'
+    );
+  }
+
+  function ocultarOffCanvasUsuarios() {
+    const offcanvasInstance = bootstrap.Offcanvas.getInstance(offCanvasForm);
+    offcanvasInstance && offcanvasInstance.hide();
+  }
+
+  function ocultarModalUsuarios() {
+    const dtrModal = document.querySelector('.dtr-bs-modal.show');
+    // hide responsive modal in small screen
+    if (dtrModal) {
+      const bsModal = bootstrap.Modal.getInstance(dtrModal);
+      bsModal.hide();
+    }
+  }
+
+  function abrirOffCanvasUsuariosParaEditar(user_id) {
+    cambiarTituloOffCanvasUsuarios('Editando Usuario');
+    traerDatosUsuario(user_id);
+    ocultarModalUsuarios();
+  }
+  function traerDatosUsuario(user_id) {
+    // get data
+    fetch(`${baseUrl}user-list/${user_id}/edit`)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('user_id').value = data.id;
+        document.getElementById('add-user-fullname').value = data.name;
+        document.getElementById('add-user-email').value = data.email;
+        document.getElementById('add-user-personaIDENTIFICACION').value = data.identificacion;
+        document.getElementById('add-user-userRole').value = data.userRole;
+      });
+  }
+  function enviarDatosUsuario() {
+    // adding or updating user when form successfully validate
+    const formData = new FormData(addNewUserForm);
+    const formDataObj = {};
+
+    // Convert FormData to URL-encoded string
+    formData.forEach((value, key) => {
+      formDataObj[key] = value;
+    });
+
+    const searchParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(formDataObj)) {
+      searchParams.append(key, value);
+    }
+
+    guardarUsuario(searchParams);
+  }
+  function guardarUsuario(searchParams) {
+    fetch(`${baseUrl}user-list`, {
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: searchParams.toString()
+    })
+      .then(async response => {
+        let data = await response.json();
+        if (response.ok) {
+          switch (data.TIPO) {
+            case 'ERROR':
+              alertaError('Error creando el usuario', data.MENSAJE);
+              break;
+            default:
+              alertaExito('Usuario Creado', data.MENSAJE || 'Operación completada.');
+              ocultarOffCanvasUsuarios();
+          }
+          dt_user_table && new DataTable(dt_user_table).draw();
+        }
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+      })
+      .catch(err => {
+        ocultarOffCanvasUsuarios();
+        console.log('There has been a problem with your fetch operation: ', err);
+      });
+  }
+
+  function confirmarBorrarUsuario(user_id) {
+    ocultarModalUsuarios();
+    confirmarAccion(
+      'Estas Seguro que quieres eliminar el usuario?',
+      "Si realizas estas accion, puedes ir a la papelera a recuperar el usuario.",
+      function () {
+        // delete the data
+        borrarUsuario(user_id);
+      });
+  }
+  function borrarUsuario(user_id) {
+    fetch(`${baseUrl}user-list/${user_id}`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        if (response.ok) {
+          dt_user_table && new DataTable(dt_user_table).draw();
+          // success sweetalert
+          alertaExito('Deleted!', 'The user has been deleted!');
+        } else {
+          throw new Error('Delete failed');
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+
+  window.confirmarDesactivarUsuario = function (user_id) {
+    ocultarModalUsuarios();
+    confirmarAccion(
+      'Estas Seguro que quieres desactivar el usuario?',
+      null,
+      function () {
+        desactivarUsuario(user_id);
+      }
+    );
+  }
+  window.desactivarUsuario = function (user_id) {
+    fetch(`${baseUrl}user-list/${user_id}`, {
+      method: 'PATCH', // o PUT, ambos funcionan
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+      },
+      body: JSON.stringify({
+        estado: 'desactivo' // o 'activo', 'borrado'
+      })
+    }).then(response => {
+      if (response.ok) {
+        dt_user_table && new DataTable(dt_user_table).draw();
+        alertaExito('Usuario Desactivado!', 'El usuario ha sido desactivado!');
+      } else {
+        throw new Error('Deactivation failed');
+      }
+    })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+
+  window.confirmarActivarUsuario = function (user_id) {
+    ocultarModalUsuarios();
+    confirmarAccion(
+      'Estas Seguro que quieres activar el usuario?',
+      null,
+      function () {
+        // delete the data
+        activarUsuario(user_id);
+      });
+  }
+  window.activarUsuario = function (user_id) {
+    fetch(`${baseUrl}user-list/${user_id}`, {
+      method: 'PATCH', // o PUT, ambos funcionan
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+      },
+      body: JSON.stringify({
+        estado: 'activo' // o 'activo', 'borrado'
+      })
+    }).then(response => {
+      if (response.ok) {
+        dt_user_table && new DataTable(dt_user_table).draw();
+        alertaExito('Usuario activado!', 'El usuario ha sido activado!');
+      } else {
+        throw new Error('Activacion failed');
+      }
+    })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+
+
+
 });

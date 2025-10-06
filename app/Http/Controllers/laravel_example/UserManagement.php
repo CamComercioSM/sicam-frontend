@@ -108,7 +108,9 @@ class UserManagement extends Controller
         'fake_id' => ++$ids,
         'name' => $user->name,
         'email' => $user->email,
+        'identificacion' => $user->identificacion,
         'userRole' => $userRole,
+        'estado' => $user->estado,
         'email_verified_at' => $user->email_verified_at,
         'updated_at' => $user->updated_at,
         'updated_by' => User::find($user->updated_by)?->name ?? 'N/A',
@@ -143,25 +145,38 @@ class UserManagement extends Controller
    */
   public function store(Request $request)
   {
+
+    $validacion = $request->validate([
+      'name'      => 'required|string|max:255',
+      'email'     => 'required|email',
+      'userRole'  => 'required|string|exists:roles,name',
+      'personaIDENTIFICACION' => 'required|string|min:4|max:12',
+    ]);
+
     $userID = $request->id;
-    if ($userID) {
-      $request->validate([
-        'name'      => 'required|string|max:255',
-        'email'     => 'required|email',
-        'userRole'  => 'required|string|exists:roles,name',
-        'personaIDENTIFICACION' => 'required|string|min:4',
+    $emailExists = User::where('email', $request->email)
+      ->where('id', '!=', $userID)
+      ->value('name');       
+    if ($emailExists) {
+      return response()->json([
+        'TIPO' => 'ERROR',
+        'MENSAJE' => "El correo ya existe, está asignado a otro usuario [{$emailExists}]."
       ]);
+    }
+    $identificacionExists = User::where('identificacion', Str::upper($request->personaIDENTIFICACION))
+      ->where('id', '!=', $userID)
+      ->value('name');
+    if ($identificacionExists) {
+      return response()->json([
+        'TIPO' => 'ERROR',
+        'MENSAJE' => "La identificación ya existe, está asignada a otro usuario [{$identificacionExists}]."
+      ]);
+    }
+
+    if ($userID) {
+
       $user = User::findOrFail($userID);
 
-      $emailExists = User::where('email', $request->email)
-        ->where('id', '!=', $userID)
-        ->exists();
-
-      if ($emailExists) {
-        return response()->json([
-          'message' => "El correo ya existe, está asignado a otro usuario."
-        ], 422);
-      }
 
       $oldEmail = $user->email;
       $oldIdentificacion = $user->identificacion;
@@ -170,29 +185,21 @@ class UserManagement extends Controller
         'name'  => $request->name,
         'email' => $request->email,
         'identificacion'   => Str::upper($request->personaIDENTIFICACION),
-    ]);
-    // 🔹 Actualizar rol
-    $user->syncRoles($request->userRole);
-    // 🔹 Si cambió el correo, volver a disparar el evento Registered
-    if ($oldEmail !== $user->email) {
+      ]);
+      // 🔹 Actualizar rol
+      $user->syncRoles($request->userRole);
+      // 🔹 Si cambió el correo, volver a disparar el evento Registered
+      if ($oldEmail !== $user->email) {
         event(new Registered($user));
-    }
-    if ($oldIdentificacion !== $user->identificacion) {
+      }
+      if ($oldIdentificacion !== $user->identificacion) {
         // Aquí puedes agregar cualquier lógica adicional que necesites
         // cuando la identificación del usuario cambie.
         $user->password = bcrypt($request->personaIDENTIFICACION);
         $user->save();
-    }
+      }
       return response()->json('Updated');
-
     } else {
-
-      $request->validate([
-        'name'      => 'required|string|max:255',
-        'email'     => 'required|email|unique:users,email',
-        'userRole'  => 'required|string|exists:roles,name',
-        'personaIDENTIFICACION' => 'required|string|min:4',
-      ]);
 
       // Crear usuario
       $user = User::create([
@@ -244,10 +251,24 @@ class UserManagement extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update(Request $request, $id): JsonResponse
   {
-    //
+    $user = User::findOrFail($id);
+
+    // Validamos que venga el campo estado y que sea uno de los permitidos
+    $request->validate([
+      'estado' => 'required|in:activo,desactivo,borrado',
+    ]);
+
+    // Actualizamos el estado
+    $user->estado = $request->estado;
+    $user->save();
+
+    return response()->json([
+      'message' => "Usuario {$user->name} actualizado con estado {$user->estado}",
+    ]);
   }
+
 
   /**
    * Remove the specified resource from storage.
@@ -265,5 +286,18 @@ class UserManagement extends Controller
     }
 
     return response()->json('Deleted');
+  }
+
+
+  public function desactivar($id): JsonResponse
+  {
+
+    $oBJuSER = User::find($id);
+    if ($oBJuSER) {
+      $oBJuSER->estado = 'desactivar';
+      $oBJuSER->save();
+    }
+
+    return response()->json('Desactivated');
   }
 }

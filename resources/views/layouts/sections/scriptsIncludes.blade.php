@@ -23,6 +23,8 @@
 @endphp
 <!-- laravel style -->
 @vite(['resources/assets/vendor/js/helpers.js'])
+@vite(['resources/js/utils/alertas.js'])
+@vite(['resources/js/utils/date.js'])
 <!-- beautify ignore:start -->
 @if ($configData['hasCustomizer'])
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->

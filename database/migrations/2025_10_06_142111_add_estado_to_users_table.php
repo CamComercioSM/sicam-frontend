@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Campo de identificación (máx 12 caracteres, indexado para búsqueda)
-            $table->string('identificacion', 12)
+            $table->string('identificacion', 12)->unique()
                 ->after('id');
             $table->index('identificacion', 'users_identificacion_index');
 
@@ -23,7 +23,7 @@ return new class extends Migration
                 ->after('email_verified_at');
 
             // Campo token_sican32 (tipo text con longitud 252)
-            $table->text('token_sican32')
+            $table->text('token_sican32')->unique()
                 ->nullable()
                 ->after('password');
         });
