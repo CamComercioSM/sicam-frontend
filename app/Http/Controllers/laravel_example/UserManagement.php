@@ -53,6 +53,7 @@ class UserManagement extends Controller
       4 => 'email',
       5 => 'email_verified_at',
       6 => 'userRole',
+      6 => 'estado',
     ];
 
     $totalData = User::count(); // Total records without filtering
@@ -62,10 +63,11 @@ class UserManagement extends Controller
     $start = $request->input('start');
     $order = $columns[$request->input('order.0.column')] ?? 'id';
     $orderRole = $request->input('columns')[6]['search']['value'] ?? null;
+    $orderEstado = $request->input('columns')[7]['search']['value'] ?? null;
     $dir = $request->input('order.0.dir') ?? 'desc';
 
-    $query = User::query();
 
+    $query = User::query();
 
     // Search handling
     if (!empty($request->input('search.value'))) {
@@ -88,6 +90,16 @@ class UserManagement extends Controller
         $query->whereHas('roles', function ($q) use ($orderRole) {
           $q->where('name', 'LIKE', "%{$orderRole}%");
         });
+      }
+    }
+    if ($orderEstado) {
+      $orderEstado = trim($orderEstado, '^$');
+      if (strtolower($orderEstado) === 'sin estado') {
+        // Usuarios sin roles asignados
+        $query->whereNull('estado');
+      } else {
+        // Usuarios con un rol específico
+        $query->where('estado',$orderEstado);
       }
     }
 

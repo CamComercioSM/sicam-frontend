@@ -108,8 +108,9 @@
     <div class="card">
         <div class="card-header border-bottom">
             <h6 class="card-title mb-0">Filters</h6>
-            <div class="d-flex justify-content-between align-items-center row pt-4 pb-2 gap-4 gap-md-0 gx-5">
+            <div class="d-flex justify-content-start align-items-center row pt-4 pb-2 gap-4 gap-md-0 gx-5">
                 <div class="col-md-4 user_role"></div>
+                <div class="col-md-4 user_estado"></div>
             </div>
         </div>
         <div class="card-datatable">

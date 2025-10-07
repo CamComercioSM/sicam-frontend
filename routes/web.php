@@ -220,7 +220,6 @@ Route::get('/app/invoice/print', [InvoicePrint::class, 'index'])->name('app-invo
 Route::get('/app/invoice/edit', [InvoiceEdit::class, 'index'])->name('app-invoice-edit');
 Route::get('/app/invoice/add', [InvoiceAdd::class, 'index'])->name('app-invoice-add');
 Route::get('/app/user/list', [UserList::class, 'index'])->name('app-user-list');
-Route::get('/app/user/view/account', [UserViewAccount::class, 'index'])->name('app-user-view-account');
 Route::get('/app/user/view/security', [UserViewSecurity::class, 'index'])->name('app-user-view-security');
 Route::get('/app/user/view/billing', [UserViewBilling::class, 'index'])->name('app-user-view-billing');
 Route::get('/app/user/view/notifications', [UserViewNotifications::class, 'index'])->name('app-user-view-notifications');
@@ -353,6 +352,7 @@ Route::get('/maps/leaflet', [Leaflet::class, 'index'])->name('maps-leaflet');
 
 // laravel example
 Route::get('/laravel/user-management', [UserManagement::class, 'UserManagement'])->name('laravel-example-user-management');
+Route::get('/app/user/view/account/{id}', [UserViewAccount::class, 'index'])->name('app-user-view-account');
 Route::resource('/user-list', UserManagement::class);
  
 Route::middleware([

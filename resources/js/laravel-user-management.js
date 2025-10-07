@@ -632,6 +632,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
         // // Role filter
         createFilter(6, '.user_role', 'UserRole', 'Select Role');
+        createFilter(7, '.user_estado', 'UserEstado', 'Select Estado');
       }
     });
 
@@ -909,8 +910,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
         console.log(error);
       });
   }
-
-
   window.confirmarDesactivarUsuario = function (user_id) {
     ocultarModalUsuarios();
     confirmarAccion(
@@ -944,8 +943,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
         console.log(error);
       });
   }
-
-
   window.confirmarActivarUsuario = function (user_id) {
     ocultarModalUsuarios();
     confirmarAccion(
@@ -979,8 +976,4 @@ document.addEventListener('DOMContentLoaded', function (e) {
         console.log(error);
       });
   }
-
-
-
-
 });

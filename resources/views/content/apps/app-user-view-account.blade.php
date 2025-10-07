@@ -23,10 +23,10 @@
       <div class="card-body pt-12">
         <div class="user-avatar-section">
           <div class=" d-flex align-items-center flex-column">
-            <img class="img-fluid rounded mb-4" src="{{ asset('assets/img/avatars/10.png') }}" height="120" width="120" alt="User avatar" />
+            <img class="img-fluid rounded mb-4" src="{{ $user->profile_photo_url }}" height="120" width="120" alt="User avatar" />
             <div class="user-info text-center">
-              <h5>Violet Mendoza</h5>
-              <span class="badge bg-label-danger rounded-pill">Author</span>
+              <h5>{{ $user->name }}</h5>
+              <span class="badge bg-label-danger rounded-pill">{{ $user->roles->first()->name ?? 'Sin rol' }}</span>
             </div>
           </div>
         </div>
@@ -54,24 +54,32 @@
             </div>
           </div>
         </div>
-        <h5 class="pb-4 border-bottom mb-4">Details</h5>
+        <h5 class="pb-4 border-bottom mb-4">Detalles del usuario</h5>
         <div class="info-container">
           <ul class="list-unstyled mb-6">
             <li class="mb-2">
-              <span class="h6">Username:</span>
-              <span>@violet.dev</span>
+              <span class="h6">Nombre:</span>
+              <span>{{ $user->name }}</span>
+            </li>
+            <li class="mb-2">
+              <span class="h6">Identificación:</span>
+              <span>{{ $user->identificacion}}</span>
             </li>
             <li class="mb-2">
               <span class="h6">Email:</span>
-              <span>vafgot@vultukir.org</span>
+              <span>{{ $user->email }}</span>
             </li>
             <li class="mb-2">
-              <span class="h6">Status:</span>
-              <span class="badge bg-label-success rounded-pill">Active</span>
+              <span class="h6">Verificacion de Email:</span>
+              <span>{{ $user->email_verified_at }}</span>
+            </li>
+            <li class="mb-2">
+              <span class="h6">Estado:</span>
+              <span class="badge bg-label-success rounded-pill">{{ $user->estado }}</span>
             </li>
             <li class="mb-2">
               <span class="h6">Role:</span>
-              <span>Author</span>
+              <span>{{ $user->roles->first()->name ?? 'Sin rol' }}</span>
             </li>
             <li class="mb-2">
               <span class="h6">Tax id:</span>
@@ -88,6 +96,15 @@
             <li class="mb-2">
               <span class="h6">Country:</span>
               <span>England</span>
+            </li>
+              <li class="mb-2">
+              <span class="h6">Actualizacion:</span>
+              <span>{{ $user->updated_at}}</span>
+            </li>
+            </li>
+              <li class="mb-2">
+              <span class="h6">Actualizado por:</span>
+              <span>{{ $user->updatedByUser->name ?? 'No disponible' }}</span>
             </li>
           </ul>
           <div class="d-flex justify-content-center">
