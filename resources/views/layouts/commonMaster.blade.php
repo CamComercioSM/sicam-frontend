@@ -94,9 +94,6 @@
   <!--/ Layout Content -->
 
   {{-- remove while creating package --}}
-  <div class="buy-now">
-    <a href="{{ config('variables.productPage') }}" target="_blank" class="btn btn-danger btn-buy-now">Buy Now</a>
-  </div>
   {{-- remove while creating package end --}}
 
   <!-- Include Scripts -->

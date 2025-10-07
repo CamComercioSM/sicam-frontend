@@ -29,7 +29,7 @@
                                 <h4 class="mb-1 me-2">{{ $totalUser }}</h4>
                                 <p class="text-success mb-1">(100%)</p>
                             </div>
-                            <small class="mb-0">Total Users</small>
+                            <small class="mb-0">Total usuarios</small>
                         </div>
                         <div class="avatar">
                             <div class="avatar-initial bg-label-primary rounded">
@@ -45,7 +45,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div class="me-1">
-                            <p class="text-heading mb-1">Verified Users</p>
+                            <p class="text-heading mb-1">Usuarios con verificacion de correo</p>
                             <div class="d-flex align-items-center">
                                 <h4 class="mb-1 me-2">{{ $verified }}</h4>
                                 <p class="text-success mb-1">(+95%)</p>
@@ -71,7 +71,7 @@
                                 <h4 class="mb-1 me-2">{{ $userDuplicates }}</h4>
                                 <p class="text-danger mb-1">(0%)</p>
                             </div>
-                            <small class="mb-0">Recent analytics</small>
+                            <small class="mb-0">Uusuarios duplicados</small>
                         </div>
                         <div class="avatar">
                             <div class="avatar-initial bg-label-success rounded">
@@ -120,14 +120,14 @@
                         <th></th>
                         <th></th>
                         <th>Id</th>
-                        <th>User</th>
-                        <th>Email</th>
-                        <th>Verified</th>
-                        <th>Roles</th>
+                        <th>Usuario</th>
+                        <th>Correo</th>
+                        <th>Verificacion</th>
+                        <th>Rol</th>
                         <th>Estado</th>
                         <th>Actualizacion</th>
                         <th>Acrtualizado por</th>
-                        <th>Actions</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
             </table>
@@ -144,12 +144,12 @@
                     <div class="form-floating form-floating-outline mb-5 form-control-validation">
                         <input type="text" class="form-control" id="add-user-fullname" placeholder="John Doe"
                             name="name" aria-label="John Doe" />
-                        <label for="add-user-fullname">Full Name</label>
+                        <label for="add-user-fullname">Nombre completo</label>
                     </div>
                     <div class="form-floating form-floating-outline mb-5 form-control-validation">
                         <input type="email" id="add-user-email" class="form-control" placeholder="john.doe@example.com"
                             aria-label="john.doe@example.com" name="email" />
-                        <label for="add-user-email">Email</label>
+                        <label for="add-user-email">Correo electronico</label>
                     </div>
                     <div class="form-floating form-floating-outline mb-5 form-control-validation">
                         <input type="number" id="add-user-personaIDENTIFICACION" class="form-control" placeholder="CC"

@@ -44,26 +44,25 @@ $customizerHidden = 'customizer-hide';
     <div
       class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg position-relative py-sm-5 px-12 py-4">
       <div class="w-px-400 mx-auto pt-12 pt-lg-0">
-        <h4 class="mb-1">Verify your email ✉️</h4>
+        <h4 class="mb-1">Verifica u correo electronico ✉️</h4>
         @if (session('status') == 'verification-link-sent')
         <div class="alert alert-success" role="alert">
           <div class="alert-body">
-            A new verification link has been sent to the email address you provided during registration.
+            Se ha enviado un nuevo enlace de verificación al correo electrónico que proporcionaste durante el registro.
           </div>
         </div>
         @endif
-        <p class="text-start mb-0">Account activation link sent to your email address: <span
-            class="h6">{{ Auth::user()->email }}</span> Please follow the link inside to continue.</p>
+        <p class="text-start mb-0">Se ha enviado el enlace de activación de tu cuenta a tu correo electrónico: <span
+            class="h6">{{ Auth::user()->email }}</span> Por favor, haz clic en el enlace dentro del correo para continuar..</p>
         <div class="mt-5 d-flex flex-column gap-2">
           <form method="POST" action="{{ route('verification.send') }}">
             @csrf
-            <button type="submit" class="w-100 btn btn-label-secondary">Click here to request
-              another</button>
+            <button type="submit" class="w-100 btn btn-label-secondary">Haz clic aquí para solicitar otro enlace.</button>
           </form>
 
           <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit" class="w-100 btn btn-danger">Log Out</button>
+            <button type="submit" class="w-100 btn btn-danger">Cerrar sesion</button>
           </form>
         </div>
       </div>

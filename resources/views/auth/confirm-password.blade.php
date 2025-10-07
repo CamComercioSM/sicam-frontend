@@ -45,7 +45,7 @@ $customizerHidden = 'customizer-hide';
         class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg position-relative py-sm-5 px-12 py-4">
         <div class="w-px-400 mx-auto pt-12 pt-lg-0">
           <h4 class="mb-1">Confirm Password</h4>
-          <p class="mb-5">Please confirm your password before continuing.</p>
+          <p class="mb-5">Por favor, confirma tu contraseña para continuar.</p>
           <form id="twoStepsForm" class="mb-5" action="{{ route('password.confirm') }}" method="POST">
             @csrf
             <div class="mb-5 form-password-toggle">
@@ -55,7 +55,7 @@ $customizerHidden = 'customizer-hide';
                     name="password"
                     placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                     aria-describedby="password" />
-                  <label class="form-label" for="password">Enter Password</label>
+                  <label class="form-label" for="password">Ingresar contraseña</label>
                 </div>
                 <span class="input-group-text cursor-pointer"><i
                     class="icon-base ri ri-eye-off-line icon-20px"></i></span>
@@ -66,7 +66,7 @@ $customizerHidden = 'customizer-hide';
               </span>
               @enderror
             </div>
-            <button type="submit" class="btn btn-primary d-grid w-100">Confirm Password</button>
+            <button type="submit" class="btn btn-primary d-grid w-100">Confirmar contraseña</button>
           </form>
         </div>
       </div>

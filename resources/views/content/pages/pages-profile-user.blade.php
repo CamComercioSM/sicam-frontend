@@ -59,7 +59,7 @@
     <div class="nav-align-top">
       <ul class="nav nav-pills flex-column flex-sm-row mb-6 gap-2 gap-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" href="javascript:void(0);"><i class="icon-base ri ri-user-3-line icon-sm me-1_5"></i>Profile</a>
+          <a class="nav-link active" href="javascript:void(0);"><i class="icon-base ri ri-user-3-line icon-sm me-1_5"></i>Perfil
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url('pages/profile-teams') }}"><i class="icon-base ri ri-team-line icon-sm me-1_5"></i>Teams</a>

@@ -42,14 +42,13 @@ $customizerHidden = 'customizer-hide';
     <div
       class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg position-relative py-sm-12 px-12 py-6">
       <div class="w-px-400 mx-auto pt-12 pt-lg-0">
-        <h4 class="mb-1">Two Step Verification 💬</h4>
+        <h4 class="mb-1">Verificacion en dos pasos 💬</h4>
         <div x-data="{ recovery: false }">
           <div class="text-start mb-5" x-show="! recovery">
-            Please confirm access to your account by entering the authentication code provided by your authenticator
-            application.
+            Por favor, confirma el acceso a tu cuenta ingresando el código de autenticación proporcionado por tu aplicación autenticadora.
           </div>
           <div class="text-start mb-5" x-show="recovery">
-            Please confirm access to your account by entering one of your emergency recovery codes.
+            Por favor, confirma el acceso a tu cuenta ingresando uno de tus códigos de recuperación de emergencia..
           </div>
           <x-validation-errors class="mb-1" />
           <form method="POST" action="{{ route('two-factor.login') }}">
@@ -68,13 +67,12 @@ $customizerHidden = 'customizer-hide';
             </div>
             <div class="d-flex justify-content-end gap-2">
               <div x-show="! recovery" x-on:click="recovery = true; $nextTick(() => { $refs.recovery_code.focus()})">
-                <button type="button" class="btn btn-outline-secondary">Use a recovery code</button>
+                <button type="button" class="btn btn-outline-secondary">Usar un código de recuperación</button>
               </div>
               <div x-cloak x-show="recovery" x-on:click="recovery = false; $nextTick(() => { $refs.code.focus() })">
-                <button type="button" class="btn btn-outline-secondary">Use an authentication
-                  code</button>
+                <button type="button" class="btn btn-outline-secondary">Usar un código de autenticación</button>
               </div>
-              <x-button class="px-3">Log in</x-button>
+              <x-button class="px-3">Iniciar sesion</x-button>
             </div>
           </form>
         </div>

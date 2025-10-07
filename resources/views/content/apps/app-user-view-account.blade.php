@@ -7,12 +7,21 @@
 @endsection
 
 @section('vendor-script')
-@vite(['resources/assets/vendor/libs/moment/moment.js', 'resources/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js', 'resources/assets/vendor/libs/sweetalert2/sweetalert2.js', 'resources/assets/vendor/libs/cleave-zen/cleave-zen.js', 'resources/assets/vendor/libs/select2/select2.js', 'resources/assets/vendor/libs/@form-validation/popular.js', 'resources/assets/vendor/libs/@form-validation/bootstrap5.js', 'resources/assets/vendor/libs/@form-validation/auto-focus.js'])
+@vite(['resources/assets/vendor/libs/moment/moment.js', 
+'resources/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js', 
+'resources/assets/vendor/libs/sweetalert2/sweetalert2.js', 
+'resources/assets/vendor/libs/cleave-zen/cleave-zen.js', 
+'resources/assets/vendor/libs/select2/select2.js', 
+'resources/assets/vendor/libs/@form-validation/popular.js', 
+'resources/assets/vendor/libs/@form-validation/bootstrap5.js', 
+'resources/assets/vendor/libs/@form-validation/auto-focus.js'])
 @endsection
 
 @section('page-script')
-@vite(['resources/assets/js/modal-edit-user.js', 'resources/assets/js/app-user-view.js', 'resources/assets/js/app-user-view-account.js'])
-@endsection
+@vite(['resources/assets/js/modal-edit-user.js', 
+'resources/assets/js/app-user-view.js', 
+'resources/assets/js/app-user-view-account.js'])
+@endsectionk
 
 @section('content')
 <div class="row">
@@ -66,7 +75,7 @@
               <span>{{ $user->identificacion}}</span>
             </li>
             <li class="mb-2">
-              <span class="h6">Email:</span>
+              <span class="h6">Correo electronico:</span>
               <span>{{ $user->email }}</span>
             </li>
             <li class="mb-2">
@@ -78,7 +87,7 @@
               <span class="badge bg-label-success rounded-pill">{{ $user->estado }}</span>
             </li>
             <li class="mb-2">
-              <span class="h6">Role:</span>
+              <span class="h6">Rol:</span>
               <span>{{ $user->roles->first()->name ?? 'Sin rol' }}</span>
             </li>
             <li class="mb-2">
@@ -86,7 +95,7 @@
               <span>Tax-8965</span>
             </li>
             <li class="mb-2">
-              <span class="h6">Contact:</span>
+              <span class="h6">Contacto:</span>
               <span>(123) 456-7890</span>
             </li>
             <li class="mb-2">
@@ -132,7 +141,7 @@
           <li class="mb-2 d-flex align-items-center"><i class="icon-base ri ri-circle-fill icon-10px text-body me-2"></i><span>Basic Support</span></li>
         </ul>
         <div class="d-flex justify-content-between align-items-center mb-1">
-          <span class="h6 mb-0">Days</span>
+          <span class="h6 mb-0">Dias</span>
           <span class="h6 mb-0">26 of 30 Days</span>
         </div>
         <div class="progress mb-1 bg-label-primary rounded" style="height: 6px;">

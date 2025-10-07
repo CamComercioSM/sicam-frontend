@@ -42,15 +42,15 @@ $customizerHidden = 'customizer-hide';
     <div
       class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg position-relative py-sm-5 px-12 py-4">
       <div class="w-px-400 mx-auto pt-12 pt-lg-0">
-        <h4 class="mb-1">Adventure starts here 🚀</h4>
-        <p class="mb-5">Make your app management easy and fun!</p>
+        <h4 class="mb-1">Registrate en {{ config('app.name') }} </h4>
+        <p class="mb-5">Sistema de Información de la Cámara de Comercio de Santa Marta para el Magdalena</p>
 
         <form id="formAuthentication" class="mb-5" action="{{ route('register') }}" method="POST">
           @csrf
           <div class="form-floating form-floating-outline mb-5">
             <input type="text" class="form-control @error('name') is-invalid @enderror" id="username" name="name"
               placeholder="johndoe" autofocus value="{{ old('name') }}" />
-            <label for="username" class="form-label">Username</label>
+            <label for="username" class="form-label">Nombre completo</label>
             @error('name')
             <span class="invalid-feedback" role="alert">
               <span class="fw-medium">{{ $message }}</span>
@@ -59,8 +59,8 @@ $customizerHidden = 'customizer-hide';
           </div>
           <div class="form-floating form-floating-outline mb-5">
             <input type="text" class="form-control @error('email') is-invalid @enderror" id="email" name="email"
-              placeholder="john@example.com" value="{{ old('email') }}" />
-            <label for="email" class="form-label">Email</label>
+              placeholder="napellido@ccsm.org.co" value="{{ old('email') }}" />
+            <label for="email" class="form-label">Correo electronico</label>
             @error('email')
             <span class="invalid-feedback" role="alert">
               <span class="fw-medium">{{ $message }}</span>
@@ -73,7 +73,7 @@ $customizerHidden = 'customizer-hide';
                 <input type="password" id="password" class="form-control @error('password') is-invalid @enderror"
                   name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                   aria-describedby="password" />
-                <label for="password">Password</label>
+                <label for="password">Contraseña</label>
               </div>
               <span class="input-group-text cursor-pointer"><i
                   class="icon-base ri ri-eye-off-line icon-20px"></i></span>
@@ -90,7 +90,7 @@ $customizerHidden = 'customizer-hide';
                 <input type="password" id="password-confirm" class="form-control" name="password_confirmation"
                   placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                   aria-describedby="password" />
-                <label for="password-confirm">Confirm Password</label>
+                <label for="password-confirm">Confirmar contraseña</label>
               </div>
               <span class="input-group-text cursor-pointer"><i
                   class="icon-base ri ri-eye-off-line icon-20px"></i></span>
@@ -102,9 +102,9 @@ $customizerHidden = 'customizer-hide';
               <input class="form-check-input @error('terms') is-invalid @enderror" type="checkbox" id="terms"
                 name="terms" />
               <label class="form-check-label" for="terms">
-                I agree to
-                <a href="{{ route('policy.show') }}" target="_blank">privacy policy</a> &
-                <a href="{{ route('terms.show') }}" target="_blank">terms</a>
+                Acepto las 
+                <a href="{{ route('policy.show') }}" target="_blank">politicas de privaciodad</a> &
+                <a href="{{ route('terms.show') }}" target="_blank">terminos y condiciones</a>
               </label>
             </div>
             @error('terms')
@@ -114,20 +114,20 @@ $customizerHidden = 'customizer-hide';
             @enderror
           </div>
           @endif
-          <button type="submit" class="btn btn-primary d-grid w-100">Sign up</button>
+          <button type="submit" class="btn btn-primary d-grid w-100">Crear cuenta</button>
         </form>
 
         <p class="text-center mb-5">
-          <span>Already have an account?</span>
+          <span>Ya tienes una cuenta?</span>
           @if (Route::has('login'))
           <a href="{{ route('login') }}">
-            <span>Sign in instead</span>
+            <span>Iniciar sesion</span>
           </a>
           @endif
         </p>
 
         <div class="divider my-5">
-          <div class="divider-text">or</div>
+          <div class="divider-text">O</div>
         </div>
 
         <div class="d-flex justify-content-center gap-2">

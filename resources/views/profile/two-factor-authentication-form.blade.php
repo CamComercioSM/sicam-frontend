@@ -1,36 +1,36 @@
 <x-action-section>
   <x-slot name="title">
-    {{ __('Two Factor Authentication') }}
+    {{ __('Autenticación en dos pasos') }}
   </x-slot>
 
   <x-slot name="description">
-    {{ __('Add additional security to your account using two factor authentication.') }}
+    {{ __('Agrega seguridad adicional a tu cuenta usando la autenticación en dos pasos.') }}
   </x-slot>
 
   <x-slot name="content">
     <h6>
       @if ($this->enabled)
       @if ($showingConfirmation)
-      {{ __('You are enabling two factor authentication.') }}
+      {{ __('Estás habilitando la autenticación en dos pasos.') }}
       @else
-      {{ __('You have enabled two factor authentication.') }}
+      {{ __('Has habilitado la autenticación en dos pasos.') }}
       @endif
       @else
-      {{ __('You have not enabled two factor authentication.') }}
+      {{ __('No has habilitado la autenticación en dos pasos.') }}
       @endif
     </h6>
 
     <p class="card-text">
-      {{ __('When two factor authentication is enabled, you will be prompted for a secure, random token during authentication. You may retrieve this token from your phone\'s Google Authenticator application.') }}
+      {{ __('Cuando la autenticación en dos pasos está habilitada, se te pedirá un token seguro y aleatorio durante la autenticación. Puedes obtener este token desde la aplicación Google Authenticator de tu teléfono.') }}
     </p>
 
     @if ($this->enabled)
     @if ($showingQrCode)
     <p class="card-text mt-2">
       @if ($showingConfirmation)
-      {{ __('Scan the following QR code using your phone\'s authenticator application and confirm it with the generated OTP code.') }}
+      {{ __('Escanea el siguiente código QR con la aplicación autenticadora de tu teléfono y confírmalo con el código OTP generado.') }}
       @else
-      {{ __('Two factor authentication is now enabled. Scan the following QR code using your phone\'s authenticator application.') }}
+      {{ __('La autenticación en dos pasos está ahora habilitada. Escanea el siguiente código QR con la aplicación autenticadora de tu teléfono.') }}
       @endif
     </p>
 

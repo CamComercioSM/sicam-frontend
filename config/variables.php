@@ -1,9 +1,9 @@
 <?php
 // Variables
 return [
-  "creatorName" => "ThemeSelection",
+  "creatorName" => "Camara de comercio de Santa Marta",
   "creatorUrl" => "https://themeselection.com",
-  "templateName" => "Materio",
+  "templateName" => "SICAM32",
   "templateSuffix" => "Materio Bootstrap 5 HTML + Laravel Admin Template",
   "templateVersion" => "2.0.0",
   "templateFree" => false,

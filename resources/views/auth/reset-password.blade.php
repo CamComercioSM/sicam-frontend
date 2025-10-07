@@ -44,13 +44,13 @@ $customizerHidden = 'customizer-hide';
       <div
         class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg position-relative py-sm-5 px-12 py-4">
         <div class="w-px-400 mx-auto pt-12 pt-lg-0">
-          <h4 class="mb-1">Reset Password 🔒</h4>
-          <p class="mb-5">Your new password must be different from previously used passwords</p>
+          <h4 class="mb-1">Restablecer contraseña 🔒</h4>
+          <p class="mb-5">Su nueva contraseña debe ser diferente a las contraseñas utilizadas anteriormente</p>
           <form id="formAuthentication" class="mb-5" action="{{ route('password.update') }}" method="POST">
             @csrf
             <input type="hidden" name="token" value="{{ $request->route('token') }}">
             <div class="mb-5">
-              <label for="email" class="form-label">Email</label>
+              <label for="email" class="form-label">Correo electronico</label>
               <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email"
                 placeholder="john@example.com" value="{{ Request()->email }}" readonly />
               @error('email')
@@ -66,7 +66,7 @@ $customizerHidden = 'customizer-hide';
                     name="password"
                     placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                     aria-describedby="password" autofocus />
-                  <label class="form-label" for="password">New Password</label>
+                  <label class="form-label" for="password">Nueva contraseña</label>
                 </div>
                 <span class="input-group-text cursor-pointer"><i
                     class="icon-base ri ri-eye-off-line icon-20px"></i></span>
@@ -83,18 +83,18 @@ $customizerHidden = 'customizer-hide';
                   <input type="password" id="confirm-password" class="form-control" name="password_confirmation"
                     placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                     aria-describedby="password" />
-                  <label class="form-label" for="confirm-password">Confirm Password</label>
+                  <label class="form-label" for="confirm-password">Confirmar contraseña</label>
                 </div>
                 <span class="input-group-text cursor-pointer"><i
                     class="icon-base ri ri-eye-off-line icon-20px"></i></span>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary d-grid w-100 mb-5">Set new password</button>
+            <button type="submit" class="btn btn-primary d-grid w-100 mb-5">Establecer nueva contraseña</button>
             <div class="text-center">
               @if (Route::has('login'))
               <a href="{{ route('login') }}" class="d-flex align-items-center justify-content-center">
                 <i class="icon-base ri ri-arrow-left-s-line scaleX-n1-rtl icon-20px me-1_5"></i>
-                Back to login
+                Regresar al inicio de sesion
               </a>
               @endif
             </div>

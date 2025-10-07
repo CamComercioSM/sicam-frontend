@@ -41,8 +41,8 @@ $customizerHidden = 'customizer-hide';
     <!-- Forgot Password -->
     <div class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-12 p-6">
       <div class="w-px-400 mx-auto">
-        <h4 class="mb-1">Forgot Password? 🔒</h4>
-        <p class="mb-5">Enter your email and we'll send you instructions to reset your password</p>
+        <h4 class="mb-1">¿Olvidaste tu contraseña? 🔒</h4>
+        <p class="mb-5">Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña</p>
         @if (session('status'))
         <div class="mb-1 text-success">
           {{ session('status') }}
@@ -52,21 +52,21 @@ $customizerHidden = 'customizer-hide';
           @csrf
           <div class="form-floating form-floating-outline mb-5">
             <input type="text" class="form-control @error('email') is-invalid @enderror" id="email" name="email"
-              placeholder="john@example.com" autofocus>
-            <label for="email" class="form-label">Email</label>
+              placeholder="napellido@ccsm.org.co" autofocus>
+            <label for="email" class="form-label">Correo electronico</label>
             @error('email')
             <span class="invalid-feedback" role="alert">
               <span class="fw-medium">{{ $message }}</span>
             </span>
             @enderror
           </div>
-          <button type="submit" class="btn btn-primary d-grid w-100 mb-5">Send Reset Link</button>
+          <button type="submit" class="btn btn-primary d-grid w-100 mb-5">Enviar enlace de reestablecimiento</button>
         </form>
         <div class="text-center">
           @if (Route::has('login'))
           <a href="{{ route('login') }}" class="d-flex align-items-center justify-content-center">
             <i class="icon-base ri ri-arrow-left-s-line scaleX-n1-rtl icon-20px me-1_5"></i>
-            Back to login
+            Regresar al inicio de sesion
           </a>
           @endif
         </div>
