@@ -5,7 +5,7 @@ $customizerHidden = 'customizer-hide';
 
 @extends('layouts/blankLayout')
 
-@section('title', 'Privacy Policy')
+@section('title', 'Politica de Privacidad')
 
 @section('page-style')
 <!-- Page -->

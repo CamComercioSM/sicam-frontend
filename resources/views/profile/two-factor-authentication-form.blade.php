@@ -40,13 +40,13 @@
 
     <div class="mt-4">
       <p class="fw-medium">
-        {{ __('Setup Key') }}: {{ decrypt($this->user->two_factor_secret) }}
+        {{ __('Clave de configuración') }}: {{ decrypt($this->user->two_factor_secret) }}
       </p>
     </div>
 
     @if ($showingConfirmation)
     <div class="mt-2">
-      <x-label for="code" value="{{ __('Code') }}" />
+      <x-label for="code" value="{{ __('Código') }}" />
       <x-input id="code" class="d-block mt-3 w-100" type="text" inputmode="numeric" name="code" autofocus
         autocomplete="one-time-code" wire:model="code" wire:keydown.enter="confirmTwoFactorAuthentication" />
       <x-input-error for="code" class="mt-3" />
@@ -56,7 +56,7 @@
 
     @if ($showingRecoveryCodes)
     <p class="card-text mt-2">
-      {{ __('Store these recovery codes in a secure password manager. They can be used to recover access to your account if your two factor authentication device is lost.') }}
+      {{ __('Guarda estos códigos de recuperación en un gestor de contraseñas seguro. Pueden usarse para recuperar el acceso a tu cuenta si pierdes tu dispositivo de autenticación en dos pasos.') }}
     </p>
 
     <div class="bg-light rounded p-2">
@@ -71,33 +71,33 @@
       @if (!$this->enabled)
       <x-confirms-password wire:then="enableTwoFactorAuthentication">
         <x-button type="button" wire:loading.attr="disabled">
-          {{ __('Enable') }}
+          {{ __('Activar') }}
         </x-button>
       </x-confirms-password>
       @else
       @if ($showingRecoveryCodes)
       <x-confirms-password wire:then="regenerateRecoveryCodes">
         <x-secondary-button class="me-1">
-          {{ __('Regenerate Recovery Codes') }}
+          {{ __('Regenerar códigos de recuperación') }}
         </x-secondary-button>
       </x-confirms-password>
       @elseif ($showingConfirmation)
       <x-confirms-password wire:then="confirmTwoFactorAuthentication">
         <x-button type="button" wire:loading.attr="disabled">
-          {{ __('Confirm') }}
+          {{ __('Confirmar') }}
         </x-button>
       </x-confirms-password>
       @else
       <x-confirms-password wire:then="showRecoveryCodes">
         <x-secondary-button class="me-1">
-          {{ __('Show Recovery Codes') }}
+          {{ __('Mostrar códigos de recuperación') }}
         </x-secondary-button>
       </x-confirms-password>
       @endif
 
       <x-confirms-password wire:then="disableTwoFactorAuthentication">
         <x-danger-button wire:loading.attr="disabled">
-          {{ __('Disable') }}
+          {{ __('Deshabilitar') }}
         </x-danger-button>
       </x-confirms-password>
       @endif

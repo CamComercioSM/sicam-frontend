@@ -39,19 +39,19 @@ $activeClass = in_array($currentRouteName, $activeRoutes) ? 'active' : '';
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
             <a class="nav-link fw-medium" aria-current="page"
-              href="{{ url('front-pages/landing') }}#landingHero">Home</a>
+              href="{{ url('front-pages/landing') }}#landingHero">Inicio</a>
           </li>
           <li class="nav-item">
             <a class="nav-link fw-medium" href="{{ url('front-pages/landing') }}#landingFeatures">Features</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link fw-medium" href="{{ url('front-pages/landing') }}#landingTeam">Team</a>
+            <a class="nav-link fw-medium" href="{{ url('front-pages/landing') }}#landingTeam">Equipo</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link fw-medium" href="{{ url('front-pages/landing') }}#landingFAQ">FAQ</a>
+            <a class="nav-link fw-medium" href="{{ url('front-pages/landing') }}#landingFAQ">Preguntas frecuentes</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link fw-medium" href="{{ url('front-pages/landing') }}#landingContact">Contact us</a>
+            <a class="nav-link fw-medium" href="{{ url('front-pages/landing') }}#landingContact">Contactanos</a>
           </li>
           <li class="nav-item mega-dropdown {{ $activeClass }}">
             <a href="javascript:void(0);"
@@ -68,7 +68,7 @@ $activeClass = in_array($currentRouteName, $activeRoutes) ? 'active' : '';
                         <i class="icon-base ri ri-layout-grid-line"></i>
                       </span>
                     </div>
-                    <span class="ps-1">Other</span>
+                    <span class="ps-1">Otros</span>
                   </div>
                   <ul class="nav flex-column">
                     <li class="nav-item {{ $currentRouteName === 'front-pages-pricing' ? 'active' : '' }}">

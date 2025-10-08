@@ -10,6 +10,7 @@
 
 <!-- BEGIN: Theme JS-->
 @vite(['resources/assets/js/front-main.js'])
+@vite(['resources/assets/js/app.js'])
 <!-- END: Theme JS-->
 
 <!-- Pricing Modal JS-->
@@ -19,3 +20,4 @@
 <!-- BEGIN: Page JS-->
 @yield('page-script')
 <!-- END: Page JS-->
+

@@ -24,7 +24,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div class="me-1">
-                            <p class="text-heading mb-1">Users</p>
+                            <p class="text-heading mb-1">Usuarios</p>
                             <div class="d-flex align-items-center">
                                 <h4 class="mb-1 me-2">{{ $totalUser }}</h4>
                                 <p class="text-success mb-1">(100%)</p>
@@ -45,12 +45,12 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div class="me-1">
-                            <p class="text-heading mb-1">Usuarios con verificacion de correo</p>
+                            <p class="text-heading mb-1">Usuarios verificados</p>
                             <div class="d-flex align-items-center">
                                 <h4 class="mb-1 me-2">{{ $verified }}</h4>
-                                <p class="text-success mb-1">(+95%)</p>
+                                <p class="text-success mb-1">%</p>
                             </div>
-                            <small class="mb-0">Recent analytics</small>
+                            <small class="mb-0">Correos Verificados</small>
                         </div>
                         <div class="avatar">
                             <div class="avatar-initial bg-label-danger rounded">
@@ -66,12 +66,12 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div class="me-1">
-                            <p class="text-heading mb-1">Duplicate Users</p>
+                            <p class="text-heading mb-1">Duplicados</p>
                             <div class="d-flex align-items-center">
                                 <h4 class="mb-1 me-2">{{ $userDuplicates }}</h4>
                                 <p class="text-danger mb-1">(0%)</p>
                             </div>
-                            <small class="mb-0">Uusuarios duplicados</small>
+                            <small class="mb-0">Usuarios duplicados</small>
                         </div>
                         <div class="avatar">
                             <div class="avatar-initial bg-label-success rounded">
@@ -87,12 +87,12 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div class="me-1">
-                            <p class="text-heading mb-1">Verification Pending</p>
+                            <p class="text-heading mb-1">Usuarios pendientes</p>
                             <div class="d-flex align-items-center">
                                 <h4 class="mb-1 me-2">{{ $notVerified }}</h4>
                                 <p class="text-success mb-1">(+6%)</p>
                             </div>
-                            <small class="mb-0">Recent analytics</small>
+                            <small class="mb-0">Correos sin verificar</small>
                         </div>
                         <div class="avatar">
                             <div class="avatar-initial bg-label-warning rounded">
@@ -107,7 +107,7 @@
     <!-- Users List Table -->
     <div class="card">
         <div class="card-header border-bottom">
-            <h6 class="card-title mb-0">Filters</h6>
+            <h6 class="card-title mb-0">Filtros</h6>
             <div class="d-flex justify-content-start align-items-center row pt-4 pb-2 gap-4 gap-md-0 gx-5">
                 <div class="col-md-4 user_role"></div>
                 <div class="col-md-4 user_estado"></div>
@@ -165,8 +165,8 @@
                         </select>
                         <label for="user-role">Rol de Usuario</label>
                     </div>
-                    <button type="submit" class="btn btn-primary me-sm-3 me-1 data-submit">Submit</button>
-                    <button type="reset" class="btn btn-outline-danger" data-bs-dismiss="offcanvas">Cancel</button>
+                    <button type="submit" class="btn btn-primary me-sm-3 me-1 data-submit">Enviar</button>
+                    <button type="reset" class="btn btn-outline-danger" data-bs-dismiss="offcanvas">Cancelar</button>
                 </form>
             </div>
         </div>

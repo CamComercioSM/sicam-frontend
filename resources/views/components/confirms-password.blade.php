@@ -1,7 +1,7 @@
 @props([
-    'title' => __('Confirm Password'),
-    'content' => __('For your security, please confirm your password to continue.'),
-    'button' => __('Confirm'),
+    'title' => __('Confirmar contraseña'),
+    'content' => __('Por tu seguridad, confirma tu contraseña para continuar.'),
+    'button' => __('Confirmar'),
 ])
 
 @php
@@ -26,7 +26,7 @@
       <div class="mt-3" x-data="{}"
         x-on:confirming-password.window="setTimeout(() => $refs.confirmable_password.focus(), 250)">
         <x-input type="password" class="{{ $errors->has('confirmable_password') ? 'is-invalid' : '' }}"
-          autocomplete="current-password" placeholder="{{ __('Password') }}" x-ref="confirmable_password"
+          autocomplete="current-password" placeholder="{{ __('Contraseña') }}" x-ref="confirmable_password"
           wire:model="confirmablePassword" wire:keydown.enter="confirmPassword" />
 
         <x-input-error for="confirmable_password" />
@@ -35,7 +35,7 @@
 
     <x-slot name="footer">
       <x-secondary-button wire:click="stopConfirmingPassword" wire:loading.attr="disabled">
-        {{ __('Cancel') }}
+        {{ __('Cancelar') }}
       </x-secondary-button>
 
       <x-button class="ms-1" dusk="confirm-password-button" wire:click="confirmPassword" wire:loading.attr="disabled">

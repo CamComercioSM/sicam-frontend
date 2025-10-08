@@ -7,7 +7,7 @@
 @vite(['resources/assets/vendor/fonts/iconify/iconify.css'])
 
 @if ($configData['hasCustomizer'])
-  @vite(['resources/assets/vendor/libs/pickr/pickr-themes.scss'])
+    @vite(['resources/assets/vendor/libs/pickr/pickr-themes.scss'])
 @endif
 
 <!-- Vendor Styles -->
@@ -16,6 +16,7 @@
 
 <!-- Core CSS -->
 @vite(['resources/assets/vendor/scss/core.scss', 'resources/assets/css/demo.css', 'resources/assets/vendor/scss/pages/front-page.scss'])
+@vite(['resources/assets/css/app.scss'])
 
 <!-- Page Styles -->
 @yield('page-style')

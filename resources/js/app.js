@@ -7,3 +7,5 @@ import.meta.glob([
   // '../assets/json/**',
   '../assets/vendor/fonts/**'
 ]);
+
+import './app-loading-overlay';

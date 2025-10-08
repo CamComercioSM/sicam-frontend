@@ -89,12 +89,21 @@
 </head>
 
 <body>
+<div id="app-loading-overlay" class="show" role="status" aria-live="polite" aria-label="Cargando">
+  <div class="overlay-card">
+    @include('_partials.macros')
+    <div class="spinner-border" role="status" aria-hidden="true"></div>
+    <p class="overlay-text">Procesando…</p>
+  </div>
+</div>
+
   <!-- Layout Content -->
   @yield('layoutContent')
   <!--/ Layout Content -->
 
   {{-- remove while creating package --}}
   {{-- remove while creating package end --}}
+
 
   <!-- Include Scripts -->
   <!-- $isFront is used to append the front layout scripts only on the front layout otherwise the variable will be blank -->

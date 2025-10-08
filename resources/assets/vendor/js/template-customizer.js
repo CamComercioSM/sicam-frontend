@@ -1594,7 +1594,22 @@ TemplateCustomizer.DIRECTIONS = [
 
 // Theme setting language
 TemplateCustomizer.LANGUAGES = {
-  en: {
+  es: {
+    panel_header: 'Personalizador de Plantilla',
+    panel_sub_header: 'Personaliza y previsualiza en tiempo real',
+    theming_header: 'Temas',
+    color_label: 'Color Primario',
+    theme_label: 'Tema',
+    skin_label: 'Apariencias',
+    semiDark_label: 'Semi Oscuro',
+    layout_header: 'Diseño',
+    layout_label: 'Menú (Navegación)',
+    layout_header_label: 'Tipos de Encabezado',
+    content_label: 'Contenido',
+    layout_navbar_label: 'Tipo de Barra de Navegación',
+    direction_label: 'Dirección'
+},
+en: {
     panel_header: 'Template Customizer',
     panel_sub_header: 'Customize and preview in real time',
     theming_header: 'Theming',
@@ -1607,21 +1622,6 @@ TemplateCustomizer.LANGUAGES = {
     layout_header_label: 'Header Types',
     content_label: 'Content',
     layout_navbar_label: 'Navbar Type',
-    direction_label: 'Direction'
-  },
-  fr: {
-    panel_header: 'Modèle De Personnalisation',
-    panel_sub_header: 'Personnalisez et prévisualisez en temps réel',
-    theming_header: 'Thématisation',
-    color_label: 'Couleur primaire',
-    theme_label: 'Thème',
-    skin_label: 'Peaux',
-    semiDark_label: 'Demi-foncé',
-    layout_header: 'Disposition',
-    layout_label: 'Menu (Navigation)',
-    layout_header_label: "Types d'en-tête",
-    content_label: 'Contenu',
-    layout_navbar_label: 'Type de barre de navigation',
     direction_label: 'Direction'
   },
   ar: {
@@ -1639,21 +1639,6 @@ TemplateCustomizer.LANGUAGES = {
     layout_navbar_label: 'نوع شريط التنقل',
     direction_label: 'اتجاه'
   },
-  de: {
-    panel_header: 'Vorlagen-Anpasser',
-    panel_sub_header: 'Anpassen und Vorschau in Echtzeit',
-    theming_header: 'Themen',
-    color_label: 'Grundfarbe',
-    theme_label: 'Thema',
-    skin_label: 'Skins',
-    semiDark_label: 'Halbdunkel',
-    layout_header: 'Layout',
-    layout_label: 'Menü (Navigation)',
-    layout_header_label: 'Header-Typen',
-    content_label: 'Inhalt',
-    layout_navbar_label: 'Art der Navigationsleiste',
-    direction_label: 'Richtung'
-  }
 }
 
 window.TemplateCustomizer = TemplateCustomizer

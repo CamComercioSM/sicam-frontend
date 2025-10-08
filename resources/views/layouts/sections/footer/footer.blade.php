@@ -11,7 +11,7 @@ $containerFooter = $configData['contentLayout'] === 'compact' ? 'container-xxl' 
                 <script>
                 document.write(new Date().getFullYear());
                 </script>
-                , made with ❤️ by <a href="{{ !empty(config('variables.creatorUrl')) ? config('variables.creatorUrl') : '' }}" target="_blank" class="footer-link fw-medium">{{ !empty(config('variables.creatorName')) ? config('variables.creatorName') : '' }}</a>
+                , by <a href="{{ !empty(config('variables.creatorUrl')) ? config('variables.creatorUrl') : '' }}" target="_blank" class="footer-link fw-medium">{{ !empty(config('variables.creatorName')) ? config('variables.creatorName') : '' }}</a>
             </div>
             <div class="d-none d-lg-inline-block">
                 <a href="{{ config('variables.adminTemplates') ? config('variables.adminTemplates') : '#' }}" class="footer-link me-4" target="_blank">Admin Templates</a>

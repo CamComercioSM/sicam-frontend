@@ -1,0 +1,45 @@
+    #app-loading-overlay {
+        position: fixed;
+        inset: 0;
+        display: none;
+        /* se muestra con .show */
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        /* > modal Bootstrap (1055) y offcanvas (1045) */
+        background:rgba(0, 0, 0, .45);
+        /* velo */
+        backdrop-filter: blur(1px);
+    }
+
+    #app-loading-overlay.show {
+        display: flex;
+    }
+
+    #app-loading-overlay {
+        transition: opacity .3s ease, visibility .3s ease;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    #app-loading-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    #app-loading-overlay .overlay-card {
+        display: flex;
+        gap: .75rem;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        border-radius: .75rem;
+        background: var(--bs-body-bg, #fff);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+        min-width: 220px;
+        justify-content: center;
+    }
+
+    #app-loading-overlay .overlay-text {
+        font-weight: 600;
+        margin: 0;
+    }

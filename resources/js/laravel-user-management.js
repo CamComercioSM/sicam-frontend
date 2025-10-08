@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         {
           // Actions
           targets: -1,
-          title: 'Actions',
+          title: 'Acciones',
           searchable: false,
           orderable: false,
           render: function (data, type, full, meta) {
@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           features: [
             {
               pageLength: {
-                menu: [10, 20, 50, 70, 100, 200, 500],
+                menu: [7, 10, 20, 50, 70, 100, 200, 500],
                 text: '_MENU_'
               }
             }
@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 {
                   extend: 'collection',
                   className: 'btn btn-label-secondary dropdown-toggle',
-                  text: '<i class="icon-base ri ri-upload-2-line me-2 icon-sm"></i>Export',
+                  text: '<i class="icon-base ri ri-upload-2-line me-2 icon-sm"></i>Exportar',
                   buttons: [
                     {
                       extend: 'print',
@@ -529,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                   ]
                 },
                 {
-                  text: '<i class="icon-base ri ri-add-line icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add New User</span>',
+                  text: '<i class="icon-base ri ri-add-line icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Nuevo Usuario</span>',
                   className: 'add-new btn btn-primary',
                   attr: {
                     'data-bs-toggle': 'offcanvas',
@@ -545,7 +545,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           features: [
             {
               info: {
-                text: 'Showing _START_ to _END_ of _TOTAL_ entries'
+                text: 'Mostrando del _START_ al _END_ de un total de _TOTAL_ registros'
               }
             }
           ]
@@ -631,8 +631,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
         };
 
         // // Role filter
-        createFilter(6, '.user_role', 'UserRole', 'Select Role');
-        createFilter(7, '.user_estado', 'UserEstado', 'Select Estado');
+        createFilter(6, '.user_role', 'UserRole', 'Seleccionar Rol');
+        createFilter(7, '.user_estado', 'UserEstado', 'Seleccionar Estado');
       }
     });
 

@@ -95,18 +95,18 @@ use Illuminate\Support\Facades\Route;
         <li>
           <button type="button" class="dropdown-item align-items-center active" data-bs-theme-value="light"
             aria-pressed="false">
-            <span> <i class="icon-base ri ri-sun-line icon-md me-3" data-icon="sun-line"></i>Light</span>
+            <span> <i class="icon-base ri ri-sun-line icon-md me-3" data-icon="sun-line"></i>Claro</span>
           </button>
         </li>
         <li>
           <button type="button" class="dropdown-item align-items-center" data-bs-theme-value="dark" aria-pressed="true">
-            <span> <i class="icon-base ri ri-moon-clear-line icon-md me-3" data-icon="moon-clear-line"></i>Dark</span>
+            <span> <i class="icon-base ri ri-moon-clear-line icon-md me-3" data-icon="moon-clear-line"></i>Oscuro</span>
           </button>
         </li>
         <li>
           <button type="button" class="dropdown-item align-items-center" data-bs-theme-value="system"
             aria-pressed="false">
-            <span> <i class="icon-base ri ri-computer-line icon-md me-3" data-icon="computer-line"></i>System</span>
+            <span> <i class="icon-base ri ri-computer-line icon-md me-3" data-icon="computer-line"></i>Según el sistema</span>
           </button>
         </li>
       </ul>
@@ -136,8 +136,8 @@ use Illuminate\Support\Facades\Route;
               <span class="dropdown-shortcuts-icon rounded-circle mb-3">
                 <i class="icon-base ri ri-calendar-line icon-26px text-heading"></i>
               </span>
-              <a href="{{ url('app/calendar') }}" class="stretched-link">Calendar</a>
-              <small>Appointments</small>
+              <a href="{{ url('app/calendar') }}" class="stretched-link">Calendario</a>
+              <small>Citas</small>
             </div>
             <div class="dropdown-shortcuts-item col">
               <span class="dropdown-shortcuts-icon rounded-circle mb-3">
@@ -212,7 +212,7 @@ use Illuminate\Support\Facades\Route;
       <ul class="dropdown-menu dropdown-menu-end p-0">
         <li class="dropdown-menu-header border-bottom">
           <div class="dropdown-header d-flex align-items-center py-3">
-            <h6 class="mb-0 me-auto">Notification</h6>
+            <h6 class="mb-0 me-auto">Notificaciones</h6>
             <div class="d-flex align-items-center h6 mb-0">
               <span class="badge bg-label-primary rounded-pill me-2">8 New</span>
               <a href="javascript:void(0)" class="dropdown-notifications-all p-2" data-bs-toggle="tooltip"
@@ -449,7 +449,7 @@ use Illuminate\Support\Facades\Route;
                   John Doe
                   @endif
                 </h6>
-                <small class="text-body-secondary">Admin</small>
+                <small class="text-body-secondary">{{ Auth::user()->roles->first()->name ?? 'Sin rol' }}</small>
               </div>
             </div>
           </a>
@@ -461,7 +461,7 @@ use Illuminate\Support\Facades\Route;
           <a class="dropdown-item"
             href="{{ Route::has('profile.show') ? route('profile.show') : url('pages/profile-user') }}">
             <i class="icon-base ri ri-user-3-line icon-22px me-2"></i>
-            <span class="align-middle">My Profile</span>
+            <span class="align-middle">Mi perfil</span>
           </a>
         </li>
         @if (Auth::check() && Laravel\Jetstream\Jetstream::hasApiFeatures())
@@ -532,7 +532,7 @@ use Illuminate\Support\Facades\Route;
             <a class="btn btn-danger d-flex" href="{{ route('logout') }}"
               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
               <i class="icon-base ri ri-logout-box-r-line ms-2 icon-16px"></i>
-              <small class="align-middle">Logout</small>
+              <small class="align-middle">Cerrar sesión</small>
             </a>
           </div>
         </li>
@@ -544,7 +544,7 @@ use Illuminate\Support\Facades\Route;
           <div class="d-grid px-4 pt-2 pb-1">
             <a class="btn btn-danger d-flex"
               href="{{ Route::has('login') ? route('login') : url('auth/login-basic') }}">
-              <small class="align-middle">Login</small>
+              <small class="align-middle">Iniciar sesión</small>
               <i class="icon-base ri ri-logout-box-r-line ms-2 icon-16px"></i>
             </a>
           </div>
