@@ -363,3 +363,8 @@ Route::middleware([
   Route::get('/', [Analytics::class, 'index'])->name('dashboard-analytics');
   Route::get('/dashboard', [Analytics::class, 'index'])->name('dashboard');
 });
+
+// Fallback route to handle 404s
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
+});
