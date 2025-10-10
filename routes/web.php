@@ -161,7 +161,6 @@ use App\Http\Controllers\maps\Leaflet;
 // Main Page Route
 //Route::get('/', [Analytics::class, 'index'])->name('dashboard-analytics');
 Route::get('/dashboard/analytics', [Analytics::class, 'index'])->name('dashboard-analytics');
-Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-crm');
 // locale
 Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
 
@@ -210,7 +209,6 @@ Route::get('/app/ecommerce/settings/shipping', [EcommerceSettingsShipping::class
 Route::get('/app/ecommerce/settings/locations', [EcommerceSettingsLocations::class, 'index'])->name('app-ecommerce-settings-locations');
 Route::get('/app/ecommerce/settings/notifications', [EcommerceSettingsNotifications::class, 'index'])->name('app-ecommerce-settings-notifications');
 Route::get('/app/academy/dashboard', [AcademyDashboard::class, 'index'])->name('app-academy-dashboard');
-Route::get('/app/academy/course', [AcademyCourse::class, 'index'])->name('app-academy-course');
 Route::get('/app/academy/course-details', [AcademyCourseDetails::class, 'index'])->name('app-academy-course-details');
 Route::get('/app/logistics/dashboard', [LogisticsDashboard::class, 'index'])->name('app-logistics-dashboard');
 Route::get('/app/logistics/fleet', [LogisticsFleet::class, 'index'])->name('app-logistics-fleet');
@@ -237,7 +235,6 @@ Route::get('/pages/account-settings-security', [AccountSettingsSecurity::class, 
 Route::get('/pages/account-settings-billing', [AccountSettingsBilling::class, 'index'])->name('pages-account-settings-billing');
 Route::get('/pages/account-settings-notifications', [AccountSettingsNotifications::class, 'index'])->name('pages-account-settings-notifications');
 Route::get('/pages/account-settings-connections', [AccountSettingsConnections::class, 'index'])->name('pages-account-settings-connections');
-Route::get('/pages/faq', [Faq::class, 'index'])->name('pages-faq');
 Route::get('/pages/pricing', [PagesPricing::class, 'index'])->name('pages-pricing');
 Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-error');
 Route::get('/pages/misc-under-maintenance', [MiscUnderMaintenance::class, 'index'])->name('pages-misc-under-maintenance');
@@ -351,15 +348,24 @@ Route::get('/charts/chartjs', [ChartJs::class, 'index'])->name('charts-chartjs')
 Route::get('/maps/leaflet', [Leaflet::class, 'index'])->name('maps-leaflet');
 
 // laravel example
-Route::get('/laravel/user-management', [UserManagement::class, 'UserManagement'])->name('laravel-example-user-management');
-Route::get('/app/user/view/account/{id}', [UserViewAccount::class, 'index'])->name('app-user-view-account');
-Route::resource('/user-list', UserManagement::class);
- 
+
 Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
   'verified',
 ])->group(function () {
-  Route::get('/', [Analytics::class, 'index'])->name('dashboard-analytics');
-  Route::get('/dashboard', [Analytics::class, 'index'])->name('dashboard');
+  Route::get('/', [Analytics::class, 'index'])->name('dashboard-ejecutivo');
+  Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-general');
+  
+  Route::get('/laravel/user-management', [UserManagement::class, 'UserManagement'])->name('usuarios-lista');
+  Route::get('/app/user/view/account/{id}', [UserViewAccount::class, 'index'])->name('app-user-view-account');
+  Route::resource('/user-list', UserManagement::class);
+
+  Route::get('/app/access-roles', [AccessRoles::class, 'index'])->name('app-access-roles');
+  Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('app-access-permission');
+
+  Route::get('/pages/faq', [Faq::class, 'index'])->name('ayuda-faq');
+  Route::get('/app/academy/course', [AcademyCourse::class, 'index'])->name('ayuda-video-guias');
+
+
 });

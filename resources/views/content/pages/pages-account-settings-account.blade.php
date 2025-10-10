@@ -46,16 +46,16 @@
           <img src="{{ asset('assets/img/avatars/1.png') }}" alt="user-avatar" class="d-block w-px-100 h-px-100 rounded" id="uploadedAvatar" />
           <div class="button-wrapper">
             <label for="upload" class="btn btn-sm btn-primary me-3 mb-4" tabindex="0">
-              <span class="d-none d-sm-block">Upload new photo</span>
+              <span class="d-none d-sm-block">Subir nueva foto</span>
               <i class="icon-base ri ri-upload-2-line d-block d-sm-none"></i>
               <input type="file" id="upload" class="account-file-input" hidden accept="image/png, image/jpeg" />
             </label>
             <button type="button" class="btn btn-sm btn-outline-danger account-image-reset mb-4">
               <i class="icon-base ri ri-refresh-line d-block d-sm-none"></i>
-              <span class="d-none d-sm-block">Reset</span>
+              <span class="d-none d-sm-block">Reiniciar</span>
             </button>
 
-            <div>Allowed JPG, GIF or PNG. Max size of 800K</div>
+            <div>Formatos permitidos: JPG, GIF o PNG. Tamaño máximo: 800 KB</div>
           </div>
         </div>
       </div>
@@ -65,32 +65,32 @@
             <div class="col-md-6 form-control-validation">
               <div class="form-floating form-floating-outline">
                 <input class="form-control" type="text" id="firstName" name="firstName" value="John" autofocus />
-                <label for="firstName">First Name</label>
+                <label for="firstName">Primer nombre</label>
               </div>
             </div>
             <div class="col-md-6 form-control-validation">
               <div class="form-floating form-floating-outline">
                 <input class="form-control" type="text" name="lastName" id="lastName" value="Doe" />
-                <label for="lastName">Last Name</label>
+                <label for="lastName">Apellido</label>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-floating form-floating-outline">
                 <input class="form-control" type="text" id="email" name="email" value="john.doe@example.com" placeholder="john.doe@example.com" />
-                <label for="email">E-mail</label>
+                <label for="email">Correo electronico</label>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-floating form-floating-outline">
                 <input type="text" class="form-control" id="organization" name="organization" value="{{ config('variables.creatorName') }}" />
-                <label for="organization">Organization</label>
+                <label for="organization">Empresa</label>
               </div>
             </div>
             <div class="col-md-6">
               <div class="input-group input-group-merge">
                 <div class="form-floating form-floating-outline">
                   <input type="text" id="phoneNumber" name="phoneNumber" class="form-control" placeholder="202 555 0111" />
-                  <label for="phoneNumber">Phone Number</label>
+                  <label for="phoneNumber">Numero de celular</label>
                 </div>
                 <span class="input-group-text">US (+1)</span>
               </div>
@@ -98,37 +98,37 @@
             <div class="col-md-6">
               <div class="form-floating form-floating-outline">
                 <input type="text" class="form-control" id="address" name="address" placeholder="Address" />
-                <label for="address">Address</label>
+                <label for="address">Direccion</label>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-floating form-floating-outline">
                 <input class="form-control" type="text" id="state" name="state" placeholder="California" />
-                <label for="state">State</label>
+                <label for="state">Departamento</label>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-floating form-floating-outline">
                 <input type="text" class="form-control" id="zipCode" name="zipCode" placeholder="231465" maxlength="6" />
-                <label for="zipCode">Zip Code</label>
+                <label for="zipCode">Codigo postal</label>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-floating form-floating-outline">
                 <input id="TagifyCountrySuggestion" name="TagifyCountrySuggestion" class="form-control h-auto" placeholder="select country" value="India, Japan, France" />
-                <label for="TagifyCountrySuggestion">Country</label>
+                <label for="TagifyCountrySuggestion">Pais</label>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-floating form-floating-outline">
                 <input id="TagifyLanguageSuggestion" name="TagifyLanguageSuggestion" class="form-control h-auto" placeholder="select language" value="English" />
-                <label for="TagifyLanguageSuggestion">Language</label>
+                <label for="TagifyLanguageSuggestion">Idioma</label>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-floating form-floating-outline">
                 <select id="timeZones" class="select2 form-select">
-                  <option value="">Select Timezone</option>
+                  <option value="">Selecciona zona horaria</option>
                   <option value="-12">(GMT-12:00) International Date Line West</option>
                   <option value="-11">(GMT-11:00) Midway Island, Samoa</option>
                   <option value="-10">(GMT-10:00) Hawaii</option>
@@ -148,7 +148,7 @@
                   <option value="-4">(GMT-04:00) Atlantic Time (Canada)</option>
                   <option value="-4">(GMT-04:00) Caracas, La Paz</option>
                 </select>
-                <label for="timeZones">Timezone</label>
+                <label for="timeZones">Zona horaria</label>
               </div>
             </div>
             <div class="col-md-6">
@@ -173,14 +173,14 @@
       <!-- /Account -->
     </div>
     <div class="card">
-      <h5 class="card-header">Delete Account</h5>
+      <h5 class="card-header">Eliminar cuenta</h5>
       <div class="card-body">
         <form id="formAccountDeactivation" onsubmit="return false">
           <div class="form-check mb-6 ms-3">
             <input class="form-check-input" type="checkbox" name="accountActivation" id="accountActivation" />
-            <label class="form-check-label" for="accountActivation">I confirm my account deactivation</label>
+            <label class="form-check-label" for="accountActivation">Confirmo la desactivación de mi cuenta.</label>
           </div>
-          <button type="submit" class="btn btn-danger deactivate-account" disabled="disabled">Deactivate Account</button>
+          <button type="submit" class="btn btn-danger deactivate-account" disabled="disabled">Desactivar cuenta</button>
         </form>
       </div>
     </div>

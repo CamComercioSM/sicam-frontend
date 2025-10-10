@@ -15,11 +15,11 @@ $configData = Helper::appClasses();
 
 <div class="faq-header d-flex flex-column justify-content-center align-items-center h-px-300 position-relative overflow-hidden rounded-3">
   <img src="{{ asset('assets/img/pages/header-' . $configData['theme'] . '.png') }}" class="scaleX-n1-rtl faq-banner-img h-px-300 z-n1" alt="background image" data-app-light-img="pages/header-light.png" data-app-dark-img="pages/header-dark.png" />
-  <h4 class="text-center text-primary mb-2">Hello, how can we help?</h4>
-  <p class="text-body text-center mb-0 px-4">or choose a category to quickly find the help you need</p>
+  <h4 class="text-center text-primary mb-2">Hola, ¿cómo podemos ayudarte hoy??</h4>
+  <p class="text-body text-center mb-0 px-4">o selecciona una categoría para acceder rápidamente a la ayuda que requieres.</p>
   <div class="input-wrapper my-6 input-group input-group-merge">
     <span class="input-group-text" id="basic-addon1"><i class="icon-base ri ri-search-line"></i></span>
-    <input type="text" class="form-control" placeholder="Ask a question...." aria-label="Search" aria-describedby="basic-addon1" />
+    <input type="text" class="form-control" placeholder="Realiza una pregunta..." aria-label="Search" aria-describedby="basic-addon1" />
   </div>
 </div>
 
@@ -31,13 +31,13 @@ $configData = Helper::appClasses();
         <li class="nav-item">
           <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#payment">
             <i class="icon-base ri ri-bank-card-line icon-sm me-1_5"></i>
-            <span class="align-middle">Payment</span>
+            <span class="align-middle">Método de pago</span>
           </button>
         </li>
         <li class="nav-item">
           <button class="nav-link" data-bs-toggle="tab" data-bs-target="#delivery">
             <i class="icon-base ri ri-shopping-cart-line icon-sm me-1_5"></i>
-            <span class="align-middle">Delivery</span>
+            <span class="align-middle">Dirección de envío</span>
           </button>
         </li>
         <li class="nav-item">

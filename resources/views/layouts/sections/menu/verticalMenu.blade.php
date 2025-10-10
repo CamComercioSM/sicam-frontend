@@ -3,7 +3,6 @@
     $configData = Helper::appClasses();
 
   $user = auth()->user();
-  
   // --- 1) Normalizador: stdClass|array -> array (recursivo)
   $normalize = function ($value) use (&$normalize) {
     if (is_array($value)) {
@@ -22,10 +21,8 @@
   $filterMenu = function (array $items) use ($user, &$filterMenu) {
     return collect($items)->map(function ($item) use ($user, &$filterMenu) {
       // $item es array asociativo garantizado
-      if (isset($item['menuHeader'])) {
-        return $item; // los headers pasan tal cual
-      }
-
+      
+      $isHeader = isset($item['menuHeader']);
       $role = $item['role']    ?? null;
       $all  = $item['all']     ?? [];
       $any  = $item['any']     ?? [];
@@ -43,14 +40,7 @@
 
         // ¿El rol del usuario está entre las opciones?
         $allowed = in_array($userRole, $roles, true);
-
-        if($allowed)  print_r(" - ALLOWED");
-        else 
-          print_r(" - NOT ALLOWED");
-        // Actualiza pasa si está permitido  
-
         $passes = $passes && $allowed;
-        var_dump($passes);
       }
 
       if(!$passes) return null;
@@ -69,6 +59,9 @@
       // Filtra hijos primero
       if (!empty($kids) && is_array($kids)) {
         $item['submenu'] = $filterMenu($kids);
+      }
+      if ($isHeader){
+        return $passes ? $item : null;
       }
 
       // Si no pasa y no tiene hijos visibles -> descarta
@@ -108,12 +101,10 @@
   $horizontalRaw    = $normalize($horizontalRawObj);
 
   $verticalArr   = is_array($verticalRaw)   ? $filterMenu($verticalRaw['menu'])   : [];
-  $horizontalArr = is_array($horizontalRaw) ? $filterMenu($horizontalRaw) : [];
-
+  $horizontalArr = is_array($horizontalRaw) ? $filterMenu($horizontalRaw['menu']) : [];
   // Resultado final como arrays de stdClass
   $menuData[0]     = $toObject( ['menu' =>  $verticalArr ]);
-  
-  $menuData[1]   = $toObject($horizontalArr);
+  $menuData[1]   = $toObject(['menu' =>  $horizontalArr ]);
 
 @endphp
 
@@ -152,7 +143,6 @@
                 @php
                     $activeClass = null;
                     $currentRouteName = Route::currentRouteName();
-
                     if ($currentRouteName === $menu->slug) {
                         $activeClass = 'active';
                     } elseif (isset($menu->submenu)) {
@@ -175,7 +165,7 @@
 
                 {{-- main menu --}}
                 <li class="menu-item {{ $activeClass }}">
-                    <a href="{{ isset($menu->url) ? url($menu->url) : 'javascript:void(0);' }}"
+                    <a href="{{ isset($menu->url) ? (Route::has($menu->url) ? route($menu->url) :url($menu->url)) : 'javascript:void(0);' }}"
                         class="{{ isset($menu->submenu) ? 'menu-link menu-toggle' : 'menu-link' }}"
                         @if (isset($menu->target) and !empty($menu->target)) target="_blank" @endif>
                         @isset($menu->icon)
