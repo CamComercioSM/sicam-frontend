@@ -12,33 +12,57 @@ document.addEventListener('DOMContentLoaded', function (e) {
       2: { title: 'Active', class: 'bg-label-success' },
       3: { title: 'Inactive', class: 'bg-label-secondary' }
     };
+  // ajax setup
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
   let dt_User,
     userView = baseUrl + 'app/user/view/account';
-
   // Users List datatable
   if (dtUserTable) {
     const userRole = document.createElement('div');
     userRole.classList.add('user_role');
+
     dt_User = new DataTable(dtUserTable, {
-      ajax: assetsPath + 'json/user-list.json', // JSON file to add data
+      processing: true,
+      serverSide: true,
+      ajax: baseUrl + 'user-list',
+      dataSrc: function (json) {
+        // Ensure recordsTotal and recordsFiltered are numeric and not undefined/null
+        if (typeof json.recordsTotal !== 'number') {
+          json.recordsTotal = 0;
+        }
+        if (typeof json.recordsFiltered !== 'number') {
+          json.recordsFiltered = 0;
+        }
+
+        // Fallback for empty data to avoid pagination NaN issue
+        json.data = Array.isArray(json.data) ? json.data : [];
+
+        return json.data;
+      },
+
       columns: [
         // columns according to JSON
         { data: 'id' },
         { data: 'id', orderable: false, render: DataTable.render.select() },
-        { data: 'full_name' },
-        { data: 'email' },
-        { data: 'role' },
-        { data: 'current_plan' },
-        { data: 'status' },
-        { data: 'id' }
+        { data: 'id' },
+        { data: 'name' },
+        { data: 'identificacion' },
+        { data: 'email_verified_at' },
+        { data: 'userRole' },
+        { data: 'estado' },
+        { data: 'action' }
       ],
       columnDefs: [
         {
           // For Responsive
           className: 'control',
-          orderable: false,
           searchable: false,
-          responsivePriority: 5,
+          orderable: false,
+          responsivePriority: 2,
           targets: 0,
           render: function (data, type, full, meta) {
             return '';
@@ -49,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           targets: 1,
           orderable: false,
           searchable: false,
-          responsivePriority: 3,
+          responsivePriority: 4,
           checkboxes: true,
           render: function () {
             return '<input type="checkbox" class="dt-checkboxes form-check-input">';
@@ -59,87 +83,136 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         },
         {
+          searchable: false,
+          orderable: false,
           targets: 2,
-          responsivePriority: 1,
           render: function (data, type, full, meta) {
-            const name = full['full_name'];
-            const email = full['email'];
-            const image = full['avatar'];
-            let output;
+            return `<span>${full.id}</span>`;
+          }
+        },
+        {
+          targets: 3,
+          responsivePriority: 4,
+          render: function (data, type, full, meta) {
+            var name = full['name'];
+            var email = full['email'];
+            var image = full['userProfilePhoto'];
+            var output;
 
             if (image) {
               // For Avatar image
-              output = `<img src="${assetsPath}img/avatars/${image}" alt="Avatar" class="rounded-circle">`;
+              output = '<img src="' + baseUrl + "storage/" + image + '" alt="Foto de perfil" class="rounded-circle">';
             } else {
               // For Avatar badge
-              const stateNum = Math.floor(Math.random() * 6) + 1;
-              const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
-              const state = states[stateNum];
-              const initials = (name.match(/\b\w/g) || []).slice(0, 2).join('').toUpperCase();
-              output = `<span class="avatar-initial rounded-circle bg-label-${state}">${initials}</span>`;
+              var stateNum = Math.floor(Math.random() * 6);
+              var states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
+              var state = states[stateNum];
+              var initials = (name.match(/\b\w/g) || []).map(char => char.toUpperCase());
+              initials = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
+              output = '<span class="avatar-initial rounded-circle bg-label-' + state + '">' + initials + '</span>';
             }
 
             // Creates full output for row
-            const rowOutput = `
-              <div class="d-flex justify-content-left align-items-center">
-                <div class="avatar-wrapper">
-                  <div class="avatar avatar-sm me-3">
-                    ${output}
-                  </div>
-                </div>
-                <div class="d-flex flex-column">
-                  <a href="${userView}" class="text-heading text-truncate"><span class="fw-medium">${name}</span></a>
-                  <small>@${email}</small>
-                </div>
-              </div>
-            `;
-
-            return rowOutput;
+            var row_output =
+              '<div class="d-flex justify-content-start align-items-center user-name">' +
+              '<div class="avatar-wrapper">' +
+              '<div class="avatar avatar-sm me-4">' +
+              output +
+              '</div>' +
+              '</div>' +
+              '<div class="d-flex flex-column">' +
+              '<a href="' +
+              userView +
+              '" class="text-heading text-truncate"><span class="fw-medium">' +
+              name +
+              '</span></a>' +
+              '<small>' +
+              email +
+              '</small>' +
+              '</div>' +
+              '</div>';
+            return row_output;
           }
         },
         {
           // User email
-          targets: 3,
-          render: function (data, type, full, meta) {
-            let email = full['email'];
-            return '<span >' + email + '</span>';
-          }
-        },
-        {
           targets: 4,
           render: function (data, type, full, meta) {
-            const role = full['role'];
-            const roleBadgeObj = {
-              Subscriber: '<i class="icon-base ri ri-user-line icon-22px text-primary me-2"></i>',
-              Author: '<i class="icon-base ri ri-vip-crown-line icon-22px text-warning me-2"></i>',
-              Maintainer: '<i class="icon-base ri ri-pie-chart-line icon-22px text-success me-2"></i>',
-              Editor: '<i class="icon-base ri ri-edit-box-line icon-22px text-info me-2"></i>',
-              Admin: '<i class="icon-base ri ri-computer-line icon-22px  text-danger me-2"></i>'
-            };
-
-            return `<span class='text-truncate d-flex align-items-center'>${roleBadgeObj[role] || ''}${role}</span>`;
+            const identificacion = full['identificacion'];
+            return '<span class="d-flex align-items-center">' +
+              '<i class="icon-base ri ri-id-card-line"></i> ' +
+              '<span>' + identificacion + '</span>' +
+              '</span>';
           }
         },
         {
-          // Plans
+          // email verify
           targets: 5,
+          className: 'text-center',
           render: function (data, type, full, meta) {
-            let plan = full['current_plan'];
-
-            return '<span class="fw-medium">' + plan + '</span>';
+            let email_verified_at = full['email_verified_at'];
+            let iconHtml;
+            if (email_verified_at && email_verified_at !== 'null') {
+              // Formato dd/mm/aaaa
+              let formattedDate = formatDate(email_verified_at);
+              iconHtml = '<i class="icon-base ri ri-mail-check-fill text-success icon-22px text-primary me-2"></i>';
+              return (
+                '<span class="d-flex align-items-center">' +
+                iconHtml +
+                '<span>' + formattedDate + '</span>' +
+                '</span>'
+              );
+            } else {
+              iconHtml = '<i class="icon-base ri fs-4 ri-shield-line text-danger icon-22px text-primary me-2"></i>';
+              return (
+                '<span class="d-flex align-items-center">' +
+                iconHtml +
+                '<span>No verificado</span>' +
+                '</span>'
+              );
+            }
           }
         },
         {
-          // User Status
+          //User Role
           targets: 6,
           render: function (data, type, full, meta) {
-            let status = full['status'];
-
+            var userRole = full['userRole'];
+            var roleBadgeObj = {
+              Asesor: '<i class="icon-base ri ri-user-line icon-22px text-primary me-2"></i>',
+              Administrador: '<i class="icon-base ri ri-vip-crown-line icon-22px text-warning me-2"></i>',
+              Presidencia: '<i class="icon-base ri ri-pie-chart-line icon-22px text-success me-2"></i>',
+              Invitado: '<i class="icon-base ri ri-edit-box-line icon-22px text-info me-2"></i>',
+              Soporte: '<i class="icon-base ri ri-computer-line icon-22px text-danger me-2"></i>'
+            };
+            if (!userRole || userRole === 'null') {
+              return "<span class='text-truncate d-flex align-items-center text-heading'>-</span>";
+            }
             return (
-              '<span class="badge rounded-pill ' +
-              statusObj[status].class +
-              '" text-capitalized>' +
-              statusObj[status].title +
+              "<span class='text-truncate d-flex align-items-center text-heading'>" +
+              (roleBadgeObj[userRole] || '') + // Ensures badge exists for the role
+              userRole +
+              '</span>'
+            );
+          }
+        },
+        {
+          //User Status
+          targets: 7,
+          render: function (data, type, full, meta) {
+            var estado = full['estado'];
+            var roleBadgeObj = {
+              activo: '<i class="icon-base ri ri-user-line icon-22px text-primary me-2"></i>',
+              desactivo: '<i class="icon-base ri ri-vip-crown-line icon-22px text-warning me-2"></i>',
+              borrado: '<i class="icon-base ri ri-pie-chart-line icon-22px text-success me-2"></i>',
+            };
+            if (!estado || estado === 'null') {
+              return "<span class='text-truncate d-flex align-items-center text-heading'>-</span>";
+            }
+            return (
+              "<span class='text-truncate d-flex align-items-center text-heading'>" +
+              (roleBadgeObj[estado] || '') + // Ensures badge exists for the role
+              estado +
               '</span>'
             );
           }
@@ -150,17 +223,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           searchable: false,
           orderable: false,
           render: function (data, type, full, meta) {
-            return `
-              <div class="d-flex align-items-center">
-                <a href="javascript:;" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"><i class="icon-base ri ri-delete-bin-7-line icon-22px"></i></a>
-                <a href="${userView}" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"><i class="icon-base ri ri-eye-line icon-22px"></i></a>
-                <a href="javascript:;" class="btn btn-sm btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0 waves-effect" data-bs-toggle="dropdown"><i class="icon-base ri ri-more-2-line icon-22px"></i></a>
-                <div class="dropdown-menu dropdown-menu-end m-0">
-                  <a href="javascript:;" class="dropdown-item">Edit</a>
-                  <a href="javascript:;" class="dropdown-item">Suspend</a>
-                </div>
-              </div>
-            `;
+            return accionesTablaRoles(full);
           }
         }
       ],
@@ -600,7 +663,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       initComplete: function () {
         // Adding role filter once table initialized
         this.api()
-          .columns(4)
+          .columns(6)
           .every(function () {
             const column = this;
             const select = document.createElement('select');
@@ -682,6 +745,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         bindDeleteEvent();
       }
     });
+
   }
 
   // Filter form control to default size
@@ -726,13 +790,34 @@ document.addEventListener('DOMContentLoaded', function (e) {
     roleTitle = document.querySelector('.role-title');
 
   roleAdd.onclick = function () {
-    roleTitle.innerHTML = 'Add New Role'; // reset text
+    roleTitle.innerHTML = 'Agregar Nuevo Rol'; // reset text
   };
   if (roleEditList) {
     roleEditList.forEach(function (roleEditEl) {
       roleEditEl.onclick = function () {
-        roleTitle.innerHTML = 'Edit Role'; // reset text
+        roleTitle.innerHTML = 'Editar Rol';
       };
     });
   }
+
+  function cambiarTituloModalRoles(titulo) {
+    document.getElementById('.addRoleModal').innerHTML = titulo;
+  }
+
+  function accionesTablaRoles(full) {
+
+    return `
+        <div class="d-flex align-items-center">
+          <a href="javascript:;" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"><i class="icon-base ri ri-delete-bin-7-line icon-22px"></i></a>
+          <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"  ><i class="icon-base ri ri-eye-line icon-22px"></i></a>
+          <a href="javascript:;" class="btn btn-sm btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0 waves-effect" data-bs-toggle="dropdown"><i class="icon-base ri ri-more-2-line icon-22px"></i></a>
+          <div class="dropdown-menu dropdown-menu-end m-0">
+            <a href="javascript:;" class="dropdown-item">Edit</a>
+            <a href="javascript:;" class="dropdown-item">Suspend</a>
+          </div>
+        </div>
+      `;
+  }
+
+
 });

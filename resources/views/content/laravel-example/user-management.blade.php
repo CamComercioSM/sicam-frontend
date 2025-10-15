@@ -121,7 +121,7 @@
                         <th></th>
                         <th>Id</th>
                         <th>Usuario</th>
-                        <th>Correo</th>
+                        <th>Identificacion</th>
                         <th>Verificacion</th>
                         <th>Rol</th>
                         <th>Estado</th>

@@ -157,12 +157,13 @@ use App\Http\Controllers\tables\DatatableExtensions;
 use App\Http\Controllers\charts\ApexCharts;
 use App\Http\Controllers\charts\ChartJs;
 use App\Http\Controllers\maps\Leaflet;
+use App\Http\Controllers\usuarios\RoleManagement;
 
 Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
   'verified',
-  'permission:ver.ejemplos'
+  'permission:ejemplos.ver'
 ])->group(function () {
   // Main Page Route
   //Route::get('/', [Analytics::class, 'index'])->name('dashboard-analytics');
@@ -365,7 +366,9 @@ Route::middleware([
   Route::get('/app/user/view/account/{id}', [UserViewAccount::class, 'index'])->name('app-user-view-account');
   Route::resource('/user-list', UserManagement::class);
 
-  Route::get('/app/access-roles', [AccessRoles::class, 'index'])->name('app-access-roles');
+  Route::get('/app/access-roles', [RoleManagement::class, 'RoleManagement'])->name('app-access-roles');
+  Route::resource('/role-list', RoleManagement::class);
+
   Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('app-access-permission');
 });
 
