@@ -65,13 +65,13 @@
       "role": ["Administrador", "Soporte"],
       "submenu": [
         {
-          "url": "app/access-roles",
+          "url": "app-access-roles",
           "name": "roles",
           "slug": "app-access-roles",
           "role": ["Administrador", "Soporte"]
         },
         {
-          "url": "app/access-permission",
+          "url": "app-access-permission",
           "name": "Permission",
           "slug": "app-access-permission",
           "role": ["Administrador", "Soporte"]
@@ -82,24 +82,25 @@
       "name": "Auditorias",
       "icon": "menu-icon icon-base ri ri-lock-2-line",
       "slug": "app-access",
-      "role": ["Administrador", "Soporte"],
+      "role": ["Soporte"],
+      "any": ["ver.ejemplos"],
       "submenu": [
         {
           "url": "pages/misc-under-maintenance",
           "name": "Registro de cambios",
-          "slug": "app-access-roles",
+          "slug": "",
           "role": ["Soporte"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Sesiones activas",
-          "slug": "app-access-permission",
+          "slug": "",
           "role": ["Soporte"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Historial de inicios de sesión",
-          "slug": "app-access-permission",
+          "slug": "",
           "role": ["Soporte"]
         }
         
@@ -107,55 +108,56 @@
     },
     {
       "menuHeader": "Procesos empresariales",
-      "role": ["Administrador"]
-
+      "role": ["Administrador"],
+      "any": ["ver.ejemplos"]
     },
     {
       "name": "Talento humano",
       "icon": "menu-icon icon-base ri ri-user-line",
-      "slug": "app-access",
+      "slug": "",
       "role": ["Administrador"],
+      "any": ["ver.ejemplos"],
       "submenu": [
         {
           "url": "pages/misc-under-maintenance",
           "name": "Colaboradores",
-          "slug": "app-access-roles",
+          "slug": "",
           "role": ["Administrador"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Nomina",
-          "slug": "app-access-permission",
+          "slug": "",
           "role": ["Administrador"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Permisos y vacaciones",
-          "slug": "app-access-permission",
+          "slug": "",
           "role": ["Administrador"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Asistencia",
-          "slug": "app-access-permission",
+          "slug": "",
           "role": ["Administrador"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Ausentismos",
-          "slug": "app-access-permission",
+          "slug": "",
           "role": ["Administrador"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Reclutamiento",
-          "slug": "app-access-permission",
+          "slug": "",
           "role": ["Administrador"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Capacitaciones",
-          "slug": "app-access-permission",
+          "slug": "",
           "role": ["Administrador"]
         }
         
@@ -164,31 +166,31 @@
     {
       "name": "Compras",
       "icon": "menu-icon icon-base ri ri-shopping-bag-3-line",
-      "slug": "app-access",
+      "slug": "",
       "role": ["Administrador"],
       "submenu": [
         {
           "url": "pages/misc-under-maintenance",
           "name": "Cotizaciones",
-          "slug": "app-access-roles",
+          "slug": "",
           "role": ["Administrador"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Pedidos",
-          "slug": "app-access-permission",
+          "slug": "",
           "role": ["Administrador"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "proveedores",
-          "slug": "app-access-permission",
+          "slug": "",
           "role": ["Administrador"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Reportes de Compras",
-          "slug": "app-access-permission",
+          "slug": "",
           "role": ["Administrador"]
         }
         
@@ -197,7 +199,7 @@
     {
       "name": "Gestion Documental",
       "icon": "menu-icon icon-base ri ri-file-copy-line",
-      "slug": "app-access",
+      "slug": "",
       "role": ["Administrador"],
       "submenu": [
         {
@@ -218,7 +220,7 @@
     {
       "name": "Precidencia",
       "icon": "menu-icon icon-base ri ri-tv-2-line",
-      "slug": "app-access",
+      "slug": "",
       "role": ["Administrador"],
       "submenu": [
         {
@@ -239,7 +241,7 @@
     {
       "name": "Financiera",
       "icon": "menu-icon icon-base ri ri-bill-line",
-      "slug": "app-access",
+      "slug": "",
       "role": ["Administrador"],
       "submenu": [
         {
@@ -289,74 +291,87 @@
     },
     {
       "menuHeader": "Ajustes del sistema",
-      "role": ["Administrador", "Soporte"]
+      "role": ["Administrador", "Soporte"],
+      "any": ["ver.ejemplos"]
     },
     {
       "name": "Configuraciones",
       "icon": "menu-icon icon-base ri ri-lock-2-line",
-      "slug": "app-access",
+      "slug": "",
       "role": ["Soporte", "Administrador"],
+      "any": ["ver.ejemplos"],
       "submenu": [
         {
           "url": "pages/misc-under-maintenance",
           "name": "Parámetros del sistema",
-          "slug": "app-access-roles",
-          "role": ["Soporte"]
+          "slug": "",
+          "role": ["Soporte"],
+          "any": ["ver.ejemplos"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Parametros visuales",
-          "slug": "app-access-permission"
+          "slug": "",
+          "any": ["ver.ejemplos"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Preferencias regionales",
-          "slug": "app-access-permission"
+          "slug": "",
+          "any": ["ver.ejemplos"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "seguridad",
-          "slug": "app-access-permission",
-          "role": ["Soporte"]
+          "slug": "",
+          "role": ["Soporte"],
+          "any": ["ver.ejemplos"]
         }
       ]
     },
     {
       "name": "Seguridad",
       "icon": "menu-icon icon-base ri ri-lock-2-line",
-      "slug": "app-access",
+      "slug": "",
       "role": ["Soporte"],
+      "any": ["ver.ejemplos"],
       "submenu": [
         {
           "url": "pages/misc-under-maintenance",
           "name": "Políticas de contraseñas",
-          "slug": "app-access-permission"
+          "slug": "",
+          "any": ["ver.ejemplos"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Logs del sistema",
-          "slug": "app-access-permission"
+          "slug": "",
+          "any": ["ver.ejemplos"]
         }
         
       ]
     },
     {
-      "menuHeader": "Ayuda y Soporte"
+      "menuHeader": "Ayuda y Soporte",
+          "any": ["ver.ejemplos"]
     },
     {
       "name": "Centro de ayuda ",
       "icon": "menu-icon icon-base ri ri-lock-2-line",
       "slug": "ayuda",
+      "any": ["ver.ejemplos"],
       "submenu": [
         {
           "url": "ayuda-faq",
           "name": "Preguntas frecuentes",
-          "slug": "ayuda-faq"
+          "slug": "ayuda-faq",
+          "any": ["ver.ejemplos"]
         },
         {
           "url": "ayuda-video-guias",
           "name": "Video guias",
-          "slug": "ayuda-video-guias"
+          "slug": "ayuda-video-guias",
+          "any": ["ver.ejemplos"]
         }
         
       ]
@@ -364,17 +379,20 @@
     {
       "name": "Soporte tecnico",
       "icon": "menu-icon icon-base ri ri-lifebuoy-line",
-      "slug": "app-access",
+      "slug": "",
+      "any": ["ver.ejemplos"],
       "submenu": [
         {
           "url": "pages/misc-under-maintenance",
           "name": "Contactar soporte",
-          "slug": ""
+          "slug": "",
+          "any": ["ver.ejemplos"]
         },
         {
           "url": "pages/misc-under-maintenance",
           "name": "Preguntas frecuentes",
-          "slug": ""
+          "slug": "",
+          "any": ["ver.ejemplos"]
         }
         
       ]

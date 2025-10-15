@@ -1,5 +1,384 @@
 {
   "menu": [
+     {
+      "menuHeader": "General"
+    },
+    {
+      "name": "Inicio",
+      "icon": "menu-icon icon-base ri ri-home-smile-line",
+      "slug": "dashboard",
+      "submenu": [
+        {
+          "url": "dashboard-general",
+          "name": "Dashboard General",
+          "slug": "dashboard-general",
+          "role": ["Invitado"]
+        },
+        {
+          "url": "dashboard-ejecutivo",
+          "name": "Dashboard ejecutivo",
+          "slug": "dashboard-ejecutivo",
+          "role": ["Administrador", "Soporte"]
+        }
+      ]
+    },
+    {
+      "menuHeader": "User Management",
+      "role": ["Administrador", "Soporte"]
+    },
+    {
+      "name": "Usuarios",
+      "icon": "menu-icon icon-base ri ri-database-2-line",
+      "slug": "usuarios",
+      "role": ["Administrador", "Soporte"],
+      "submenu": [
+        {
+          "url": "usuarios-lista",
+          "name": "Lista",
+          "slug": "usuarios-lista",
+          "role": ["Administrador","Soporte"]
+        },
+        {
+          "url": "usuarios-crear",
+          "name": "Crear nuevo usuario",
+          "slug": "usuarios-crear",
+          "role": ["Administrador", "Soporte"]
+        },
+        {
+          "url": "usuarios-restaurar",
+          "name": "Restaurar usuarios",
+          "slug": "usuarios-restaurar",
+          "role": ["Administrador", "Soporte"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Respaldos",
+          "slug": "",
+          "role": ["Administrador", "Soporte"]
+        }
+      ]
+    },
+    {
+      "name": "roles & Permissions",
+      "icon": "menu-icon icon-base ri ri-lock-2-line",
+      "slug": "app-access",
+      "role": ["Administrador", "Soporte"],
+      "submenu": [
+        {
+          "url": "app-access-roles",
+          "name": "roles",
+          "slug": "app-access-roles",
+          "role": ["Administrador", "Soporte"]
+        },
+        {
+          "url": "app-access-permission",
+          "name": "Permission",
+          "slug": "app-access-permission",
+          "role": ["Administrador", "Soporte"]
+        }
+      ]
+    },
+    {
+      "name": "Auditorias",
+      "icon": "menu-icon icon-base ri ri-lock-2-line",
+      "slug": "app-access",
+      "role": ["Soporte"],
+      "submenu": [
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Registro de cambios",
+          "slug": "app-access-roles",
+          "role": ["Soporte"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Sesiones activas",
+          "slug": "app-access-permission",
+          "role": ["Soporte"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Historial de inicios de sesión",
+          "slug": "app-access-permission",
+          "role": ["Soporte"]
+        }
+        
+      ]
+    },
+    {
+      "menuHeader": "Procesos empresariales",
+      "role": ["Administrador"]
+
+    },
+    {
+      "name": "Talento humano",
+      "icon": "menu-icon icon-base ri ri-user-line",
+      "slug": "app-access",
+      "role": ["Administrador"],
+      "submenu": [
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Colaboradores",
+          "slug": "app-access-roles",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Nomina",
+          "slug": "app-access-permission",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Permisos y vacaciones",
+          "slug": "app-access-permission",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Asistencia",
+          "slug": "app-access-permission",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Ausentismos",
+          "slug": "app-access-permission",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Reclutamiento",
+          "slug": "app-access-permission",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Capacitaciones",
+          "slug": "app-access-permission",
+          "role": ["Administrador"]
+        }
+        
+      ]
+    },
+    {
+      "name": "Compras",
+      "icon": "menu-icon icon-base ri ri-shopping-bag-3-line",
+      "slug": "app-access",
+      "role": ["Administrador"],
+      "submenu": [
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Cotizaciones",
+          "slug": "app-access-roles",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Pedidos",
+          "slug": "app-access-permission",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "proveedores",
+          "slug": "app-access-permission",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Reportes de Compras",
+          "slug": "app-access-permission",
+          "role": ["Administrador"]
+        }
+        
+      ]
+    },
+    {
+      "name": "Gestion Documental",
+      "icon": "menu-icon icon-base ri ri-file-copy-line",
+      "slug": "app-access",
+      "role": ["Administrador"],
+      "submenu": [
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Repositorio general",
+          "slug": "",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Reportes documentales",
+          "slug": "",
+          "role": ["Administrador"]
+        }
+        
+      ]
+    },
+    {
+      "name": "Precidencia",
+      "icon": "menu-icon icon-base ri ri-tv-2-line",
+      "slug": "app-access",
+      "role": ["Administrador"],
+      "submenu": [
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Reportes ejecutivos",
+          "slug": "",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Seguimiento a proyectos",
+          "slug": "",
+          "role": ["Administrador"]
+        }
+        
+      ]
+    },
+    {
+      "name": "Financiera",
+      "icon": "menu-icon icon-base ri ri-bill-line",
+      "slug": "app-access",
+      "role": ["Administrador"],
+      "submenu": [
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Contabilidad general",
+          "slug": "",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Bancos",
+          "slug": "",
+          "role": ["Administrador"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Reportes financieros",
+          "slug": "",
+          "role": ["Administrador"]
+        }
+        
+      ]
+    },
+    {
+      "name": "Servicios empresariales",
+      "icon": "menu-icon icon-base ri ri-bar-chart-2-line",
+      "slug": "sevicios",
+      "role": ["Administrador"],
+      "submenu": [
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Formalización",
+          "slug": ""
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Fortalecimiento y crecimiento empresarial",
+          "slug": ""
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Formación y capacitació",
+          "slug": ""
+        }
+        
+      ]
+    },
+    {
+      "menuHeader": "Ajustes del sistema",
+      "role": ["Administrador", "Soporte"]
+    },
+    {
+      "name": "Configuraciones",
+      "icon": "menu-icon icon-base ri ri-lock-2-line",
+      "slug": "app-access",
+      "role": ["Soporte", "Administrador"],
+      "submenu": [
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Parámetros del sistema",
+          "slug": "app-access-roles",
+          "role": ["Soporte"]
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Parametros visuales",
+          "slug": "app-access-permission"
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Preferencias regionales",
+          "slug": "app-access-permission"
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "seguridad",
+          "slug": "app-access-permission",
+          "role": ["Soporte"]
+        }
+      ]
+    },
+    {
+      "name": "Seguridad",
+      "icon": "menu-icon icon-base ri ri-lock-2-line",
+      "slug": "app-access",
+      "role": ["Soporte"],
+      "submenu": [
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Políticas de contraseñas",
+          "slug": "app-access-permission"
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Logs del sistema",
+          "slug": "app-access-permission"
+        }
+        
+      ]
+    },
+    {
+      "menuHeader": "Ayuda y Soporte"
+    },
+    {
+      "name": "Centro de ayuda ",
+      "icon": "menu-icon icon-base ri ri-lock-2-line",
+      "slug": "ayuda",
+      "submenu": [
+        {
+          "url": "ayuda-faq",
+          "name": "Preguntas frecuentes",
+          "slug": "ayuda-faq"
+        },
+        {
+          "url": "ayuda-video-guias",
+          "name": "Video guias",
+          "slug": "ayuda-video-guias"
+        }
+        
+      ]
+    },
+    {
+      "name": "Soporte tecnico",
+      "icon": "menu-icon icon-base ri ri-lifebuoy-line",
+      "slug": "app-access",
+      "submenu": [
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Contactar soporte",
+          "slug": ""
+        },
+        {
+          "url": "pages/misc-under-maintenance",
+          "name": "Preguntas frecuentes",
+          "slug": ""
+        }
+        
+      ]
+    },
     {
       "name": "Dashboards",
       "icon": "menu-icon icon-base ri ri-home-smile-line",
