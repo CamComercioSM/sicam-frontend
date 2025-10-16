@@ -30,6 +30,18 @@ document.addEventListener('DOMContentLoaded', function (e) {
         // defaultSubmit: new FormValidation.plugins.DefaultSubmit(),
         autoFocus: new FormValidation.plugins.AutoFocus()
       }
+    }).on('core.form.valid', function () {
+      const formData = new FormData(addRoleForm);
+      const formDataObj = {};
+      // Convert FormData to URL-encoded string
+      formData.forEach((value, key) => {
+        formDataObj[key] = value;
+      });
+      const searchParams = new URLSearchParams();
+      for (const [key, value] of Object.entries(formDataObj)) {
+        searchParams.append(key, value);
+      }
+      
     });
 
     // Select All checkbox click

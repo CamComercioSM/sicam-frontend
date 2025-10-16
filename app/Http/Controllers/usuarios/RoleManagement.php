@@ -63,40 +63,49 @@ class RoleManagement extends Controller
      */
     public function show($id)
     {
-        $user = User::findOrFail($id);
-
-        // Obtener el rol asignado
-        $roleName = $user->getRoleNames()->first();
-
+        if (is_numeric($id)) {
+            $user = User::findOrFail($id);
+            $roleName = $user->getRoleNames()->first();
+        } else {
+            $user = null;
+            $roleName = $id;
+        }
         if ($roleName) {
             $role = Role::where('name', $roleName)->first();
 
-            // Obtener los permisos del rol
-            $permissions = $role->permissions;
+            if ($role) {
+                $permissions = $role->permissions;
+                $coleccionPermisos = $permissions
+                    ->filter(fn($p) => str_contains($p->name, '.'))
+                    ->mapToGroups(function ($p) {
+                        [$grupo, $op] = explode('.', $p->name, 2);
+                        return [$grupo => $op];
+                    })
+                    ->map(fn($ops) => collect($ops)->unique()->values()->all());
 
-            // Agrupar los permisos (igual que en RoleManagement)
-            $coleccionPermisos = $permissions
-                ->filter(fn($p) => str_contains($p->name, '.'))
-                ->mapToGroups(function ($p) {
-                    [$grupo, $op] = explode('.', $p->name, 2);
-                    return [$grupo => $op];
-                })
-                ->map(fn($ops) => collect($ops)->unique()->values()->all());
-
-            // Agregar el rol y permisos al objeto user
-            $user->rol = [
-                'nombre' => $role->name,
-                'permisos' => $coleccionPermisos,
-            ];
+                $rol = [
+                    'nombre' => $role->name,
+                    'permisos' => $coleccionPermisos,
+                ];
+            } else {
+                $rol = [
+                    'nombre' => 'Sin Rol',
+                    'permisos' => collect(),
+                ];
+            }
         } else {
-            $user->rol = [
+            $rol = [
                 'nombre' => 'Sin Rol',
                 'permisos' => collect(),
             ];
         }
 
-        return response()->json($user);
+        return response()->json([
+            'user' => $user,
+            'rol' => $rol,
+        ]);
     }
+
 
 
     /**
