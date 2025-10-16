@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\usuarios;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use Spatie\Permission\Models\Permission;
@@ -25,7 +26,7 @@ class RoleManagement extends Controller
                 return [$grupo => $op];
             })
             ->map(fn($ops) => collect($ops)->unique()->values()->all()); // <- cast aquí
-            
+
 
         return View('content.apps.app-access-roles', [
             'roles' => $roles,
@@ -60,10 +61,43 @@ class RoleManagement extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        // Obtener el rol asignado
+        $roleName = $user->getRoleNames()->first();
+
+        if ($roleName) {
+            $role = Role::where('name', $roleName)->first();
+
+            // Obtener los permisos del rol
+            $permissions = $role->permissions;
+
+            // Agrupar los permisos (igual que en RoleManagement)
+            $coleccionPermisos = $permissions
+                ->filter(fn($p) => str_contains($p->name, '.'))
+                ->mapToGroups(function ($p) {
+                    [$grupo, $op] = explode('.', $p->name, 2);
+                    return [$grupo => $op];
+                })
+                ->map(fn($ops) => collect($ops)->unique()->values()->all());
+
+            // Agregar el rol y permisos al objeto user
+            $user->rol = [
+                'nombre' => $role->name,
+                'permisos' => $coleccionPermisos,
+            ];
+        } else {
+            $user->rol = [
+                'nombre' => 'Sin Rol',
+                'permisos' => collect(),
+            ];
+        }
+
+        return response()->json($user);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -84,8 +118,11 @@ class RoleManagement extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $user = User::findOrFail($id);
+        $roleName = $user->getRoleNames()->first();
+        if($roleName){$user->removeRole($roleName);}
+        return response()->json('Rol removido');
     }
 }

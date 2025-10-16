@@ -4,14 +4,10 @@
 
 'use strict';
 
+
 // Datatable (js)
 document.addEventListener('DOMContentLoaded', function (e) {
-  const dtUserTable = document.querySelector('.datatables-users'),
-    statusObj = {
-      1: { title: 'Pending', class: 'bg-label-warning' },
-      2: { title: 'Active', class: 'bg-label-success' },
-      3: { title: 'Inactive', class: 'bg-label-secondary' }
-    };
+  const dtUserTable = document.querySelector('.datatables-users');
   // ajax setup
   $.ajaxSetup({
     headers: {
@@ -707,7 +703,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
     function bindDeleteEvent() {
       const userTable = document.querySelector('.datatables-users');
       const modal = document.querySelector('.dtr-bs-modal');
-
       if (userTable && userTable.classList.contains('collapsed')) {
         if (modal) {
           modal.addEventListener('click', function (event) {
@@ -800,24 +795,112 @@ document.addEventListener('DOMContentLoaded', function (e) {
     });
   }
 
+  //evento quitar role del usuario
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('.delete-record')) {
+      const viewBtn = e.target.closest('.delete-record');
+      const user_id = viewBtn.dataset.id;
+      quitaRoleAlUsuario(user_id);
+    }
+  });
+
+  //evento mostrar permisos del usuario y su rol
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('.view-record')) {
+      const viewBtn = e.target.closest('.view-record');
+      const user_id = viewBtn.dataset.id;
+      mostrarDatosDeRolParaUsuario(user_id);
+    }
+  });
+
+  //Evento editar rol de un usuario
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('.edit-role-user')) {
+      const viewBtn = e.target.closest('.edit-role-user');
+      const user_id = viewBtn.dataset.id;
+      console.log(user_id);
+    }
+  });
+
   function cambiarTituloModalRoles(titulo) {
-    document.getElementById('.addRoleModal').innerHTML = titulo;
+    roleTitle = document.querySelector('.role-title');
+    roleTitle.innerHTML = titulo;
+  }
+
+  function mostrarDatosDeRolParaUsuario(user_id) {
+    cambiarTituloModalRoles('Rol del usuario');
+    traerDatosRol(user_id);
+    document.querySelectorAll('#addRoleModal input[type="checkbox"]').forEach(chk => {
+      chk.checked = false;
+    });
+  }
+
+  function quitaRoleAlUsuario(user_id) {
+    fetch(`${baseUrl}role-list/${user_id}`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        if (response.ok) {
+          dtUserTable && new DataTable(dtUserTable).draw();
+          // success sweetalert
+          alertaExito('Rol removido!', 'El usuario esta sin rol!');
+        } else {
+          throw new Error('Error al remover rol');
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   function accionesTablaRoles(full) {
 
     return `
         <div class="d-flex align-items-center">
-          <a href="javascript:;" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"><i class="icon-base ri ri-delete-bin-7-line icon-22px"></i></a>
-          <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"  ><i class="icon-base ri ri-eye-line icon-22px"></i></a>
+          <a href="javascript:;" data-id="${full['id']}" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"><i class="icon-base ri ri-delete-bin-7-line icon-22px"></i></a>
+          <button
+            type="button"
+            class="btn btn-icon btn-text-secondary btn-sm rounded-pill view-record"
+            data-id="${full['id']}"
+            data-bs-toggle="modal"
+            data-bs-target="#addRoleModal"
+          >
+          <i class="icon-base ri ri-eye-line icon-22px"></i>
+          </button>          
           <a href="javascript:;" class="btn btn-sm btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0 waves-effect" data-bs-toggle="dropdown"><i class="icon-base ri ri-more-2-line icon-22px"></i></a>
           <div class="dropdown-menu dropdown-menu-end m-0">
-            <a href="javascript:;" class="dropdown-item">Edit</a>
+            <a href="javascript:;" data-id="${full['id']}" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="dropdown-item edit-role-user">Edit</a>
             <a href="javascript:;" class="dropdown-item">Suspend</a>
           </div>
         </div>
       `;
   }
 
+  function traerDatosRol(user_id) {
+    // get data
+    fetch(`${baseUrl}role-list/${user_id}`)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('modalRoleName').value = data.rol.nombre;
+        let permisos = data.rol.permisos;
+        Object.entries(permisos).forEach(([grupo, acciones]) => {
+          acciones.forEach(accion => {
+            Object.entries(permisos).forEach(([grupo, acciones]) => {
+              acciones.forEach(accion => {
+                const checkbox = document.querySelector(
+                  `#addRoleModal input[id="${grupo}_${accion}"]`
+                );
+                if (checkbox) checkbox.checked = true;
+              });
+            });
+          });
+        });
+      })
+      .catch(error => console.error('Error al traer datos del rol:', error));
+  }
 
 });
