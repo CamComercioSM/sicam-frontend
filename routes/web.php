@@ -369,7 +369,7 @@ Route::middleware([
   Route::get('/app/access-roles', [RoleManagement::class, 'RoleManagement'])->name('gestion.roles');
   Route::resource('/role-list', RoleManagement::class);
 
-  Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('app-access-permission');
+  Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('gestion.permisos');
 });
 
 

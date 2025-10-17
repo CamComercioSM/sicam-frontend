@@ -44,7 +44,8 @@
       ],
       "submenu": [
         {
-          "url": "usuarios-lista",
+          "url": "laravel/user-management",
+          "alias":"usuarios-lista",
           "name": "Lista",
           "slug": "usuarios-lista",
           "role": [
@@ -84,26 +85,27 @@
     {
       "name": "roles & Permissions",
       "icon": "menu-icon icon-base ri ri-lock-2-line",
-      "slug": "roles-permisos",
+      "slug": "gestion",
       "role": [
         "Administrador",
         "Soporte"
       ],
       "submenu": [
         {
-          "url": "gestion.roles", 
+          "url": "app/access-roles", 
           "alias": "gestion.roles",
           "name": "roles",
-          "slug": "gestion-roles",
+          "slug": "gestion.roles",
           "role": [
             "Administrador",
             "Soporte"
           ]
         },
         {
-          "url": "app-access-permission",
+          "url": "app/access-permission",
+          "alias": "gestion.permisos",
           "name": "Permission",
-          "slug": "app-access-permission",
+          "slug": "gestion.permisos",
           "role": [
             "Administrador",
             "Soporte"
@@ -119,7 +121,7 @@
         "Soporte"
       ],
       "any": [
-        "ver.ejemplos"
+        "ejemplos.ver"
       ],
       "submenu": [
         {
@@ -154,7 +156,7 @@
         "Administrador"
       ],
       "any": [
-        "ver.ejemplos"
+        "ejemplos.ver"
       ]
     },
     {
@@ -165,7 +167,7 @@
         "Administrador"
       ],
       "any": [
-        "ver.ejemplos"
+        "ejemplos.ver"
       ],
       "submenu": [
         {
@@ -386,7 +388,7 @@
         "Soporte"
       ],
       "any": [
-        "ver.ejemplos"
+        "ejemplos.ver"
       ]
     },
     {
@@ -398,7 +400,7 @@
         "Administrador"
       ],
       "any": [
-        "ver.ejemplos"
+        "ejemplos.ver"
       ],
       "submenu": [
         {
@@ -409,7 +411,7 @@
             "Soporte"
           ],
           "any": [
-            "ver.ejemplos"
+            "ejemplos.ver"
           ]
         },
         {
@@ -417,7 +419,7 @@
           "name": "Parametros visuales",
           "slug": "",
           "any": [
-            "ver.ejemplos"
+            "ejemplos.ver"
           ]
         },
         {
@@ -425,7 +427,7 @@
           "name": "Preferencias regionales",
           "slug": "",
           "any": [
-            "ver.ejemplos"
+            "ejemplos.ver"
           ]
         },
         {
@@ -436,7 +438,7 @@
             "Soporte"
           ],
           "any": [
-            "ver.ejemplos"
+            "ejemplos.ver"
           ]
         }
       ]
@@ -449,7 +451,7 @@
         "Soporte"
       ],
       "any": [
-        "ver.ejemplos"
+        "ejemplos.ver"
       ],
       "submenu": [
         {
@@ -457,7 +459,7 @@
           "name": "Políticas de contraseñas",
           "slug": "",
           "any": [
-            "ver.ejemplos"
+            "ejemplos.ver"
           ]
         },
         {
@@ -465,7 +467,7 @@
           "name": "Logs del sistema",
           "slug": "",
           "any": [
-            "ver.ejemplos"
+            "ejemplos.ver"
           ]
         }
       ]
@@ -473,7 +475,7 @@
     {
       "menuHeader": "Ayuda y Soporte",
       "any": [
-        "ver.ejemplos"
+        "ejemplos.ver"
       ]
     },
     {
@@ -481,7 +483,7 @@
       "icon": "menu-icon icon-base ri ri-lock-2-line",
       "slug": "ayuda",
       "any": [
-        "ver.ejemplos"
+        "ejemplos.ver"
       ],
       "submenu": [
         {
@@ -489,7 +491,7 @@
           "name": "Preguntas frecuentes",
           "slug": "ayuda-faq",
           "any": [
-            "ver.ejemplos"
+            "ejemplos.ver"
           ]
         },
         {
@@ -497,7 +499,7 @@
           "name": "Video guias",
           "slug": "ayuda-video-guias",
           "any": [
-            "ver.ejemplos"
+            "ejemplos.ver"
           ]
         }
       ]
@@ -507,7 +509,7 @@
       "icon": "menu-icon icon-base ri ri-lifebuoy-line",
       "slug": "",
       "any": [
-        "ver.ejemplos"
+        "ejemplos.ver"
       ],
       "submenu": [
         {
@@ -515,7 +517,7 @@
           "name": "Contactar soporte",
           "slug": "",
           "any": [
-            "ver.ejemplos"
+            "ejemplos.ver"
           ]
         },
         {
@@ -523,7 +525,7 @@
           "name": "Preguntas frecuentes",
           "slug": "",
           "any": [
-            "ver.ejemplos"
+            "ejemplos.ver"
           ]
         }
       ]
