@@ -89,7 +89,7 @@
 </head>
 
 <body>
-<div id="app-loading-overlay" class="show" role="status" aria-live="polite" aria-label="Cargando">
+<div id="app-loading-overlay" class="overlay " role="status" aria-live="polite" aria-label="Cargando">
   <div class="overlay-card">
     @include('_partials.macros')
     <div class="spinner-border" role="status" aria-hidden="true"></div>

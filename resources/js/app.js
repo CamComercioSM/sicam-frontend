@@ -8,4 +8,4 @@ import.meta.glob([
   '../assets/vendor/fonts/**'
 ]);
 
-import './app-loading-overlay';
+import './app-loading-overlay.js';

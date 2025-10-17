@@ -25,9 +25,13 @@
             autoHideTimer = null;
         }
 
-        // toggle
-        overlay.classList.toggle('show', !!show);
-        document.documentElement.style.overflow = show ? 'hidden' : '';
+        if(show) {
+            overlay.classList.add('show');    
+        }else{
+            overlay.classList.remove('show');    
+        }
+        
+        document.documentElement.style.overflow = show ? 'hidden' : 'visible';
 
         // autohide
         if (show && Number.isFinite(opts.timeout) && opts.timeout > 0) {

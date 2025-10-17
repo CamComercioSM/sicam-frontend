@@ -55,7 +55,7 @@ $configData = Helper::appClasses();
         <div class="d-flex justify-content-between align-items-center">
           <div class="role-heading ">
             <h5 class="mb-1">{{$role->name}}</h5>
-            <a href="javascript:;" data-role-name="{{ $role->name }}" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="role-edit-modal">
+            <a href="javascript:;" data-role-name="{{ $role->name }}"  class="role-edit-modal">
               <p class="mb-0">Editar Rol</p>
             </a>
           </div>
@@ -114,5 +114,5 @@ $configData = Helper::appClasses();
 
 <!-- Modal -->
 @include('_partials/_modals/modal-add-role')
-<!-- / Add Role Modal -->
+<!-- / Add Role Modal '-->
 @endsection

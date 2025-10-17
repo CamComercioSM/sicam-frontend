@@ -72,8 +72,8 @@
             <!-- Permission table -->
           </div>
           <div class="col-12 text-center">
-            <button type="submit" class="btn btn-primary me-3">Submit</button>
-            <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+            <button type="submit" class="btn btn-primary me-3">Enviar</button>
+            <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</button>
           </div>
         </form>
         <!--/ Add role form -->

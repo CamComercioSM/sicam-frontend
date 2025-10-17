@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         modalRoleName: {
           validators: {
             notEmpty: {
-              message: 'Please enter role name'
+              message: 'Por favor ingrese nombre del rol'
             }
           }
         }
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       for (const [key, value] of Object.entries(formDataObj)) {
         searchParams.append(key, value);
       }
-      
+
     });
 
     // Select All checkbox click

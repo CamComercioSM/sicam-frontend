@@ -3,7 +3,6 @@
  */
 
 'use strict';
-
 import { functionsIn } from "lodash";
 
 // Datatable (js)
@@ -216,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         },
         {
           targets: -1,
-          title: 'Actions',
+          title: 'Acciones',
           searchable: false,
           orderable: false,
           render: function (data, type, full, meta) {
@@ -236,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
             {
               pageLength: {
                 menu: [10, 25, 50, 100],
-                text: 'Show _MENU_'
+                text: 'Mostrar _MENU_'
               }
             },
             {
@@ -244,14 +243,14 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 {
                   extend: 'collection',
                   className: 'btn btn-outline-secondary dropdown-toggle',
-                  text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-download-line icon-16px me-1"></i> <span class="d-none d-sm-inline-block">Export</span></span>',
+                  text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-download-line icon-16px me-1"></i> <span class="d-none d-sm-inline-block">Exportar</span></span>',
                   buttons: [
                     {
                       extend: 'print',
-                      text: `<span class="d-flex align-items-center"><i class="icon-base ri ri-printer-line me-1"></i>Print</span>`,
+                      text: `<span class="d-flex align-items-center"><i class="icon-base ri ri-printer-line me-1"></i>Imprimir</span>`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
+                        columns: [2, 3, 4, 5, 6, 7],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
@@ -411,10 +410,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
                     },
                     {
                       extend: 'copy',
-                      text: `<i class="icon-base ri ri-file-copy-line me-1"></i>Copy`,
+                      text: `<i class="icon-base ri ri-file-copy-line me-1"></i>Copiar`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
+                        columns: [2, 3, 4, 5, 6, 7],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
@@ -456,7 +455,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           features: [
             {
               search: {
-                placeholder: 'Search User',
+                placeholder: 'Buscar Usuarios',
                 text: '_INPUT_'
               }
             },
@@ -465,7 +464,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
         },
         bottomStart: {
           rowClass: 'row mx-3 justify-content-between',
-          features: ['info']
+          features: [
+            {
+              info: {
+                text: 'Mostrando del _START_ al _END_ de _TOTAL_ registros'
+              }
+            }
+          ]
         },
         bottomEnd: 'paging'
       },
@@ -482,11 +487,11 @@ document.addEventListener('DOMContentLoaded', function (e) {
         {
           extend: 'collection',
           className: 'btn btn-outline-secondary dropdown-toggle me-4 waves-effect waves-light',
-          text: '<i class="ri-download-line ri-16px me-1"></i> <span class="d-none d-sm-inline-block">Export</span>',
+          text: '<i class="ri-download-line ri-16px me-1"></i> <span class="d-none d-sm-inline-block">Exportar</span>',
           buttons: [
             {
               extend: 'print',
-              text: '<i class="ri-printer-line me-1" ></i>Print',
+              text: '<i class="ri-printer-line me-1" ></i>Imprimir',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5],
@@ -666,7 +671,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
             const select = document.createElement('select');
             select.id = 'UserRole';
             select.className = 'form-select text-capitalize form-select-sm';
-            select.innerHTML = '<option value=""> Select Role </option>';
+            select.innerHTML = '<option value=""> Selecciona un rol </option>';
 
             userRole.appendChild(select);
 
@@ -780,7 +785,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     });
   }, 100);
 
-  // On edit role click, update text
+  // evento editar o crear un rol
   var roleEditList = document.querySelectorAll('.role-edit-modal'),
     roleAdd = document.querySelector('.add-new-role'),
     roleTitle = document.querySelector('.role-title');
@@ -790,52 +795,67 @@ document.addEventListener('DOMContentLoaded', function (e) {
     mostrarInput();
     cambiarTituloModalRoles('Agregar Nuevo Rol');
   };
+
   if (roleEditList) {
     roleEditList.forEach(function (roleEditEl) {
-      roleEditEl.onclick = function () {
-        desmarcarCheckBoxes();
+      roleEditEl.onclick = async function () {
         const roleName = this.dataset.roleName;
-        mostrarInput();
+        cargando(true, { text: 'Buscando datos' });
         cambiarTituloModalRoles('Editar Rol');
-        mostrarDatosDeRolParaUsuario(roleName);
-        mostrarDatosParaUnRol(roleName);
+        desmarcarCheckBoxes();
+        mostrarInput();
+        await mostrarDatosParaUnRol(roleName);
       };
     });
   }
 
   //evento quitar role del usuario
-  document.addEventListener('click', function (e) {
+  document.addEventListener('click', async function (e) {
     if (e.target.closest('.delete-record')) {
+      cargando(true, { text: 'Buscando datos' });
       const viewBtn = e.target.closest('.delete-record');
       const user_id = viewBtn.dataset.id;
-      quitaRoleAlUsuario(user_id);
+      await quitaRoleAlUsuario(user_id);
     }
   });
 
   //evento mostrar permisos del usuario y su rol
-  document.addEventListener('click', function (e) {
+  document.addEventListener('click', async function (e) {
     if (e.target.closest('.view-record')) {
+      cargando(true, { text: 'Buscando datos' });
       desmarcarCheckBoxes();
+      cambiarTituloModalRoles('Rol del usuario');
       const viewBtn = e.target.closest('.view-record');
       const user_id = viewBtn.dataset.id;
-      mostrarDatosDeRolParaUsuario(user_id);
+      await mostrarDatosDeRolParaUsuario(user_id);
     }
   });
 
   //Evento editar rol de un usuario
-  document.addEventListener('click', function (e) {
+  document.addEventListener('click', async function (e) {
     if (e.target.closest('.edit-role-user')) {
+      cargando(true, { text: 'Buscando datos' });
       desmarcarCheckBoxes();
-      $('modalRoleName').hide();
       const viewBtn = e.target.closest('.edit-role-user');
       const user_id = viewBtn.dataset.id;
-      cambiarRoleDelUsuario(user_id);
+      await cambiarRoleDelUsuario(user_id);
     }
+  });
+
+  //evento cambio de rol para editar
+  document.getElementById('add-user-userRole').addEventListener('change', async function () {
+    cargando(true, { text: 'Buscando datos' });
+    const roleName = this.value;
+    document.getElementById('add-user-userRole').style.display = 'none';
+    mostrarSelect();
+    await traerDatosRol(roleName);
+    desmarcarCheckBoxes();
   });
 
   function mostrarInput() {
     document.getElementById('add-user-userRole').style.display = 'none';
     document.querySelector('label[for="user-role"]').style.display = 'none';
+    document.getElementById('modalRoleName').value = '';
     document.getElementById('modalRoleName').style.display = 'block';
     document.querySelector('label[for="modalRoleName"]').style.display = 'block';
   }
@@ -850,6 +870,28 @@ document.addEventListener('DOMContentLoaded', function (e) {
       chk.checked = false;
     });
   }
+  function marcarCheckboxesEnModal(data) {
+    let permisos = data.rol.permisos;
+    Object.entries(permisos).forEach(([grupo, acciones]) => {
+      acciones.forEach(accion => {
+        Object.entries(permisos).forEach(([grupo, acciones]) => {
+          acciones.forEach(accion => {
+            const checkbox = document.querySelector(
+              `#addRoleModal input[id="${grupo}_${accion}"]`
+            );
+            if (checkbox) checkbox.checked = true;
+          });
+        });
+      });
+    });
+  }
+
+  function bloquearCamposModal() {
+    document.querySelectorAll('#addRoleModal input, #addRoleModal select').forEach(el => {
+      el.disabled = true;
+    });
+  }
+
   function cambiarTituloModalRoles(titulo) {
     roleTitle = document.querySelector('.role-title');
     roleTitle.innerHTML = titulo;
@@ -862,7 +904,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   function mostrarDatosDeRolParaUsuario(user_id) {
     mostrarInput();
-    cambiarTituloModalRoles('Rol del usuario');
     traerDatosRol(user_id);
   }
 
@@ -879,6 +920,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           dtUserTable && new DataTable(dtUserTable).draw();
           // success sweetalert
           alertaExito('Rol removido!', 'El usuario esta sin rol!');
+          cargando(false);
         } else {
           throw new Error('Error al remover rol');
         }
@@ -897,15 +939,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
             type="button"
             class="btn btn-icon btn-text-secondary btn-sm rounded-pill view-record"
             data-id="${full['id']}"
-            data-bs-toggle="modal"
-            data-bs-target="#addRoleModal"
           >
           <i class="icon-base ri ri-eye-line icon-22px"></i>
           </button>          
           <a href="javascript:;" class="btn btn-sm btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0 waves-effect" data-bs-toggle="dropdown"><i class="icon-base ri ri-more-2-line icon-22px"></i></a>
           <div class="dropdown-menu dropdown-menu-end m-0">
-            <a href="javascript:;" data-id="${full['id']}" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="dropdown-item edit-role-user">Edit</a>
-            <a href="javascript:;" class="dropdown-item">Suspend</a>
+            <a href="javascript:;" data-id="${full['id']}" class="dropdown-item edit-role-user">Editar</a>
+            <a href="javascript:;" class="dropdown-item">Suspender</a>
           </div>
         </div>
       `;
@@ -919,29 +959,25 @@ document.addEventListener('DOMContentLoaded', function (e) {
         document.getElementById('modalRoleName').value = data.rol.nombre;
         document.getElementById('add-user-userRole').value = data.rol.nombre;
         marcarCheckboxesEnModal(data);
+        cargando(false);
+        abrirModal(true);
       })
       .catch(error => console.error('Error al traer datos del rol:', error));
   }
 
-  function marcarCheckboxesEnModal(data) {
-    let permisos = data.rol.permisos;
-    Object.entries(permisos).forEach(([grupo, acciones]) => {
-      acciones.forEach(accion => {
-        Object.entries(permisos).forEach(([grupo, acciones]) => {
-          acciones.forEach(accion => {
-            const checkbox = document.querySelector(
-              `#addRoleModal input[id="${grupo}_${accion}"]`
-            );
-            if (checkbox) checkbox.checked = true;
-          });
-        });
-      });
-    });
+  function abrirModal(op) {
+    const modalEl = document.getElementById('addRoleModal');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    if (op) {
+      modal.show();
+    } else {
+      modal.hide();
+    }
+
   }
 
   function cambiarRoleDelUsuario(user_id) {
-    mostrarDatosDeRolParaUsuario(user_id);
     mostrarSelect();
+    traerDatosRol(user_id);
   }
-
 });

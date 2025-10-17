@@ -366,7 +366,7 @@ Route::middleware([
   Route::get('/app/user/view/account/{id}', [UserViewAccount::class, 'index'])->name('app-user-view-account');
   Route::resource('/user-list', UserManagement::class);
 
-  Route::get('/app/access-roles', [RoleManagement::class, 'RoleManagement'])->name('app-access-roles');
+  Route::get('/app/access-roles', [RoleManagement::class, 'RoleManagement'])->name('gestion.roles');
   Route::resource('/role-list', RoleManagement::class);
 
   Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('app-access-permission');
