@@ -6,7 +6,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="text-center mb-6">
           <h4 class="role-title mb-2 pb-0">Agregar Nuevo Rol</h4>
-          <p>Establecer permisos para el  rol.</p>
+          <p class="role-subtitle">Establecer permisos para el  rol.</p>
         </div>
         <!-- Add role form -->
         <form id="addRoleForm" class="row g-3" onsubmit="return false">
@@ -14,8 +14,8 @@
             <div class="form-floating form-floating-outline">
               <input type="text" id="modalRoleName" name="modalRoleName" class="form-control" placeholder="Ingresa el nombre del rol" tabindex="-1" />
               <label for="modalRoleName">Nombre del rol</label>
-                <select id="add-user-userRole" name="userRole" class="form-select">
-                  <option id="add-user-userRole-select" value="">Selecciona un rol...</option>
+                <select id="add-role-userRole" name="userRole" class="form-select">
+                  <option id="add-user-userRole-select" value="default">Selecciona un rol...</option>
                   @foreach ($roles as $role)
                       <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
                   @endforeach

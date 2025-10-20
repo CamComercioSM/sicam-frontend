@@ -140,9 +140,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
               '</div>' +
               '</div>' +
               '<div class="d-flex flex-column">' +
-              '<a href="' +
-              userView +
-              '" class="text-heading text-truncate"><span class="fw-medium">' +
+              '<a href="' + userView + '/' + full['id'] + '" class="text-heading text-truncate"><span class="fw-medium">' +
               name +
               '</span></a>' +
               '<small>' +

@@ -59,7 +59,6 @@ $configData = Helper::appClasses();
               <p class="mb-0">Editar Rol</p>
             </a>
           </div>
-          <a href="javascript:void(0);" class="text-secondary"><i class="icon-base ri ri-file-copy-line icon-22px"></i></a>
         </div>
       </div>
     </div>

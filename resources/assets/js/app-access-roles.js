@@ -117,9 +117,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
               '</div>' +
               '</div>' +
               '<div class="d-flex flex-column">' +
-              '<a href="' +
-              userView +
-              '" class="text-heading text-truncate"><span class="fw-medium">' +
+              '<a href="' + userView + '/' + full['id'] + '" class="text-heading text-truncate"><span class="fw-medium">' +
               name +
               '</span></a>' +
               '<small>' +
@@ -631,7 +629,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           display: DataTable.Responsive.display.modal({
             header: function (row) {
               const data = row.data();
-              return 'Details of ' + data['full_name'];
+              return 'Detalles de ' + data['name'];
             }
           }),
           type: 'column',
@@ -702,7 +700,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
         row = event.target.parentElement.closest('tr');
       }
       if (row) {
-        dt_User.row(row).remove().draw();
+
+        //dt_User.row(row).remove().draw();
       }
     }
 
@@ -812,10 +811,16 @@ document.addEventListener('DOMContentLoaded', function (e) {
   //evento quitar role del usuario
   document.addEventListener('click', async function (e) {
     if (e.target.closest('.delete-record')) {
-      cargando(true, { text: 'Buscando datos' });
-      const viewBtn = e.target.closest('.delete-record');
-      const user_id = viewBtn.dataset.id;
-      await quitaRoleAlUsuario(user_id);
+      confirmarAccion(
+        'Estas Seguro que quieres eliminar el rol del usuario?',
+        "Si quieres cambiarlo utiliza la opcion editar",
+        function () {
+          // delete the role
+          const viewBtn = e.target.closest('.delete-record');
+          const user_id = viewBtn.dataset.id;
+          cargando(true, { text: 'Buscando datos' });
+          quitaRoleAlUsuario(user_id);
+        });
     }
   });
 
@@ -825,6 +830,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       cargando(true, { text: 'Buscando datos' });
       desmarcarCheckBoxes();
       cambiarTituloModalRoles('Rol del usuario');
+      bloquearCamposModal();
       const viewBtn = e.target.closest('.view-record');
       const user_id = viewBtn.dataset.id;
       await mostrarDatosDeRolParaUsuario(user_id);
@@ -834,26 +840,35 @@ document.addEventListener('DOMContentLoaded', function (e) {
   //Evento editar rol de un usuario
   document.addEventListener('click', async function (e) {
     if (e.target.closest('.edit-role-user')) {
-      cargando(true, { text: 'Buscando datos' });
-      desmarcarCheckBoxes();
       const viewBtn = e.target.closest('.edit-role-user');
       const user_id = viewBtn.dataset.id;
+      cargando(true, { text: 'Buscando datos' });
+      desmarcarCheckBoxes();
+      cambiarTituloModalRoles('Editar rol del usuario',`Establecer permisos para el usuario ${user_id}`);
+      document.getElementById('add-user-userRole-select').style.display = 'none';
       await cambiarRoleDelUsuario(user_id);
+
     }
   });
 
   //evento cambio de rol para editar
-  document.getElementById('add-user-userRole').addEventListener('change', async function () {
-    cargando(true, { text: 'Buscando datos' });
+  document.getElementById('add-role-userRole').addEventListener('change', async function () {
     const roleName = this.value;
-    document.getElementById('add-user-userRole').style.display = 'none';
-    mostrarSelect();
-    await traerDatosRol(roleName);
-    desmarcarCheckBoxes();
+    if (roleName != 'default') {
+      cargando(true, { text: 'Buscando datos' });
+      mostrarSelect();
+      await traerDatosRol(roleName);
+
+    }else{
+      desmarcarCheckBoxes();
+    }
   });
 
+  // Se ejecuta cuando el modal termina de cerrarse
+  document.getElementById('addRoleModal').addEventListener('hidden.bs.modal', resetModal);
+
   function mostrarInput() {
-    document.getElementById('add-user-userRole').style.display = 'none';
+    document.getElementById('add-role-userRole').style.display = 'none';
     document.querySelector('label[for="user-role"]').style.display = 'none';
     document.getElementById('modalRoleName').value = '';
     document.getElementById('modalRoleName').style.display = 'block';
@@ -862,7 +877,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
   function mostrarSelect() {
     document.getElementById('modalRoleName').style.display = 'none';
     document.querySelector('label[for="modalRoleName"]').style.display = 'none';
-    document.getElementById('add-user-userRole').style.display = 'block';
+    document.getElementById('add-role-userRole').style.display = 'block';
     document.querySelector('label[for="user-role"]').style.display = 'block';
   }
   function desmarcarCheckBoxes() {
@@ -885,16 +900,23 @@ document.addEventListener('DOMContentLoaded', function (e) {
       });
     });
   }
-
-  function bloquearCamposModal() {
-    document.querySelectorAll('#addRoleModal input, #addRoleModal select').forEach(el => {
+  function bloquearCamposModal(op=true) {
+    if(op){
+      document.querySelectorAll('#addRoleModal input, #addRoleModal select').forEach(el => {
       el.disabled = true;
     });
+    }else{
+      document.querySelectorAll('#addRoleModal input, #addRoleModal select').forEach(el => {
+      el.disabled = false;
+    });
+    }
   }
 
-  function cambiarTituloModalRoles(titulo) {
+  function cambiarTituloModalRoles(titulo, subtitle='Establecer permisos para el  rol.') {
     roleTitle = document.querySelector('.role-title');
+    roleSubTitle = document.querySelector('.role-subtitle');
     roleTitle.innerHTML = titulo;
+    roleSubTitle.innerHTML = subtitle;
   }
 
   function mostrarDatosParaUnRol(roleName) {
@@ -956,16 +978,32 @@ document.addEventListener('DOMContentLoaded', function (e) {
     fetch(`${baseUrl}role-list/${user_id}`)
       .then(response => response.json())
       .then(data => {
-        document.getElementById('modalRoleName').value = data.rol.nombre;
-        document.getElementById('add-user-userRole').value = data.rol.nombre;
+        if (data.rol.nombre === "Sin Rol") {
+          document.getElementById('add-user-userRole-select').style.display = 'block';
+          document.getElementById('add-role-userRole').value = "default";
+        } else {
+          document.getElementById('modalRoleName').value = data.rol.nombre;
+          document.getElementById('add-role-userRole').value = data.rol.nombre;
+        }
+        desmarcarCheckBoxes();
         marcarCheckboxesEnModal(data);
         cargando(false);
+        ocultarModalUsuarios();
         abrirModal(true);
       })
       .catch(error => console.error('Error al traer datos del rol:', error));
   }
+  function ocultarModalUsuarios() {
+    const dtrModal = document.querySelector('.dtr-bs-modal.show');
+    // hide responsive modal in small screen
+    if (dtrModal) {
+      const bsModal = bootstrap.Modal.getInstance(dtrModal);
+      bsModal.hide();
+    }
+  }
 
   function abrirModal(op) {
+    
     const modalEl = document.getElementById('addRoleModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
     if (op) {
@@ -974,6 +1012,11 @@ document.addEventListener('DOMContentLoaded', function (e) {
       modal.hide();
     }
 
+  }
+
+  function resetModal() {
+    bloquearCamposModal(false);
+    desmarcarCheckBoxes();
   }
 
   function cambiarRoleDelUsuario(user_id) {
