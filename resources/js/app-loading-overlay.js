@@ -3,6 +3,7 @@
     const textEl = overlay?.querySelector('.overlay-text');
     let autoHideTimer = null;
 
+    window.overlayCancelado = false;
     /**
      * Muestra/oculta un overlay global que bloquea toda la pantalla.
      * @param {boolean} show - true para mostrar, false para ocultar
@@ -26,7 +27,8 @@
         }
 
         if(show) {
-            overlay.classList.add('show');    
+            overlay.classList.add('show');
+            window.overlayCancelado = false;    
         }else{
             overlay.classList.remove('show');    
         }
@@ -42,6 +44,7 @@
     // Accesibilidad: cerrar con ESC si se desea
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && overlay.classList.contains('show')) {
+            window.overlayCancelado = true;
             cargando(false);
         }
     });

@@ -799,8 +799,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
     roleEditList.forEach(function (roleEditEl) {
       roleEditEl.onclick = async function () {
         const roleName = this.dataset.roleName;
+        const roleId = this.dataset.roleId;
         cargando(true, { text: 'Buscando datos' });
-        cambiarTituloModalRoles('Editar Rol');
+        cambiarTituloModalRoles('Editar Rol',`Modificando el Rol ${roleName}`);
         desmarcarCheckBoxes();
         mostrarInput();
         await mostrarDatosParaUnRol(roleName);
@@ -827,12 +828,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
   //evento mostrar permisos del usuario y su rol
   document.addEventListener('click', async function (e) {
     if (e.target.closest('.view-record')) {
-      cargando(true, { text: 'Buscando datos' });
-      desmarcarCheckBoxes();
-      cambiarTituloModalRoles('Rol del usuario');
-      bloquearCamposModal();
       const viewBtn = e.target.closest('.view-record');
       const user_id = viewBtn.dataset.id;
+      const user_name = viewBtn.dataset.name;
+      cargando(true, { text: 'Buscando datos' });
+      desmarcarCheckBoxes();
+      cambiarTituloModalRoles('Rol del usuario',`Rol y permisos del usuario ${user_name}`);
+      bloquearCamposModal();
       await mostrarDatosDeRolParaUsuario(user_id);
     }
   });
@@ -842,12 +844,12 @@ document.addEventListener('DOMContentLoaded', function (e) {
     if (e.target.closest('.edit-role-user')) {
       const viewBtn = e.target.closest('.edit-role-user');
       const user_id = viewBtn.dataset.id;
+      const user_name = viewBtn.dataset.name;
       cargando(true, { text: 'Buscando datos' });
       desmarcarCheckBoxes();
-      cambiarTituloModalRoles('Editar rol del usuario',`Establecer permisos para el usuario ${user_id}`);
+      cambiarTituloModalRoles('Editar rol del usuario',`Establecer rol y permisos para el usuario ${user_name}`);
       document.getElementById('add-user-userRole-select').style.display = 'none';
       await cambiarRoleDelUsuario(user_id);
-
     }
   });
 
@@ -858,7 +860,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
       cargando(true, { text: 'Buscando datos' });
       mostrarSelect();
       await traerDatosRol(roleName);
-
     }else{
       desmarcarCheckBoxes();
     }
@@ -913,8 +914,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
   }
 
   function cambiarTituloModalRoles(titulo, subtitle='Establecer permisos para el  rol.') {
-    roleTitle = document.querySelector('.role-title');
-    roleSubTitle = document.querySelector('.role-subtitle');
+    let roleTitle = document.querySelector('.role-title');
+    let roleSubTitle = document.querySelector('.role-subtitle');
     roleTitle.innerHTML = titulo;
     roleSubTitle.innerHTML = subtitle;
   }
@@ -956,17 +957,18 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
     return `
         <div class="d-flex align-items-center">
-          <a href="javascript:;" data-id="${full['id']}" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"><i class="icon-base ri ri-delete-bin-7-line icon-22px"></i></a>
+          <a href="javascript:;" data-id="${full['id']}" data-name="${full['name']}" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"><i class="icon-base ri ri-delete-bin-7-line icon-22px"></i></a>
           <button
             type="button"
             class="btn btn-icon btn-text-secondary btn-sm rounded-pill view-record"
             data-id="${full['id']}"
+            data-name="${full['name']}"
           >
           <i class="icon-base ri ri-eye-line icon-22px"></i>
           </button>          
           <a href="javascript:;" class="btn btn-sm btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0 waves-effect" data-bs-toggle="dropdown"><i class="icon-base ri ri-more-2-line icon-22px"></i></a>
           <div class="dropdown-menu dropdown-menu-end m-0">
-            <a href="javascript:;" data-id="${full['id']}" class="dropdown-item edit-role-user">Editar</a>
+            <a href="javascript:;" data-id="${full['id']}" data-name="${full['name']}" class="dropdown-item edit-role-user">Editar</a>
             <a href="javascript:;" class="dropdown-item">Suspender</a>
           </div>
         </div>
@@ -978,6 +980,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
     fetch(`${baseUrl}role-list/${user_id}`)
       .then(response => response.json())
       .then(data => {
+        if (window.overlayCancelado) {
+        return;
+        }
         if (data.rol.nombre === "Sin Rol") {
           document.getElementById('add-user-userRole-select').style.display = 'block';
           document.getElementById('add-role-userRole').value = "default";
