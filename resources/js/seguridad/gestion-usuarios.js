@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   // Variable declaration for table
   dt_user_table = document.querySelector('.datatables-users');
-  const userView = baseUrl + 'app/user/view/account',
+  const userView = baseUrl + 'seguridad/usuarios/ver/cuenta/',
     offCanvasForm = document.getElementById('offcanvasAddUser');
 
   // Select2 initialization
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       processing: true,
       serverSide: true,
       ajax: {
-        url: baseUrl + 'user-list',
+        url: baseUrl + 'usuarios-gestion',
         dataSrc: function (json) {
           // Ensure recordsTotal and recordsFiltered are numeric and not undefined/null
           if (typeof json.recordsTotal !== 'number') {
@@ -116,19 +116,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
             var name = full['name'];
             var email = full['email'];
             var image = full['userProfilePhoto'];
-            var output;
-
+            var avatar;
             if (image) {
               // For Avatar image
-              output = '<img src="' + baseUrl + "storage/" + image + '" alt="Foto de perfil" class="rounded-circle">';
-            } else {
-              // For Avatar badge
-              var stateNum = Math.floor(Math.random() * 6);
-              var states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
-              var state = states[stateNum];
-              var initials = (name.match(/\b\w/g) || []).map(char => char.toUpperCase());
-              initials = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
-              output = '<span class="avatar-initial rounded-circle bg-label-' + state + '">' + initials + '</span>';
+              avatar = '<img src="' + baseUrl + image + '" alt="Foto de perfil" class="rounded-circle">';
             }
 
             // Creates full output for row
@@ -136,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
               '<div class="d-flex justify-content-start align-items-center user-name">' +
               '<div class="avatar-wrapper">' +
               '<div class="avatar avatar-sm me-4">' +
-              output +
+              avatar +
               '</div>' +
               '</div>' +
               '<div class="d-flex flex-column">' +
@@ -818,7 +809,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
   }
   function traerDatosUsuario(user_id) {
     // get data
-    fetch(`${baseUrl}user-list/${user_id}/edit`)
+    fetch(`${baseUrl}usuarios-gestion/${user_id}/edit`)
       .then(response => response.json())
       .then(data => {
         document.getElementById('user_id').value = data.id;
@@ -846,7 +837,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     guardarUsuario(searchParams);
   }
   function guardarUsuario(searchParams) {
-    fetch(`${baseUrl}user-list`, {
+    fetch(`${baseUrl}usuarios-gestion`, {
       method: 'POST',
       headers: {
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -888,7 +879,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       });
   }
   function borrarUsuario(user_id) {
-    fetch(`${baseUrl}user-list/${user_id}`, {
+    fetch(`${baseUrl}usuarios-gestion/${user_id}`, {
       method: 'DELETE',
       headers: {
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -919,7 +910,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     );
   }
   window.desactivarUsuario = function (user_id) {
-    fetch(`${baseUrl}user-list/${user_id}`, {
+    fetch(`${baseUrl}usuarios-gestion/${user_id}`, {
       method: 'PATCH', // o PUT, ambos funcionan
       headers: {
         'Content-Type': 'application/json',
@@ -952,7 +943,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       });
   }
   window.activarUsuario = function (user_id) {
-    fetch(`${baseUrl}user-list/${user_id}`, {
+    fetch(`${baseUrl}usuarios-gestion/${user_id}`, {
       method: 'PATCH', // o PUT, ambos funcionan
       headers: {
         'Content-Type': 'application/json',

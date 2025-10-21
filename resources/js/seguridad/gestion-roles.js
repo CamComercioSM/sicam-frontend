@@ -3,7 +3,7 @@
  */
 
 'use strict';
-import { functionsIn } from "lodash";
+import { functionsIn, nth } from "lodash";
 
 // Datatable (js)
 document.addEventListener('DOMContentLoaded', function (e) {
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     dt_User = new DataTable(dtUserTable, {
       processing: true,
       serverSide: true,
-      ajax: baseUrl + 'user-list',
+      ajax: baseUrl + 'usuarios-gestion',
       dataSrc: function (json) {
         // Ensure recordsTotal and recordsFiltered are numeric and not undefined/null
         if (typeof json.recordsTotal !== 'number') {
@@ -218,62 +218,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
       },
       order: [[2, 'desc']],
       layout: {
-
-        top: {
-          rowClass: 'row mx-2',
-          features: [
-            {
-              buttons: [
-
-                {
-                  text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-user-settings-line icon-16px me-1"></i><span class="d-none d-sm-inline-block">Cambiar rol</span></span>',
-                  className: 'btn btn-primary',
-                  action: function () {
-                    const ids = getSelectedUserIds();
-                    if (ids.length === 0) {
-                      alertaError('Sin selección', 'Selecciona al menos un usuario.');
-                      return;
-                    }
-                    // Modo masivo: preparamos modal
-                    window.bulkMode = true;
-                    window.bulkSelected = ids;
-
-                    // UI del modal (mostrar select de rol / ocultar input)
-                    cambiarTituloModalRoles('Cambiar rol (masivo)', `Usuarios seleccionados: ${ids.length}`);
-                    desmarcarCheckBoxes();
-                    bloquearCamposModal(false);
-                    document.getElementById('add-user-userRole-select').style.display = 'block';
-                    document.getElementById('add-role-userRole').value = 'default';
-                    document.getElementById('modalRoleName').style.display = 'none';
-                    document.querySelector('label[for="modalRoleName"]').style.display = 'none';
-                    document.querySelector('label[for="user-role"]').style.display = 'block';
-
-                    abrirModal(true);
-                  }
-                },
-                {
-                  text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-delete-bin-7-line icon-16px me-1"></i><span class="d-none d-sm-inline-block">Eliminar rol</span></span>',
-                  className: 'btn btn-outline-danger',
-                  action: function () {
-                    const ids = getSelectedUserIds();
-                    if (ids.length === 0) {
-                      alertaError('Sin selección', 'Selecciona al menos un usuario.');
-                      return;
-                    }
-                    confirmarAccion(
-                      '¿Eliminar rol de los usuarios seleccionados?',
-                      `Se removerá el rol de ${ids.length} usuario(s).`,
-                      function () { bulkRemoveRoles(ids); }
-                    );
-                  }
-                },
-
-
-              ]
-            }
-          ]
-        },
-
         topStart: {
           rowClass: 'row mx-2',
           features: [
@@ -323,10 +267,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
                                 // Get regular text content
                                 text = doc.body.textContent || doc.body.innerText;
                               }
-
                               return text.trim();
                             }
-
                             return inner;
                           }
                         }
@@ -347,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<span class="d-flex align-items-center"><i class="icon-base ri ri-file-text-line me-1"></i>Csv</span>`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
+                        columns: [2, 3, 4, 5, 6, 7],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
@@ -373,7 +315,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
                               // Handle other elements (status, role, etc)
                               text = doc.body.textContent || doc.body.innerText;
                             }
-
                             return text.trim();
                           }
                         }
@@ -384,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<span class="d-flex align-items-center"><i class="icon-base ri ri-file-excel-line me-1"></i>Excel</span>`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
+                        columns: [2, 3, 4, 5, 6, 7],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
@@ -421,7 +362,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<span class="d-flex align-items-center"><i class="icon-base ri ri-file-pdf-line me-1"></i>Pdf</span>`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
+                        columns: [2, 3, 4, 5, 6, 7],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
@@ -491,7 +432,43 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       }
                     }
                   ]
-                }
+                },
+                {
+                  text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-user-settings-line icon-16px me-1"></i><span class="d-none d-sm-inline-block">Cambiar rol</span></span>',
+                  className: 'btn btn-primary',
+                  action: function () {
+                    const ids = getSelectedUserIds();
+                    if (ids.length === 0) {
+                      alertaError('Sin selección', 'Selecciona al menos un usuario.');
+                      return;
+                    }
+                    // Modo masivo: preparamos modal
+                    window.bulkMode = true;
+                    window.bulkSelected = ids;
+
+                    // UI del modal (mostrar select de rol / ocultar input)
+                    cambiarTituloModalRoles('Cambiando roles', `Usuarios seleccionados: ${ids.length}`);
+                    resetModal();
+                    mostrarSelect();
+                    abrirModal(true);
+                  }
+                },
+                {
+                  text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-delete-bin-7-line icon-16px me-1"></i><span class="d-none d-sm-inline-block">Eliminar rol</span></span>',
+                  className: 'btn btn-outline-danger',
+                  action: function () {
+                    const ids = getSelectedUserIds();
+                    if (ids.length === 0) {
+                      alertaError('Sin selección', 'Selecciona al menos un usuario.');
+                      return;
+                    }
+                    confirmarAccion(
+                      '¿Eliminar rol de los usuarios seleccionados?',
+                      `Se removerá el rol de ${ids.length} usuario(s).`,
+                      function () { bulkRemoveRoles(ids); }
+                    );
+                  }
+                },
               ]
             }
           ]
@@ -539,7 +516,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
               text: '<i class="ri-printer-line me-1" ></i>Imprimir',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [1, 2, 3, 4, 5],
+                columns: [2, 3, 4, 5, 6, 7],
                 // prevent avatar to be print
                 format: {
                   body: function (inner, coldex, rowdex) {
@@ -801,12 +778,12 @@ document.addEventListener('DOMContentLoaded', function (e) {
     const elementsToModify = [
       { selector: '.dt-length', classToAdd: 'my-md-5 my-0 me-2' },
       { selector: '.dt-buttons', classToAdd: 'd-block w-auto', classToRemove: 'flex-wrap' },
-      { selector: '.user_role', classToAdd: 'w-px-200' },
+      { selector: '.user_role', classToRemove: 'mt-5', classToAdd: 'mb-sm-5 mb-0' },
       { selector: '.dt-search', classToRemove: 'mt-5', classToAdd: 'mb-sm-5 mb-0' },
       {
         selector: '.dt-layout-start',
         classToAdd: 'mt-5 mt-md-0 px-lg-5 pe-0 ps-2 d-flex justify-content-center',
-        classToRemove: 'justify-content-between'
+        classToRemove: 'justify-content-between '
       },
       {
         selector: '.dt-layout-end',
@@ -928,6 +905,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     document.querySelector('label[for="user-role"]').style.display = 'block';
   }
   function desmarcarCheckBoxes() {
+    
     document.querySelectorAll('#addRoleModal input[type="checkbox"]').forEach(chk => {
       chk.checked = false;
     });
@@ -958,6 +936,34 @@ document.addEventListener('DOMContentLoaded', function (e) {
       });
     }
   }
+  // Obtiene IDs seleccionados con Select extension
+function getSelectedUserIds() {
+  try {
+    // Si el DataTable usa "Select" extension
+    const data = dt_User.rows({ selected: true }).data();
+    return data.map(d => ({
+      id: d.id,
+      name: d.name ?? null
+    })).toArray();
+  } catch (e) {
+    // Fallback: manual por checkboxes
+    const ids = [];
+    document.querySelectorAll('.datatables-users tbody tr').forEach(tr => {
+      const chk = tr.querySelector('td:nth-child(2) input[type="checkbox"]');
+      if (chk && chk.checked) {
+        const row = dt_User.row(tr).data();
+        const nameEl = tr.querySelector('.fw-medium');
+        const name = row?.name ?? (nameEl ? nameEl.textContent.trim() : null);
+
+        if (row?.id != null) {
+          ids.push({ id: row.id, name });
+        }
+      }
+    });
+
+    return ids;
+  }
+}
 
   function cambiarTituloModalRoles(titulo, subtitle = 'Establecer permisos para el  rol.') {
     let roleTitle = document.querySelector('.role-title');
@@ -977,7 +983,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
   }
 
   function quitaRoleAlUsuario(user_id) {
-    fetch(`${baseUrl}role-list/${user_id}`, {
+    fetch(`${baseUrl}roles-gestion/${user_id}`, {
       method: 'DELETE',
       headers: {
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -1023,7 +1029,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   function traerDatosRol(user_id) {
     // get data
-    fetch(`${baseUrl}role-list/${user_id}`)
+    fetch(`${baseUrl}roles-gestion/${user_id}`)
       .then(response => response.json())
       .then(data => {
         if (window.overlayCancelado) {

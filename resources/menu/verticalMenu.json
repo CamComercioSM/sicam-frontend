@@ -45,9 +45,9 @@
       "submenu": [
         {
           "url": "laravel/user-management",
-          "alias":"usuarios-lista",
+          "alias":"usuarios.lista",
           "name": "Lista",
-          "slug": "usuarios-lista",
+          "slug": "usuarios.lista",
           "role": [
             "Administrador",
             "Soporte"

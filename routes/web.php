@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\laravel_example\UserManagement;
 use App\Http\Controllers\dashboard\Analytics;
 use App\Http\Controllers\dashboard\Crm;
 use App\Http\Controllers\language\LanguageController;
@@ -157,7 +156,75 @@ use App\Http\Controllers\tables\DatatableExtensions;
 use App\Http\Controllers\charts\ApexCharts;
 use App\Http\Controllers\charts\ChartJs;
 use App\Http\Controllers\maps\Leaflet;
-use App\Http\Controllers\usuarios\RoleManagement;
+use App\Http\Controllers\usuarios\GestionRoles;
+use App\Http\Controllers\usuarios\GestionUsuarios;
+
+Route::middleware([
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
+  'role:Administrador|Soporte'
+])->group(function () {
+
+  Route::get('/seguridad/usuarios', [GestionUsuarios::class, 'PanelUsuarios'])
+    ->name('usuarios.lista');
+  Route::get('/seguridad/usuarios/ver/cuenta/{id}', [UserViewAccount::class, 'index'])
+    ->name('usuario.detalles');
+  Route::resource('/usuarios-gestion', GestionUsuarios::class);
+
+  Route::get('/seguridad/roles', [GestionRoles::class, 'GestionRoles'])
+    ->name('gestion.roles');
+  Route::resource('/roles-gestion', GestionRoles::class);
+
+  Route::get('/seguridad/permisos', [AccessPermission::class, 'index'])
+    ->name('gestion.permisos');
+});
+
+
+Route::middleware([
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
+])->group(function () {
+
+  Route::get('/', [Analytics::class, 'index'])->name('dashboard-ejecutivo');
+  Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-general');
+
+  Route::get('/pages/faq', [Faq::class, 'index'])->name('ayuda-faq');
+  Route::get('/app/academy/course', [AcademyCourse::class, 'index'])->name('ayuda-video-guias');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Route::middleware([
   'auth:sanctum',
@@ -353,35 +420,4 @@ Route::middleware([
 
   // maps
   Route::get('/maps/leaflet', [Leaflet::class, 'index'])->name('maps-leaflet');
-});
-
-Route::middleware([
-  'auth:sanctum',
-  config('jetstream.auth_session'),
-  'verified',
-  'role:Administrador|Soporte'
-])->group(function () {
-
-  Route::get('/laravel/user-management', [UserManagement::class, 'UserManagement'])->name('usuarios-lista');
-  Route::get('/app/user/view/account/{id}', [UserViewAccount::class, 'index'])->name('app-user-view-account');
-  Route::resource('/user-list', UserManagement::class);
-
-  Route::get('/app/access-roles', [RoleManagement::class, 'RoleManagement'])->name('gestion.roles');
-  Route::resource('/role-list', RoleManagement::class);
-
-  Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('gestion.permisos');
-});
-
-
-Route::middleware([
-  'auth:sanctum',
-  config('jetstream.auth_session'),
-  'verified',
-])->group(function () {
-
-  Route::get('/', [Analytics::class, 'index'])->name('dashboard-ejecutivo');
-  Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-general');
-
-  Route::get('/pages/faq', [Faq::class, 'index'])->name('ayuda-faq');
-  Route::get('/app/academy/course', [AcademyCourse::class, 'index'])->name('ayuda-video-guias');
 });

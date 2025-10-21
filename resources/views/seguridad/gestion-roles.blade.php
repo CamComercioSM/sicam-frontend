@@ -15,7 +15,7 @@
 @endsection
 
 @section('page-script')
-    @vite(['resources/assets/js/app-access-roles.js', 'resources/assets/js/modal-add-role.js'])
+    @vite(['resources/js/seguridad/gestion-roles.js', 'resources/js/seguridad/modal-roles.js'])
 @endsection
 
 @section('content')
@@ -106,6 +106,6 @@
     <!--/ Role cards -->
 
     <!-- Modal -->
-    @include('_partials/_modals/modal-add-role')
+    @include('seguridad/modal-roles')
     <!-- / Add Role Modal '-->
 @endsection

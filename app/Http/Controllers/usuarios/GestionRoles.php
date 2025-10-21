@@ -11,10 +11,10 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Collection;
 
 
-class RoleManagement extends Controller
+class GestionRoles extends Controller
 {
 
-    function RoleManagement(): View
+    function GestionRoles(): View
     {
         $roles = Role::all();
         $permisos = Permission::all();
@@ -27,8 +27,7 @@ class RoleManagement extends Controller
             })
             ->map(fn($ops) => collect($ops)->unique()->values()->all()); // <- cast aquí
 
-
-        return View('content.apps.app-access-roles', [
+        return View('seguridad.gestion-roles', [
             'roles' => $roles,
             'permisos' => $coleccionPermisos,
         ]);
