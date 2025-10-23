@@ -83,6 +83,7 @@ class GestionRoles extends Controller
                     ->map(fn($ops) => collect($ops)->unique()->values()->all());
 
                 $rol = [
+                    'id' => $role->id,
                     'nombre' => $role->name,
                     'permisos' => $coleccionPermisos,
                 ];

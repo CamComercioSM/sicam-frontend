@@ -10,12 +10,13 @@
         </div>
         <!-- Add role form -->
         <form id="addRoleForm" class="row g-3" onsubmit="return false">
+        @csrf
           <div class="col-12 form-control-validation mb-3">
             <div class="form-floating form-floating-outline">
               <input type="text" id="modalRoleName" name="modalRoleName" class="form-control" placeholder="Ingresa el nombre del rol" tabindex="-1" />
               <label for="modalRoleName">Nombre del rol</label>
                 <select id="add-role-userRole" name="userRole" class="form-select">
-                  <option id="add-user-userRole-select" value="default">Selecciona un rol...</option>
+                  <option id="add-user-userRole-select" value="">Selecciona un rol...</option>
                   @foreach ($roles as $role)
                       <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
                   @endforeach
@@ -75,6 +76,9 @@
             <button type="submit" class="btn btn-primary me-3">Enviar</button>
             <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</button>
           </div>
+          <input type="hidden" name="roleID" value="" id="add-role-roleID" />
+          <input type="hidden" name="userID" value="" id="add-role-userID" />
+          <input type="hidden" name="userIDs" value="" id="add-role-userIDs" />
         </form>
         <!--/ Add role form -->
       </div>

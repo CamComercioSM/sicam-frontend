@@ -140,6 +140,7 @@
             </div>
             <div class="offcanvas-body mx-0 flex-grow-0 h-100">
                 <form class="add-new-user pt-0" id="addNewUserForm">
+                @csrf
                     <input type="hidden" name="id" id="user_id">
                     <div class="form-floating form-floating-outline mb-5 form-control-validation">
                         <input type="text" class="form-control" id="add-user-fullname" placeholder="John Doe"

@@ -26,13 +26,13 @@
             autoHideTimer = null;
         }
 
-        if(show) {
+        if (show) {
             overlay.classList.add('show');
-            window.overlayCancelado = false;    
-        }else{
-            overlay.classList.remove('show');    
+            window.overlayCancelado = false;
+        } else {
+            overlay.classList.remove('show');
         }
-        
+
         document.documentElement.style.overflow = show ? 'hidden' : 'visible';
 
         // autohide
@@ -49,6 +49,16 @@
         }
     });
 })();
+
+window.bloquearPantalla = function (msg) {
+    cargando(true, { 'text': msg });
+}
+window.desbloquearPantalla = function (msg) {
+    cargando(false);
+}
+
+
+
 document.addEventListener('DOMContentLoaded', async () => {
     // Mostramos el overlay manualmente (por si venía oculto)
     cargando(true, { text: 'Inicializando aplicación…' });

@@ -3,774 +3,138 @@
  */
 
 'use strict';
-import { functionsIn, nth } from "lodash";
 
 // Datatable (js)
 document.addEventListener('DOMContentLoaded', function (e) {
   const dtUserTable = document.querySelector('.datatables-users');
-  // ajax setup
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
-  let dt_User,
-    userView = baseUrl + 'app/user/view/account';
+  var dt_User,
+    userView = baseUrl + 'seguridad/usuarios/ver/cuenta/',
+    recursoRolesURL = baseUrl + 'roles-gestion',
+    recursoUsuariosURL = baseUrl + 'usuarios-gestion';
+
+
   // Users List datatable
   if (dtUserTable) {
     const userRole = document.createElement('div');
     userRole.classList.add('user_role');
 
+    // Contexto para los helpers (ajusta según tus variables globales)
+    const ctx = {
+      baseUrl,            // ej: window.baseUrl
+      userView,           // ej: baseUrl + 'app/user/view/account'
+      formatDate,         // tu formateador si existe (sino usan formatDateDefault)
+      accionesTablas  // tu función existente para el último col
+    };
+    const columnasTablaRoles = [
+      // columns according to JSON
+      { data: 'id' },
+      { data: 'id', orderable: false, render: DataTable.render.select() },
+      { data: 'id' },
+      { data: 'name' },
+      { data: 'identificacion' },
+      { data: 'email_verified_at' },
+      { data: 'userRole' },
+      { data: 'estado' },
+      { data: 'action' }
+    ];
+    const definicionColumnasRoles = [
+      {
+        className: 'control',
+        searchable: false,
+        orderable: false,
+        responsivePriority: 2,
+        targets: 0,
+        render: renderColumnaControl
+      },
+      {
+        targets: 1,
+        orderable: false,
+        searchable: false,
+        responsivePriority: 4,
+        checkboxes: true,
+        render: renderColumnaCheckbox,
+        checkboxes: {
+          selectAllRender: '<input type="checkbox" class="form-check-input">'
+        }
+      },
+      {
+        searchable: false,
+        orderable: false,
+        targets: 2,
+        render: renderColumnaId
+      },
+      {
+        targets: 3,
+        responsivePriority: 4,
+        // Enlazamos contexto para baseUrl/userView
+        render: withCtx(renderColumnaUsuario, ctx)
+      },
+      {
+        targets: 4,
+        render: renderColumnaIdentificacion
+      },
+      {
+        targets: 5,
+        className: 'text-center',
+        render: withCtx(renderColumnaEmailVerificado, ctx)
+      },
+      {
+        targets: 6,
+        render: renderColumnaUserRole
+      },
+      {
+        targets: 7,
+        render: renderColumnaEstado
+      },
+      {
+        targets: -1,
+        title: 'Acciones',
+        searchable: false,
+        orderable: false,
+        render: withCtx(renderColumnaAcciones, ctx)
+      }
+    ];
+    const exportCols = [2, 3, 4, 5, 6, 7];
+    const layout = buildDataTableLayout(exportCols);
+    
     dt_User = new DataTable(dtUserTable, {
       processing: true,
       serverSide: true,
-      ajax: baseUrl + 'usuarios-gestion',
-      dataSrc: function (json) {
-        // Ensure recordsTotal and recordsFiltered are numeric and not undefined/null
-        if (typeof json.recordsTotal !== 'number') {
-          json.recordsTotal = 0;
-        }
-        if (typeof json.recordsFiltered !== 'number') {
-          json.recordsFiltered = 0;
-        }
+      ajax: recursoUsuariosURL,
 
-        // Fallback for empty data to avoid pagination NaN issue
-        json.data = Array.isArray(json.data) ? json.data : [];
+      dataSrc: limpiarRespuestaDataTable,
 
-        return json.data;
-      },
+      columns: columnasTablaRoles,
 
-      columns: [
-        // columns according to JSON
-        { data: 'id' },
-        { data: 'id', orderable: false, render: DataTable.render.select() },
-        { data: 'id' },
-        { data: 'name' },
-        { data: 'identificacion' },
-        { data: 'email_verified_at' },
-        { data: 'userRole' },
-        { data: 'estado' },
-        { data: 'action' }
-      ],
-      columnDefs: [
-        {
-          // For Responsive
-          className: 'control',
-          searchable: false,
-          orderable: false,
-          responsivePriority: 2,
-          targets: 0,
-          render: function (data, type, full, meta) {
-            return '';
-          }
-        },
-        {
-          // For Checkboxes
-          targets: 1,
-          orderable: false,
-          searchable: false,
-          responsivePriority: 4,
-          checkboxes: true,
-          render: function () {
-            return '<input type="checkbox" class="dt-checkboxes form-check-input">';
-          },
-          checkboxes: {
-            selectAllRender: '<input type="checkbox" class="form-check-input">'
-          }
-        },
-        {
-          searchable: false,
-          orderable: false,
-          targets: 2,
-          render: function (data, type, full, meta) {
-            return `<span>${full.id}</span>`;
-          }
-        },
-        {
-          targets: 3,
-          responsivePriority: 4,
-          render: function (data, type, full, meta) {
-            var name = full['name'];
-            var email = full['email'];
-            var image = full['userProfilePhoto'];
-            var avatar;
-            if (image) {
-              // For Avatar image
-              avatar = '<img src="' + baseUrl + image + '" alt="Foto de perfil" class="rounded-circle">';
-            }
+      columnDefs: definicionColumnasRoles,
 
-            // Creates full output for row
-            var row_output =
-              '<div class="d-flex justify-content-start align-items-center user-name">' +
-              '<div class="avatar-wrapper">' +
-              '<div class="avatar avatar-sm me-4">' +
-              avatar +
-              '</div>' +
-              '</div>' +
-              '<div class="d-flex flex-column">' +
-              '<a href="' + userView + '/' + full['id'] + '" class="text-heading text-truncate"><span class="fw-medium">' +
-              name +
-              '</span></a>' +
-              '<small>' +
-              email +
-              '</small>' +
-              '</div>' +
-              '</div>';
-            return row_output;
-          }
-        },
-        {
-          // User email
-          targets: 4,
-          render: function (data, type, full, meta) {
-            const identificacion = full['identificacion'];
-            return '<span class="d-flex align-items-center">' +
-              '<i class="icon-base ri ri-id-card-line"></i> ' +
-              '<span>' + identificacion + '</span>' +
-              '</span>';
-          }
-        },
-        {
-          // email verify
-          targets: 5,
-          className: 'text-center',
-          render: function (data, type, full, meta) {
-            let email_verified_at = full['email_verified_at'];
-            let iconHtml;
-            if (email_verified_at && email_verified_at !== 'null') {
-              // Formato dd/mm/aaaa
-              let formattedDate = formatDate(email_verified_at);
-              iconHtml = '<i class="icon-base ri ri-mail-check-fill text-success icon-22px text-primary me-2"></i>';
-              return (
-                '<span class="d-flex align-items-center">' +
-                iconHtml +
-                '<span>' + formattedDate + '</span>' +
-                '</span>'
-              );
-            } else {
-              iconHtml = '<i class="icon-base ri fs-4 ri-shield-line text-danger icon-22px text-primary me-2"></i>';
-              return (
-                '<span class="d-flex align-items-center">' +
-                iconHtml +
-                '<span>No verificado</span>' +
-                '</span>'
-              );
-            }
-          }
-        },
-        {
-          //User Role
-          targets: 6,
-          render: function (data, type, full, meta) {
-            var userRole = full['userRole'];
-            var roleBadgeObj = {
-              Asesor: '<i class="icon-base ri ri-user-line icon-22px text-primary me-2"></i>',
-              Administrador: '<i class="icon-base ri ri-vip-crown-line icon-22px text-warning me-2"></i>',
-              Presidencia: '<i class="icon-base ri ri-pie-chart-line icon-22px text-success me-2"></i>',
-              Invitado: '<i class="icon-base ri ri-edit-box-line icon-22px text-info me-2"></i>',
-              Soporte: '<i class="icon-base ri ri-computer-line icon-22px text-danger me-2"></i>'
-            };
-            if (!userRole || userRole === 'null') {
-              return "<span class='text-truncate d-flex align-items-center text-heading'>-</span>";
-            }
-            return (
-              "<span class='text-truncate d-flex align-items-center text-heading'>" +
-              (roleBadgeObj[userRole] || '') + // Ensures badge exists for the role
-              userRole +
-              '</span>'
-            );
-          }
-        },
-        {
-          //User Status
-          targets: 7,
-          render: function (data, type, full, meta) {
-            var estado = full['estado'];
-            var roleBadgeObj = {
-              activo: '<i class="icon-base ri ri-user-line icon-22px text-primary me-2"></i>',
-              desactivo: '<i class="icon-base ri ri-vip-crown-line icon-22px text-warning me-2"></i>',
-              borrado: '<i class="icon-base ri ri-pie-chart-line icon-22px text-success me-2"></i>',
-            };
-            if (!estado || estado === 'null') {
-              return "<span class='text-truncate d-flex align-items-center text-heading'>-</span>";
-            }
-            return (
-              "<span class='text-truncate d-flex align-items-center text-heading'>" +
-              (roleBadgeObj[estado] || '') + // Ensures badge exists for the role
-              estado +
-              '</span>'
-            );
-          }
-        },
-        {
-          targets: -1,
-          title: 'Acciones',
-          searchable: false,
-          orderable: false,
-          render: function (data, type, full, meta) {
-            return accionesTablaRoles(full);
-          }
-        }
-      ],
       select: {
         style: 'multi',
         selector: 'td:nth-child(2)'
       },
-      order: [[2, 'desc']],
-      layout: {
-        topStart: {
-          rowClass: 'row mx-2',
-          features: [
-            {
-              pageLength: {
-                menu: [10, 25, 50, 100],
-                text: 'Mostrar _MENU_'
-              }
-            },
-            {
-              buttons: [
-                {
-                  extend: 'collection',
-                  className: 'btn btn-outline-secondary dropdown-toggle',
-                  text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-download-line icon-16px me-1"></i> <span class="d-none d-sm-inline-block">Exportar</span></span>',
-                  buttons: [
-                    {
-                      extend: 'print',
-                      text: `<span class="d-flex align-items-center"><i class="icon-base ri ri-printer-line me-1"></i>Imprimir</span>`,
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [2, 3, 4, 5, 6, 7],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
+      order: [[6, 'desc']],
+      layout: layout,
 
-                            // Check if inner is HTML content
-                            if (inner.indexOf('<') > -1) {
-                              const parser = new DOMParser();
-                              const doc = parser.parseFromString(inner, 'text/html');
-
-                              // Get all text content
-                              let text = '';
-
-                              // Handle specific elements
-                              const userNameElements = doc.querySelectorAll('.role-name');
-                              if (userNameElements.length > 0) {
-                                userNameElements.forEach(el => {
-                                  // Get text from nested structure
-                                  const nameText =
-                                    el.querySelector('.fw-medium')?.textContent ||
-                                    el.querySelector('.d-block')?.textContent ||
-                                    el.textContent;
-                                  text += nameText.trim() + ' ';
-                                });
-                              } else {
-                                // Get regular text content
-                                text = doc.body.textContent || doc.body.innerText;
-                              }
-                              return text.trim();
-                            }
-                            return inner;
-                          }
-                        }
-                      },
-                      customize: function (win) {
-                        win.document.body.style.color = config.colors.headingColor;
-                        win.document.body.style.borderColor = config.colors.borderColor;
-                        win.document.body.style.backgroundColor = config.colors.bodyBg;
-                        const table = win.document.body.querySelector('table');
-                        table.classList.add('compact');
-                        table.style.color = 'inherit';
-                        table.style.borderColor = 'inherit';
-                        table.style.backgroundColor = 'inherit';
-                      }
-                    },
-                    {
-                      extend: 'csv',
-                      text: `<span class="d-flex align-items-center"><i class="icon-base ri ri-file-text-line me-1"></i>Csv</span>`,
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [2, 3, 4, 5, 6, 7],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-
-                            // Parse HTML content
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(inner, 'text/html');
-
-                            let text = '';
-
-                            // Handle role-name elements specifically
-                            const userNameElements = doc.querySelectorAll('.role-name');
-                            if (userNameElements.length > 0) {
-                              userNameElements.forEach(el => {
-                                // Get text from nested structure - try different selectors
-                                const nameText =
-                                  el.querySelector('.fw-medium')?.textContent ||
-                                  el.querySelector('.d-block')?.textContent ||
-                                  el.textContent;
-                                text += nameText.trim() + ' ';
-                              });
-                            } else {
-                              // Handle other elements (status, role, etc)
-                              text = doc.body.textContent || doc.body.innerText;
-                            }
-                            return text.trim();
-                          }
-                        }
-                      }
-                    },
-                    {
-                      extend: 'excel',
-                      text: `<span class="d-flex align-items-center"><i class="icon-base ri ri-file-excel-line me-1"></i>Excel</span>`,
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [2, 3, 4, 5, 6, 7],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-
-                            // Parse HTML content
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(inner, 'text/html');
-
-                            let text = '';
-
-                            // Handle role-name elements specifically
-                            const userNameElements = doc.querySelectorAll('.role-name');
-                            if (userNameElements.length > 0) {
-                              userNameElements.forEach(el => {
-                                // Get text from nested structure - try different selectors
-                                const nameText =
-                                  el.querySelector('.fw-medium')?.textContent ||
-                                  el.querySelector('.d-block')?.textContent ||
-                                  el.textContent;
-                                text += nameText.trim() + ' ';
-                              });
-                            } else {
-                              // Handle other elements (status, role, etc)
-                              text = doc.body.textContent || doc.body.innerText;
-                            }
-
-                            return text.trim();
-                          }
-                        }
-                      }
-                    },
-                    {
-                      extend: 'pdf',
-                      text: `<span class="d-flex align-items-center"><i class="icon-base ri ri-file-pdf-line me-1"></i>Pdf</span>`,
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [2, 3, 4, 5, 6, 7],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-
-                            // Parse HTML content
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(inner, 'text/html');
-
-                            let text = '';
-
-                            // Handle role-name elements specifically
-                            const userNameElements = doc.querySelectorAll('.role-name');
-                            if (userNameElements.length > 0) {
-                              userNameElements.forEach(el => {
-                                // Get text from nested structure - try different selectors
-                                const nameText =
-                                  el.querySelector('.fw-medium')?.textContent ||
-                                  el.querySelector('.d-block')?.textContent ||
-                                  el.textContent;
-                                text += nameText.trim() + ' ';
-                              });
-                            } else {
-                              // Handle other elements (status, role, etc)
-                              text = doc.body.textContent || doc.body.innerText;
-                            }
-
-                            return text.trim();
-                          }
-                        }
-                      }
-                    },
-                    {
-                      extend: 'copy',
-                      text: `<i class="icon-base ri ri-file-copy-line me-1"></i>Copiar`,
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [2, 3, 4, 5, 6, 7],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-
-                            // Parse HTML content
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(inner, 'text/html');
-
-                            let text = '';
-
-                            // Handle role-name elements specifically
-                            const userNameElements = doc.querySelectorAll('.role-name');
-                            if (userNameElements.length > 0) {
-                              userNameElements.forEach(el => {
-                                // Get text from nested structure - try different selectors
-                                const nameText =
-                                  el.querySelector('.fw-medium')?.textContent ||
-                                  el.querySelector('.d-block')?.textContent ||
-                                  el.textContent;
-                                text += nameText.trim() + ' ';
-                              });
-                            } else {
-                              // Handle other elements (status, role, etc)
-                              text = doc.body.textContent || doc.body.innerText;
-                            }
-
-                            return text.trim();
-                          }
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-user-settings-line icon-16px me-1"></i><span class="d-none d-sm-inline-block">Cambiar rol</span></span>',
-                  className: 'btn btn-primary',
-                  action: function () {
-                    const ids = getSelectedUserIds();
-                    if (ids.length === 0) {
-                      alertaError('Sin selección', 'Selecciona al menos un usuario.');
-                      return;
-                    }
-                    // Modo masivo: preparamos modal
-                    window.bulkMode = true;
-                    window.bulkSelected = ids;
-
-                    // UI del modal (mostrar select de rol / ocultar input)
-                    cambiarTituloModalRoles('Cambiando roles', `Usuarios seleccionados: ${ids.length}`);
-                    resetModal();
-                    mostrarSelect();
-                    abrirModal(true);
-                  }
-                },
-                {
-                  text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-delete-bin-7-line icon-16px me-1"></i><span class="d-none d-sm-inline-block">Eliminar rol</span></span>',
-                  className: 'btn btn-outline-danger',
-                  action: function () {
-                    const ids = getSelectedUserIds();
-                    if (ids.length === 0) {
-                      alertaError('Sin selección', 'Selecciona al menos un usuario.');
-                      return;
-                    }
-                    confirmarAccion(
-                      '¿Eliminar rol de los usuarios seleccionados?',
-                      `Se removerá el rol de ${ids.length} usuario(s).`,
-                      function () { bulkRemoveRoles(ids); }
-                    );
-                  }
-                },
-              ]
-            }
-          ]
-        },
-        topEnd: {
-          features: [
-            {
-              search: {
-                placeholder: 'Buscar Usuarios',
-                text: '_INPUT_'
-              }
-            },
-            userRole
-          ]
-        },
-        bottomStart: {
-          rowClass: 'row mx-3 justify-content-between',
-          features: [
-            {
-              info: {
-                text: 'Mostrando del _START_ al _END_ de _TOTAL_ registros'
-              }
-            }
-          ]
-        },
-        bottomEnd: 'paging'
-      },
-      language: {
-        paginate: {
-          next: '<i class="icon-base ri ri-arrow-right-s-line scaleX-n1-rtl icon-22px"></i>',
-          previous: '<i class="icon-base ri ri-arrow-left-s-line scaleX-n1-rtl icon-22px"></i>',
-          first: '<i class="icon-base ri ri-skip-back-mini-line scaleX-n1-rtl icon-22px"></i>',
-          last: '<i class="icon-base ri ri-skip-forward-mini-line scaleX-n1-rtl icon-22px"></i>'
-        }
-      },
-      // for buttons
-      buttons: [
-        {
-          extend: 'collection',
-          className: 'btn btn-outline-secondary dropdown-toggle me-4 waves-effect waves-light',
-          text: '<i class="ri-download-line ri-16px me-1"></i> <span class="d-none d-sm-inline-block">Exportar</span>',
-          buttons: [
-            {
-              extend: 'print',
-              text: '<i class="ri-printer-line me-1" ></i>Imprimir',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [2, 3, 4, 5, 6, 7],
-                // prevent avatar to be print
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              },
-              customize: function (win) {
-                //customize print view for dark
-                $(win.document.body)
-                  .css('color', headingColor)
-                  .css('border-color', borderColor)
-                  .css('background-color', bodyBg);
-                $(win.document.body)
-                  .find('table')
-                  .addClass('compact')
-                  .css('color', 'inherit')
-                  .css('border-color', 'inherit')
-                  .css('background-color', 'inherit');
-              }
-            },
-            {
-              extend: 'csv',
-              text: '<i class="ri-file-text-line me-1" ></i>Csv',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              }
-            },
-            {
-              extend: 'excel',
-              text: '<i class="ri-file-excel-line me-1"></i>Excel',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              }
-            },
-            {
-              extend: 'pdf',
-              text: '<i class="ri-file-pdf-line me-1"></i>Pdf',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              }
-            },
-            {
-              extend: 'copy',
-              text: '<i class="ri-file-copy-line me-1"></i>Copy',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              }
-            }
-          ]
-        }
-      ],
-      // For responsive popup
-      responsive: {
-        details: {
-          display: DataTable.Responsive.display.modal({
-            header: function (row) {
-              const data = row.data();
-              return 'Detalles de ' + data['name'];
-            }
-          }),
-          type: 'column',
-          renderer: function (api, rowIdx, columns) {
-            const data = columns
-              .map(function (col) {
-                return col.title !== '' // Do not show row in modal popup if title is blank (for check box)
-                  ? `<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
-                      <td>${col.title}:</td>
-                      <td>${col.data}</td>
-                    </tr>`
-                  : '';
-              })
-              .join('');
-
-            if (data) {
-              const div = document.createElement('div');
-              div.classList.add('table-responsive');
-              const table = document.createElement('table');
-              div.appendChild(table);
-              table.classList.add('table');
-              const tbody = document.createElement('tbody');
-              tbody.innerHTML = data;
-              table.appendChild(tbody);
-              return div;
-            }
-            return false;
-          }
-        }
-      },
-      initComplete: function () {
-        // Adding role filter once table initialized
-        this.api()
-          .columns(6)
-          .every(function () {
-            const column = this;
-            const select = document.createElement('select');
-            select.id = 'UserRole';
-            select.className = 'form-select text-capitalize form-select-sm';
-            select.innerHTML = '<option value=""> Selecciona un rol </option>';
-
-            userRole.appendChild(select);
-
-            select.addEventListener('change', function () {
-              const val = select.value;
-              column.search(val ? '^' + val + '$' : '', true, false).draw();
-            });
-
-            column
-              .data()
-              .unique()
-              .sort()
-              .each(function (d) {
-                const option = document.createElement('option');
-                option.value = d;
-                option.className = 'text-capitalize';
-                option.textContent = d;
-                select.appendChild(option);
-              });
-          });
-      }
     });
 
-    //? The 'delete-record' class is necessary for the functionality of the following code.
-    function deleteRecord(event) {
-      let row = document.querySelector('.dtr-expanded');
-      if (event) {
-        row = event.target.parentElement.closest('tr');
-      }
-      if (row) {
 
-        //dt_User.row(row).remove().draw();
-      }
-    }
 
-    function bindDeleteEvent() {
-      const userTable = document.querySelector('.datatables-users');
-      const modal = document.querySelector('.dtr-bs-modal');
-      if (userTable && userTable.classList.contains('collapsed')) {
-        if (modal) {
-          modal.addEventListener('click', function (event) {
-            if (event.target.parentElement.classList.contains('delete-record')) {
-              deleteRecord();
-              const closeButton = modal.querySelector('.btn-close');
-              if (closeButton) closeButton.click(); // Simulates a click on the close button
-            }
-          });
-        }
-      } else {
-        const tableBody = userTable?.querySelector('tbody');
-        if (tableBody) {
-          tableBody.addEventListener('click', function (event) {
-            if (event.target.parentElement.classList.contains('delete-record')) {
-              deleteRecord(event);
-            }
-          });
-        }
-      }
-    }
 
-    // Initial event binding
-    bindDeleteEvent();
 
-    // Re-bind events when modal is shown or hidden
-    document.addEventListener('show.bs.modal', function (event) {
-      if (event.target.classList.contains('dtr-bs-modal')) {
-        bindDeleteEvent();
-      }
-    });
 
-    document.addEventListener('hide.bs.modal', function (event) {
-      if (event.target.classList.contains('dtr-bs-modal')) {
-        bindDeleteEvent();
-      }
-    });
+
+
+
+
+
+
+
+
+
+
 
   }
+
 
   // Filter form control to default size
   // ? setTimeout used for multilingual table initialization
@@ -778,12 +142,12 @@ document.addEventListener('DOMContentLoaded', function (e) {
     const elementsToModify = [
       { selector: '.dt-length', classToAdd: 'my-md-5 my-0 me-2' },
       { selector: '.dt-buttons', classToAdd: 'd-block w-auto', classToRemove: 'flex-wrap' },
-      { selector: '.user_role', classToRemove: 'mt-5', classToAdd: 'mb-sm-5 mb-0' },
+      { selector: '.user_role', classToAdd: 'w-px-200' },
       { selector: '.dt-search', classToRemove: 'mt-5', classToAdd: 'mb-sm-5 mb-0' },
       {
         selector: '.dt-layout-start',
         classToAdd: 'mt-5 mt-md-0 px-lg-5 pe-0 ps-2 d-flex justify-content-center',
-        classToRemove: 'justify-content-between '
+        classToRemove: 'justify-content-between'
       },
       {
         selector: '.dt-layout-end',
@@ -794,7 +158,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
       { selector: '.dt-layout-table', classToRemove: 'row mt-2' },
       { selector: '.dt-layout-full', classToRemove: 'col-md col-12', classToAdd: 'table-responsive' }
     ];
-
     // Delete record
     elementsToModify.forEach(({ selector, classToRemove, classToAdd }) => {
       document.querySelectorAll(selector).forEach(element => {
@@ -808,277 +171,46 @@ document.addEventListener('DOMContentLoaded', function (e) {
     });
   }, 100);
 
-  // evento editar o crear un rol
-  var roleEditList = document.querySelectorAll('.role-edit-modal'),
-    roleAdd = document.querySelector('.add-new-role');
+  // On edit role click, update text
+  const modalRolesHTML = document.getElementById('addRoleModal');
+  const modalRoles = bootstrap.Modal.getOrCreateInstance(modalRolesHTML);
 
-  roleAdd.onclick = function () {
-    resetModal();
-    mostrarInput();
-    cambiarTituloModalRoles('Agregar Nuevo Rol');
-  };
+  var roleEditList = document.querySelectorAll('.role-edit-modal'),
+    roleAdd = document.querySelector('.add-new-role'),
+    roleTitle = document.querySelector('.role-title'),
+    roleSubTitle = document.querySelector('.role-subtitle'),
+    formGestionRoles = document.getElementById('addRoleForm')
+    ;
+
+  agregarEvento('click', roleAdd, abriraModalNuevoRol)
+
 
   if (roleEditList) {
     roleEditList.forEach(function (roleEditEl) {
-      roleEditEl.onclick = async function () {
-        const roleName = this.dataset.roleName;
-        const roleId = this.dataset.roleId;
-        resetModal();
-        cargando(true, { text: 'Buscando datos' });
-        cambiarTituloModalRoles('Editar Rol', `Modificando el Rol ${roleName}`);
-        mostrarInput();
-        await mostrarDatosParaUnRol(roleName);
+      roleEditEl.onclick = function () {
+        roleTitle.innerHTML = 'Edit Role'; // reset text
       };
     });
   }
 
-  //evento quitar role del usuario
-  document.addEventListener('click', async function (e) {
-    if (e.target.closest('.delete-record')) {
-      confirmarAccion(
-        'Estas Seguro que quieres eliminar el rol del usuario?',
-        "Si quieres cambiarlo utiliza la opcion editar",
-        function () {
-          // delete the role
-          const viewBtn = e.target.closest('.delete-record');
-          const user_id = viewBtn.dataset.id;
-          cargando(true, { text: 'Buscando datos' });
-          quitaRoleAlUsuario(user_id);
-        });
-    }
-  });
 
-  //evento mostrar permisos del usuario y su rol
-  document.addEventListener('click', async function (e) {
-    if (e.target.closest('.view-record')) {
-      const viewBtn = e.target.closest('.view-record');
-      const user_id = viewBtn.dataset.id;
-      const user_name = viewBtn.dataset.name;
-      cargando(true, { text: 'Buscando datos' });
-      desmarcarCheckBoxes();
-      cambiarTituloModalRoles('Rol del usuario', `Rol y permisos del usuario ${user_name}`);
-      bloquearCamposModal();
-      await mostrarDatosDeRolParaUsuario(user_id);
-    }
-  });
-
-  //Evento editar rol de un usuario
-  document.addEventListener('click', async function (e) {
-    if (e.target.closest('.edit-role-user')) {
-      const viewBtn = e.target.closest('.edit-role-user');
-      const user_id = viewBtn.dataset.id;
-      const user_name = viewBtn.dataset.name;
-      cargando(true, { text: 'Buscando datos' });
-      desmarcarCheckBoxes();
-      cambiarTituloModalRoles('Editar rol del usuario', `Establecer rol y permisos para el usuario ${user_name}`);
-      document.getElementById('add-user-userRole-select').style.display = 'none';
-      await cambiarRoleDelUsuario(user_id);
-    }
-  });
-
-  //evento cambio de rol para editar
-  document.getElementById('add-role-userRole').addEventListener('change', async function () {
-    const roleName = this.value;
-    if (roleName != 'default') {
-      cargando(true, { text: 'Buscando datos' });
-      mostrarSelect();
-      await traerDatosRol(roleName);
-    } else {
-      desmarcarCheckBoxes();
-    }
-  });
-
-  // Se ejecuta cuando el modal termina de cerrarse
-  document.getElementById('addRoleModal').addEventListener('hidden.bs.modal', resetModal);
-
-  function mostrarInput() {
-    document.getElementById('add-role-userRole').style.display = 'none';
-    document.querySelector('label[for="user-role"]').style.display = 'none';
-    document.getElementById('modalRoleName').value = '';
-    document.getElementById('modalRoleName').style.display = 'block';
-    document.querySelector('label[for="modalRoleName"]').style.display = 'block';
-  }
-  function mostrarSelect() {
-    document.getElementById('modalRoleName').style.display = 'none';
-    document.querySelector('label[for="modalRoleName"]').style.display = 'none';
-    document.getElementById('add-role-userRole').style.display = 'block';
-    document.querySelector('label[for="user-role"]').style.display = 'block';
-  }
-  function desmarcarCheckBoxes() {
-    
-    document.querySelectorAll('#addRoleModal input[type="checkbox"]').forEach(chk => {
-      chk.checked = false;
-    });
-  }
-  function marcarCheckboxesEnModal(data) {
-    let permisos = data.rol.permisos;
-    Object.entries(permisos).forEach(([grupo, acciones]) => {
-      acciones.forEach(accion => {
-        Object.entries(permisos).forEach(([grupo, acciones]) => {
-          acciones.forEach(accion => {
-            const checkbox = document.querySelector(
-              `#addRoleModal input[id="${grupo}_${accion}"]`
-            );
-            if (checkbox) checkbox.checked = true;
-          });
-        });
-      });
-    });
-  }
-  function bloquearCamposModal(op = true) {
-    if (op) {
-      document.querySelectorAll('#addRoleModal input, #addRoleModal select').forEach(el => {
-        el.disabled = true;
-      });
-    } else {
-      document.querySelectorAll('#addRoleModal input, #addRoleModal select').forEach(el => {
-        el.disabled = false;
-      });
-    }
-  }
-  // Obtiene IDs seleccionados con Select extension
-function getSelectedUserIds() {
-  try {
-    // Si el DataTable usa "Select" extension
-    const data = dt_User.rows({ selected: true }).data();
-    return data.map(d => ({
-      id: d.id,
-      name: d.name ?? null
-    })).toArray();
-  } catch (e) {
-    // Fallback: manual por checkboxes
-    const ids = [];
-    document.querySelectorAll('.datatables-users tbody tr').forEach(tr => {
-      const chk = tr.querySelector('td:nth-child(2) input[type="checkbox"]');
-      if (chk && chk.checked) {
-        const row = dt_User.row(tr).data();
-        const nameEl = tr.querySelector('.fw-medium');
-        const name = row?.name ?? (nameEl ? nameEl.textContent.trim() : null);
-
-        if (row?.id != null) {
-          ids.push({ id: row.id, name });
-        }
-      }
-    });
-
-    return ids;
-  }
-}
-
-  function cambiarTituloModalRoles(titulo, subtitle = 'Establecer permisos para el  rol.') {
-    let roleTitle = document.querySelector('.role-title');
-    let roleSubTitle = document.querySelector('.role-subtitle');
-    roleTitle.innerHTML = titulo;
-    roleSubTitle.innerHTML = subtitle;
+  function abriraModalNuevoRol() {
+    resetearFormularios(formGestionRoles);
+    cambiarTituloModalRoles('Nuevo Rol', 'defina los datos del nuevo rol.');
+    abrirModalRoles();
   }
 
-  function mostrarDatosParaUnRol(roleName) {
-    mostrarInput();
-    traerDatosRol(roleName);
+  function cambiarTituloModalRoles(titulo, subtitulo) {
+    if (roleTitle) roleTitle.innerHTML = titulo;
+    if (roleSubTitle) roleSubTitle.innerHTML = subtitulo;
   }
 
-  function mostrarDatosDeRolParaUsuario(user_id) {
-    mostrarInput();
-    traerDatosRol(user_id);
+
+  function abrirModalRoles(op = true) {
+    modalRoles[op ? 'show' : 'hide']();
   }
 
-  function quitaRoleAlUsuario(user_id) {
-    fetch(`${baseUrl}roles-gestion/${user_id}`, {
-      method: 'DELETE',
-      headers: {
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => {
-        if (response.ok) {
-          dtUserTable && new DataTable(dtUserTable).draw();
-          // success sweetalert
-          alertaExito('Rol removido!', 'El usuario esta sin rol!');
-          cargando(false);
-        } else {
-          throw new Error('Error al remover rol');
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
 
-  function accionesTablaRoles(full) {
 
-    return `
-        <div class="d-flex align-items-center">
-          <a href="javascript:;" data-id="${full['id']}" data-name="${full['name']}" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"><i class="icon-base ri ri-delete-bin-7-line icon-22px"></i></a>
-          <button
-            type="button"
-            class="btn btn-icon btn-text-secondary btn-sm rounded-pill view-record"
-            data-id="${full['id']}"
-            data-name="${full['name']}"
-          >
-          <i class="icon-base ri ri-eye-line icon-22px"></i>
-          </button>          
-          <a href="javascript:;" class="btn btn-sm btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0 waves-effect" data-bs-toggle="dropdown"><i class="icon-base ri ri-more-2-line icon-22px"></i></a>
-          <div class="dropdown-menu dropdown-menu-end m-0">
-            <a href="javascript:;" data-id="${full['id']}" data-name="${full['name']}" class="dropdown-item edit-role-user">Editar</a>
-            <a href="javascript:;" class="dropdown-item">Suspender</a>
-          </div>
-        </div>
-      `;
-  }
 
-  function traerDatosRol(user_id) {
-    // get data
-    fetch(`${baseUrl}roles-gestion/${user_id}`)
-      .then(response => response.json())
-      .then(data => {
-        if (window.overlayCancelado) {
-          resetModal();
-          return;
-        }
-        if (data.rol.nombre === "Sin Rol") {
-          document.getElementById('add-user-userRole-select').style.display = 'block';
-          document.getElementById('add-role-userRole').value = "default";
-        } else {
-          document.getElementById('modalRoleName').value = data.rol.nombre;
-          document.getElementById('add-role-userRole').value = data.rol.nombre;
-        }
-        desmarcarCheckBoxes();
-        marcarCheckboxesEnModal(data);
-        cargando(false);
-        ocultarModalUsuarios();
-        abrirModal(true);
-      })
-      .catch(error => console.error('Error al traer datos del rol:', error));
-  }
-  function ocultarModalUsuarios() {
-    const dtrModal = document.querySelector('.dtr-bs-modal.show');
-    // hide responsive modal in small screen
-    if (dtrModal) {
-      const bsModal = bootstrap.Modal.getInstance(dtrModal);
-      bsModal.hide();
-    }
-  }
-
-  function abrirModal(op) {
-
-    const modalEl = document.getElementById('addRoleModal');
-    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-    if (op) {
-      modal.show();
-    } else {
-      modal.hide();
-    }
-
-  }
-
-  function resetModal() {
-    bloquearCamposModal(false);
-    desmarcarCheckBoxes();
-  }
-
-  function cambiarRoleDelUsuario(user_id) {
-    mostrarSelect();
-    traerDatosRol(user_id);
-  }
 });

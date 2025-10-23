@@ -6,6 +6,16 @@
 
 document.addEventListener('DOMContentLoaded', function (e) {
   (function () {
+
+    // Select All checkbox click
+    const selectAll = document.querySelector('#selectAll');
+    const checkboxList = document.querySelectorAll('[type="checkbox"]');
+    selectAll.addEventListener('change', t => {
+      checkboxList.forEach(e => {
+        e.checked = t.target.checked;
+      });
+    });
+
     // add role form validation
     FormValidation.formValidation(document.getElementById('addRoleForm'), {
       fields: {
@@ -31,26 +41,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         autoFocus: new FormValidation.plugins.AutoFocus()
       }
     }).on('core.form.valid', function () {
-      const formData = new FormData(addRoleForm);
-      const formDataObj = {};
-      // Convert FormData to URL-encoded string
-      formData.forEach((value, key) => {
-        formDataObj[key] = value;
-      });
-      const searchParams = new URLSearchParams();
-      for (const [key, value] of Object.entries(formDataObj)) {
-        searchParams.append(key, value);
-      }
-
-    });
-
-    // Select All checkbox click
-    const selectAll = document.querySelector('#selectAll'),
-      checkboxList = document.querySelectorAll('[type="checkbox"]');
-    selectAll.addEventListener('change', t => {
-      checkboxList.forEach(e => {
-        e.checked = t.target.checked;
-      });
+     armarDatosFormRoles();
     });
   })();
 });
