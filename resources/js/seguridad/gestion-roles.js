@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       baseUrl,            // ej: window.baseUrl
       userView,           // ej: baseUrl + 'app/user/view/account'
       formatDate,         // tu formateador si existe (sino usan formatDateDefault)
-      accionesTablas  // tu función existente para el último col
+      accionesTabla: accionesTablaRoles  // tu función existente para el último col
     };
     const columnasTablaRoles = [
       // columns according to JSON
@@ -37,6 +37,30 @@ document.addEventListener('DOMContentLoaded', function (e) {
       { data: 'estado' },
       { data: 'action' }
     ];
+
+    function accionesTablaRoles(full) {
+
+      return `
+        <div class="d-flex align-items-center">
+          <a href="javascript:;" data-id="${full['id']}" data-name="${full['name']}" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"><i class="icon-base ri ri-delete-bin-7-line icon-22px"></i></a>
+          <button
+            type="button"
+            class="btn btn-icon btn-text-secondary btn-sm rounded-pill view-record"
+            data-id="${full['id']}"
+            data-name="${full['name']}"
+          >
+          <i class="icon-base ri ri-eye-line icon-22px"></i>
+          </button>          
+          <a href="javascript:;" class="btn btn-sm btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0 waves-effect" data-bs-toggle="dropdown"><i class="icon-base ri ri-more-2-line icon-22px"></i></a>
+          <div class="dropdown-menu dropdown-menu-end m-0">
+            <a href="javascript:;" data-id="${full['id']}" data-name="${full['name']}" class="dropdown-item edit-role-user">Editar</a>
+            <a href="javascript:;" class="dropdown-item">Suspender</a>
+          </div>
+        </div>
+      `;
+    }
+
+
     const definicionColumnasRoles = [
       {
         className: 'control',
@@ -94,27 +118,74 @@ document.addEventListener('DOMContentLoaded', function (e) {
         render: withCtx(renderColumnaAcciones, ctx)
       }
     ];
-    const exportCols = [2, 3, 4, 5, 6, 7];
-    const layout = buildDataTableLayout(exportCols);
-    
+    const exportColumns = [2, 3, 4, 5, 6, 7];
+    const exportItems = buildExportButtons({
+      columns: exportColumns,
+      classNameItem: 'dropdown-item'
+    });
+    const botonesTopStart = [
+      {
+        extend: 'collection',
+        className: 'btn btn-outline-secondary dropdown-toggle',
+        text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-download-line icon-16px me-1"></i> <span class="d-none d-sm-inline-block">Exportar</span></span>',
+        buttons: exportItems
+      },
+      {
+        text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-user-settings-line icon-16px me-1"></i><span class="d-none d-sm-inline-block">Cambiar rol</span></span>',
+        className: 'btn btn-primary',
+        action: function () {
+          resetModal();
+          const ids = getSelectedUserIds();
+          if (ids.length === 0) {
+            alertaError('Sin selección', 'Selecciona al menos un usuario.');
+            return;
+          }
+          document.getElementById('add-role-userIDs').value = ids;
+          cambiarTituloModalRoles('Cambiando roles', `Usuarios seleccionados: ${ids.length}`);
+          mostrarSelect();
+          abrirModal(true);
+        }
+      },
+      {
+        text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-delete-bin-7-line icon-16px me-1"></i><span class="d-none d-sm-inline-block">Eliminar rol</span></span>',
+        className: 'btn btn-outline-danger',
+        action: function () {
+          const ids = getSelectedUserIds();
+          if (ids.length === 0) {
+            alertaError('Sin selección', 'Selecciona al menos un usuario.');
+            return;
+          }
+          confirmarAccion(
+            '¿Eliminar rol de los usuarios seleccionados?',
+            `Se removerá el rol de ${ids.length} usuario(s).`,
+            function () { bulkRemoveRoles(ids); }
+          );
+        }
+      }
+    ];
+    const configTopStart = generarTopStart('row mx-2', columnTopStart(true, botonesTopStart));
+    const configTopEnd = generarTopEnd(columnTopEnd(true, 'Buscar Usuarios', '_INPUT_', [userRole]));
+    const configBottomStart = generarBottomStart('row mx-3 justify-content-between', columnBottomStart(true, 'Mostrando del _START_ al _END_ de _TOTAL_ registros'));
+    const configBottomEnd = generarBottomEnd('paging');
+    const layout = construirDataTableLayout(
+      configTopStart,
+      configTopEnd,
+      configBottomStart,
+      configBottomEnd
+    );
     dt_User = new DataTable(dtUserTable, {
-      processing: true,
-      serverSide: true,
       ajax: recursoUsuariosURL,
-
       dataSrc: limpiarRespuestaDataTable,
-
       columns: columnasTablaRoles,
-
       columnDefs: definicionColumnasRoles,
-
       select: {
         style: 'multi',
         selector: 'td:nth-child(2)'
       },
       order: [[6, 'desc']],
       layout: layout,
-
+      responsive: modalDetallesFilaTabla('name'),
+      initComplete: renderAlInicializarTablaRoles
     });
 
 
@@ -204,7 +275,38 @@ document.addEventListener('DOMContentLoaded', function (e) {
     if (roleTitle) roleTitle.innerHTML = titulo;
     if (roleSubTitle) roleSubTitle.innerHTML = subtitulo;
   }
+  function renderAlInicializarTablaRoles() {
+    // Adding role filter once table initialized
+    this.api()
+      .columns(6)
+      .every(function () {
+        const column = this;
+        const select = document.createElement('select');
+        select.id = 'UserRole';
+        select.className = 'form-select text-capitalize form-select-sm';
+        select.innerHTML = '<option value=""> Selecciona un rol </option>';
 
+        userRole.appendChild(select);
+
+        select.addEventListener('change', function () {
+          const val = select.value;
+          column.search(val ? '^' + val + '$' : '', true, false).draw();
+        });
+
+        column
+          .data()
+          .unique()
+          .sort()
+          .each(function (d) {
+            const option = document.createElement('option');
+            option.value = d;
+            option.className = 'text-capitalize';
+            option.textContent = d;
+            select.appendChild(option);
+          });
+      });
+
+  }
 
   function abrirModalRoles(op = true) {
     modalRoles[op ? 'show' : 'hide']();

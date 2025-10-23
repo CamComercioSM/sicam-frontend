@@ -363,5 +363,152 @@ window.construirDataTableLayout = function (
     return layout;
 };
 
+// Crea el feature de "tamaño de página"
+window.featurePageLength = function (menu = [10, 25, 50, 100], text = 'Mostrar _MENU_') {
+  return { pageLength: { menu, text } };
+};
+
+// Crea el feature de "botones" (acepta array de botones DataTables Buttons)
+window.featureButtons = function (buttons = []) {
+  return { buttons: Array.isArray(buttons) ? buttons : (buttons ? [buttons] : []) };
+};
+
+// Construye el array de features para topStart,
+// combinando (opcionalmente) pageLength + botones
+//  - mostrarPageLength: boolean para incluir/omitir el selector de tamaño
+//  - botonesTopStart: array de botones (tu colección de export, acciones, etc.)
+window.columnTopStart = function (mostrarPageLength = true, botonesTopStart = []) {
+  const features = [];
+  if (mostrarPageLength) features.push(window.featurePageLength());
+  if (botonesTopStart && botonesTopStart.length) {
+    features.push(window.featureButtons(botonesTopStart));
+  }
+  return features;
+};
+
+// Envoltura de región topStart: { rowClass, features:[...] }
+window.generarTopStart = function (rowClass = 'row mx-2', features = []) {
+  return { rowClass, features: Array.isArray(features) ? features : [features] };
+};
+
+  function toArray(value) {
+    if (Array.isArray(value)) return value;
+    if (value == null) return [];
+    return [value];
+  }
+
+  window.featurePageLength = function (menu = [10, 25, 50, 100], text = 'Mostrar _MENU_') {
+    return { pageLength: { menu, text } };
+  };
+
+  window.featureButtons = function (buttons = []) {
+    return { buttons: toArray(buttons) };
+  };
+
+  window.columnTopStart = function (mostrarPageLength = true, botones = []) {
+    const features = [];
+    if (mostrarPageLength) features.push(window.featurePageLength());
+    if (botones?.length) features.push(window.featureButtons(botones));
+    return features;
+  };
+
+  window.generarTopStart = function (rowClass = 'row mx-2', features = []) {
+    return { rowClass, features: toArray(features) };
+  };
+
+  window.featureSearch = function (placeholder = 'Buscar', text = '_INPUT_') {
+    return { search: { placeholder, text } };
+  };
+
+  /**
+   * Construye el array de features para el topEnd.
+   * @param {boolean} incluirBuscador - Si incluye el campo de búsqueda
+   * @param {string} placeholder - Placeholder del buscador
+   * @param {string} text - Texto de reemplazo (usualmente "_INPUT_")
+   * @param {array} extras - Features adicionales, ej. userRole
+   */
+  window.columnTopEnd = function (incluirBuscador = true, placeholder = 'Buscar', text = '_INPUT_', extras = []) {
+    const features = [];
+    if (incluirBuscador) features.push(window.featureSearch(placeholder, text));
+    if (extras?.length) features.push(...extras);
+    return features;
+  };
+
+  /**
+   * Crea la sección topEnd del layout.
+   */
+  window.generarTopEnd = function (features = []) {
+    return { features: toArray(features) };
+  };
+
+  window.featureInfo = function (text = 'Mostrando del _START_ al _END_ de _TOTAL_ registros') {
+    return { info: { text } };
+  };
+
+  /**
+   * Crea la lista de features para bottomStart.
+   * @param {boolean} mostrarInfo - Si incluye el texto de info
+   * @param {string} textoInfo - Texto a mostrar en la info
+   * @param {array} extras - Features adicionales opcionales
+   */
+  window.columnBottomStart = function (mostrarInfo = true, textoInfo, extras = []) {
+    const features = [];
+    if (mostrarInfo) features.push(window.featureInfo(textoInfo));
+    if (extras?.length) features.push(...extras);
+    return features;
+  };
+
+  window.generarBottomStart = function (rowClass = 'row mx-3 justify-content-between', features = []) {
+    return { rowClass, features: toArray(features) };
+  };
+
+  /**
+   * Puede ser string ('paging') o un array de features
+   */
+  window.generarBottomEnd = function (valor = 'paging') {
+    if (typeof valor === 'string') return valor;
+    return { features: toArray(valor) };
+  };
+
+
+// Helper súper simple para usar en: responsive: modalDelaTabla('campo')
+// Si pasas una función, se usa para armar el título: modalDelaTabla(d => d.name + ' (#' + d.id + ')')
+window.modalDetallesFilaTabla = function (txt_titulo = 'name') {
+  const buildHeader = (row) => {
+    const d = (row && typeof row.data === 'function') ? row.data() : {};
+    const titulo = (typeof txt_titulo === 'function')
+      ? txt_titulo(d, row)
+      : (d?.[txt_titulo] ?? 'Detalle');
+    return `Detalles de ${window.escapeHtml(titulo)}`;
+  };
+
+  return {
+    details: {
+      display: DataTable.Responsive.display.modal({ header: buildHeader }),
+      type: 'column',
+      renderer: function (api, rowIdx, columns) {
+        const filas = columns
+          .filter(col => col.title !== '' && col.title !== 'Acciones')
+          .map(col => `
+            <tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
+              <td class="pe-3 text-muted">${window.escapeHtml(col.title)}:</td>
+              <td>${(col.data)}</td>
+            </tr>
+          `)
+          .join('');
+
+        if (!filas) return false;
+
+        const div = document.createElement('div');
+        div.className = 'table-responsive';
+        div.innerHTML = `
+          <table class="table table-sm mb-0">
+            <tbody>${filas}</tbody>
+          </table>`;
+        return div;
+      }
+    }
+  };
+};
 
 console.info('[Renderizadores globales] cargados correctamente');

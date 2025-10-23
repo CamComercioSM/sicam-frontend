@@ -32,7 +32,10 @@ try {
   window.pdfMake = pdfMake;
   window.pdfFonts = pdfFonts;
   window.JSZip = JSZip;
-} catch (e) {}
+} catch (e) { }
 window.DataTable = DataTable;
+
 // Export the libraries/modules
 export { DataTable, JSZip, pdfMake, pdfFonts };
+
+import '../../../config/datatables-defaults.js';
