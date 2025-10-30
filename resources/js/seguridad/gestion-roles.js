@@ -7,17 +7,14 @@
 // Datatable (js)
 document.addEventListener('DOMContentLoaded', function (e) {
   const dtUserTable = document.querySelector('.datatables-users');
+
   var dt_User,
     userView = baseUrl + 'seguridad/usuarios/ver/cuenta/',
     recursoRolesURL = baseUrl + 'roles-gestion',
     recursoUsuariosURL = baseUrl + 'usuarios-gestion';
 
-
   // Users List datatable
   if (dtUserTable) {
-    const userRole = document.createElement('div');
-    userRole.classList.add('user_role');
-
     // Contexto para los helpers (ajusta según tus variables globales)
     const ctx = {
       baseUrl,            // ej: window.baseUrl
@@ -59,8 +56,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
         </div>
       `;
     }
-
-
     const definicionColumnasRoles = [
       {
         className: 'control',
@@ -164,15 +159,39 @@ document.addEventListener('DOMContentLoaded', function (e) {
       }
     ];
     const configTopStart = generarTopStart('row mx-2', columnTopStart(true, botonesTopStart));
-    const configTopEnd = generarTopEnd(columnTopEnd(true, 'Buscar Usuarios', '_INPUT_', [userRole]));
+    const configTopEnd = generarTopEnd(columnTopEnd(true, 'Buscar Usuarios', '_INPUT_', [document.createElement('div').classList.add('user_role')]));
     const configBottomStart = generarBottomStart('row mx-3 justify-content-between', columnBottomStart(true, 'Mostrando del _START_ al _END_ de _TOTAL_ registros'));
-    const configBottomEnd = generarBottomEnd('paging');
-    const layout = construirDataTableLayout(
-      configTopStart,
-      configTopEnd,
-      configBottomStart,
-      configBottomEnd
-    );
+    const configBottomEnd = generarBottomEnd('paging');    
+    function renderAlInicializarTablaRoles(settings, json) {
+      this.api()
+        .columns(6)
+        .every(function () {
+          const column = this;
+          const select = document.createElement('select');
+          select.id = 'UserRole';
+          select.className = 'form-select text-capitalize form-select-sm';
+          select.innerHTML = '<option value=""> Selecciona un rol </option>';
+          let divFiltroRoles = document.querySelector('.user_role');
+          divFiltroRoles.appendChild(select);
+          select.addEventListener('change', function () {
+            const val = select.value;
+            column.search(val ? '^' + val + '$' : '', true, false).draw();
+          });
+          column
+            .data()
+            .unique()
+            .sort()
+            .each(function (d) {
+              const option = document.createElement('option');
+              option.value = d;
+              option.className = 'text-capitalize';
+              option.textContent = d;
+              select.appendChild(option);
+            });
+        });
+    }
+
+    //creacion de la tabla
     dt_User = new DataTable(dtUserTable, {
       ajax: recursoUsuariosURL,
       dataSrc: limpiarRespuestaDataTable,
@@ -183,32 +202,18 @@ document.addEventListener('DOMContentLoaded', function (e) {
         selector: 'td:nth-child(2)'
       },
       order: [[6, 'desc']],
-      layout: layout,
+      layout: {
+        topStart: configTopStart,
+        topEnd: configTopEnd,
+        bottomStart: configBottomStart,
+        bottomEnd: configBottomEnd
+      },
       responsive: modalDetallesFilaTabla('name'),
       initComplete: renderAlInicializarTablaRoles
     });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   }
 
-
-  // Filter form control to default size
-  // ? setTimeout used for multilingual table initialization
   setTimeout(() => {
     const elementsToModify = [
       { selector: '.dt-length', classToAdd: 'my-md-5 my-0 me-2' },
@@ -229,6 +234,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       { selector: '.dt-layout-table', classToRemove: 'row mt-2' },
       { selector: '.dt-layout-full', classToRemove: 'col-md col-12', classToAdd: 'table-responsive' }
     ];
+
     // Delete record
     elementsToModify.forEach(({ selector, classToRemove, classToAdd }) => {
       document.querySelectorAll(selector).forEach(element => {
@@ -274,38 +280,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
   function cambiarTituloModalRoles(titulo, subtitulo) {
     if (roleTitle) roleTitle.innerHTML = titulo;
     if (roleSubTitle) roleSubTitle.innerHTML = subtitulo;
-  }
-  function renderAlInicializarTablaRoles() {
-    // Adding role filter once table initialized
-    this.api()
-      .columns(6)
-      .every(function () {
-        const column = this;
-        const select = document.createElement('select');
-        select.id = 'UserRole';
-        select.className = 'form-select text-capitalize form-select-sm';
-        select.innerHTML = '<option value=""> Selecciona un rol </option>';
-
-        userRole.appendChild(select);
-
-        select.addEventListener('change', function () {
-          const val = select.value;
-          column.search(val ? '^' + val + '$' : '', true, false).draw();
-        });
-
-        column
-          .data()
-          .unique()
-          .sort()
-          .each(function (d) {
-            const option = document.createElement('option');
-            option.value = d;
-            option.className = 'text-capitalize';
-            option.textContent = d;
-            select.appendChild(option);
-          });
-      });
-
   }
 
   function abrirModalRoles(op = true) {

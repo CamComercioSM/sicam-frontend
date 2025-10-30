@@ -123,7 +123,7 @@ use Illuminate\Support\Facades\Route;
       <div class="dropdown-menu dropdown-menu-end p-0">
         <div class="dropdown-menu-header border-bottom">
           <div class="dropdown-header d-flex align-items-center py-2 my-50">
-            <h6 class="mb-0 me-auto">Shortcuts</h6>
+            <h6 class="mb-0 me-auto">Atajos</h6>
             <a href="javascript:void(0)" class="dropdown-shortcuts-add btn btn-text-secondary rounded-pill btn-icon"
               data-bs-toggle="tooltip" data-bs-placement="top" title="Add shortcuts">
               <i class="icon-base ri ri-add-line icon-20px text-heading"></i>
@@ -201,7 +201,7 @@ use Illuminate\Support\Facades\Route;
     <!-- Quick links -->
 
     <!-- Notification -->
-    <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
+    <!-- <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
       <a class="nav-link dropdown-toggle hide-arrow btn btn-icon btn-text-secondary rounded-pill"
         href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
         <span class="position-relative">
@@ -420,7 +420,8 @@ use Illuminate\Support\Facades\Route;
           </div>
         </li>
       </ul>
-    </li>
+    </li> -->
+    
     <!--/ Notification -->
     <!-- User -->
     <li class="nav-item navbar-dropdown dropdown-user dropdown">

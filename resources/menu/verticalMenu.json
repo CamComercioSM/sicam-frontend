@@ -79,6 +79,12 @@
             "Administrador",
             "Soporte"
           ]
+        },
+        {
+        "name": "Indicadores",
+        "icon": "ri-home-7-line",
+        "url": "indicadores",
+        "slug":""
         }
       ]
     },

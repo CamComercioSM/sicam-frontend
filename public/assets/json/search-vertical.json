@@ -893,95 +893,93 @@
         "src": "img/avatars/12.png",
         "url": "app/user/view/account"
       }
+    ],
+    "Programas y convocatorias": [
+      {
+        "name": "Listado de programas",
+        "icon": "menu-icon icon-base ri ri-file-list-3-line me-1",
+        "url": "programas/list"
+      },
+      {
+        "name": "Listado de convocatrias",
+        "icon": "menu-icon icon-base ri ri-list-check me-1",
+        "url": "convocatorias/list"
+      },
+      {
+        "name": "Listado de inscripciones",
+        "icon": "menu-icon icon-base ri ri-checkbox-multiple-line me-1",
+        "url": "inscripciones/list"
+      }
+    ],
+    "Empresarios y Unidades productivas":[
+      {
+        "name": "Unidades productivas",
+        "icon": "menu-icon icon-base ri ri-hotel-line me-1",
+        "url": "unidadesProductivas/list"
+      },
+      {
+        "name": "Empresarios",
+        "icon": "menu-icon icon-base ri ri-group-line me-1",
+        "url": "empresarios/list"
+      }
+    ],
+    "Ruta C":[
+      {
+        "name": "Capsulas",
+        "icon": "menu-icon icon-base ri ri-video-line me-1",
+        "url": "capsulas/list"
+      }
+    ],
+    "Analitica": [
+      {
+        "name": "Indicadores",
+        "icon": "ri-home-7-line",
+        "url": "indicadores"
+      }
     ]
   },
   "suggestions": {
-    "Popular Searches": [
+    "Programas y convocatorias": [
       {
-        "name": "Analytics",
+        "name": "Listado de programas",
+        "icon": "menu-icon icon-base ri ri-file-list-3-line me-1",
+        "url": "programas/list"
+      },
+      {
+        "name": "Listado de convocatrias",
+        "icon": "menu-icon icon-base ri ri-list-check me-1",
+        "url": "convocatorias/list"
+      },
+      {
+        "name": "Listado de inscripciones",
+        "icon": "menu-icon icon-base ri ri-checkbox-multiple-line me-1",
+        "url": "inscripciones/list"
+      }
+    ],
+    "Empresarios y Unidades productivas":[
+      {
+        "name": "Unidades productivas",
+        "icon": "menu-icon icon-base ri ri-hotel-line me-1",
+        "url": "unidadesProductivas/list"
+      },
+      {
+        "name": "Empresarios",
+        "icon": "menu-icon icon-base ri ri-group-line me-1",
+        "url": "empresarios/list"
+      }
+    ],
+    "Ruta C":[
+      {
+        "name": "Capsulas",
+        "icon": "menu-icon icon-base ri ri-video-line me-1",
+        "url": "capsulas/list"
+      }
+    ],
+    "Analitica": [
+      {
+        "name": "Indicadores",
         "icon": "ri-home-7-line",
-        "url": ""
-      },
-      {
-        "name": "CRM",
-        "icon": "ri-computer-line",
-        "url": "dashboard/crm"
-      },
-      {
-        "name": "eCommerce",
-        "icon": "ri-shopping-cart-2-line",
-        "url": "app/ecommerce/dashboard"
-      },
-      {
-        "name": "User List",
-        "icon": "ri-group-line",
-        "url": "app/user/list"
-      }
-    ],
-    "Apps & Pages": [
-      {
-        "name": "Calendar",
-        "icon": "ri-calendar-line",
-        "url": "app/calendar"
-      },
-      {
-        "name": "Invoice List",
-        "icon": "ri-list-ordered-2",
-        "url": "app/invoice/list"
-      },
-      {
-        "name": "Account Settings",
-        "icon": "ri-user-settings-line",
-        "url": "pages/account-settings-account"
-      },
-      {
-        "name": "Dialog Examples",
-        "icon": "ri-tv-2-line",
-        "url": "modal-examples"
-      }
-    ],
-    "User Interface": [
-      {
-        "name": "Typography",
-        "icon": "ri-font-size",
-        "url": "ui/typography"
-      },
-      {
-        "name": "Advanced Cards",
-        "icon": "ri-list-check-2",
-        "url": "cards-advance"
-      },
-      {
-        "name": "Icons",
-        "icon": "ri-remixicon-line",
-        "url": "icons-ri"
-      },
-      {
-        "name": "Widget Cards",
-        "icon": "ri-id-card-line",
-        "url": "cards/advance"
-      }
-    ],
-    "Forms & Charts": [
-      {
-        "name": "Form Layouts",
-        "icon": "ri-article-line",
-        "url": "form/layouts-vertical"
-      },
-      {
-        "name": "Form Validation",
-        "icon": "ri-check-line",
-        "url": "form/validation"
-      },
-      {
-        "name": "Form Wizard",
-        "icon": "ri-align-center",
-        "url": "form/wizard-numbered"
-      },
-      {
-        "name": "E-Charts",
-        "icon": "ri-line-chart-line",
-        "url": "charts/apex"
+        "url": "indicadores"
       }
     ]
   }

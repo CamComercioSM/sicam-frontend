@@ -14,7 +14,7 @@ $containerFooter = $configData['contentLayout'] === 'compact' ? 'container-xxl' 
                 , by <a href="{{ !empty(config('variables.creatorUrl')) ? config('variables.creatorUrl') : '' }}" target="_blank" class="footer-link fw-medium">{{ !empty(config('variables.creatorName')) ? config('variables.creatorName') : '' }}</a>
             </div>
             <div class="d-none d-lg-inline-block">
-                <a href="{{ config('variables.adminTemplates') ? config('variables.adminTemplates') : '#' }}" class="footer-link me-4" target="_blank">Admin Templates</a>
+                <a href="{{ config('variables.adminTemplates') ? config('variables.adminTemplates') : '#' }}" class="footer-link me-4" target="_blank">Admin</a>
                 <a href="{{ config('variables.licenseUrl') ? config('variables.licenseUrl') : '#' }}" class="footer-link me-4" target="_blank">License</a>
                 <a href="{{ config('variables.bootstrapDashboard') ? config('variables.bootstrapDashboard') : '#' }}" target="_blank" class="footer-link me-4">Bootstrap Dashboard</a>
                 <a href="{{ config('variables.documentation') ? config('variables.documentation') . '/laravel-introduction.html' : '#' }}" target="_blank" class="footer-link me-4">Documentation</a>

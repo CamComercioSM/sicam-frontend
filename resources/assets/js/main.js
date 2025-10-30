@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // Search Configuration
 const SearchConfig = {
   container: '#autocomplete',
-  placeholder: 'Search [CTRL + K]',
+  placeholder: 'Buscar [CTRL + K]',
   classNames: {
     detachedContainer: 'd-flex flex-column',
     detachedFormContainer: 'd-flex align-items-center justify-content-between border-bottom',

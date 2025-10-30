@@ -98,9 +98,7 @@ Object.assign(DataTable.defaults, {
     serverSide: true,
     pageLength: 50,
     lengthMenu: [5, 10, 25, 50, 100, 200, 500],
-
     engthMenu: [10, 25, 50, 100],
-
     // 👇 Botones por defecto (puedes sobrescribirlos por tabla)
     buttons: makeExportButtons()
 });
