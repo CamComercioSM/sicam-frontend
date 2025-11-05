@@ -421,3 +421,8 @@ Route::middleware([
   // maps
   Route::get('/maps/leaflet', [Leaflet::class, 'index'])->name('maps-leaflet');
 });
+
+// Fallback route to handle 404s
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
+});
