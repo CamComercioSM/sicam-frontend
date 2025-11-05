@@ -122,6 +122,22 @@ function limpiarFormularios(destino, opciones = {}) {
     return resetearFormularios(destino, { ...opciones, modo: 'limpiar' });
 }
 
+window.marcarCheckboxesEnModal = function (data, idModal) {
+  // Obtener los permisos desde data.rol.permisos o data.permisos
+  const permisos = data?.rol?.permisos || data?.permisos || {};
+
+  // Limpiar primero todos los checkboxes dentro del modal indicado
+  document.querySelectorAll(`${idModal} input[type="checkbox"]`).forEach(chk => chk.checked = false);
+
+  // Recorrer los permisos y marcar los checkboxes correspondientes
+  Object.entries(permisos).forEach(([grupo, acciones]) => {
+    acciones.forEach(accion => {
+      const checkbox = document.querySelector(`${idModal} input[id="${grupo}_${accion}"]`);
+      if (checkbox) checkbox.checked = true;
+    });
+  });
+}
+
 // Exponer al ámbito global
 window.Formularios = { resetearFormularios, limpiarFormularios };
 window.resetearFormularios = resetearFormularios;

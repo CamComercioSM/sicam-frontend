@@ -78,7 +78,7 @@ window.renderColumnaId = function (data, type, full) {
 };
 
 window.renderColumnaUsuario = function (data, type, full, meta, ctx = {}) {
-  const { baseUrl = '', userView = '' } = ctx;
+  const { baseUrl , userView} = ctx;
   const name = escapeHtml(full?.name);
   const email = escapeHtml(full?.email);
   const image = full?.userProfilePhoto;
@@ -90,7 +90,7 @@ window.renderColumnaUsuario = function (data, type, full, meta, ctx = {}) {
     '<div class="avatar avatar-sm me-4">' + avatar + '</div>' +
     '</div>' +
     '<div class="d-flex flex-column">' +
-    `<a href="${userView}/${full?.id}" class="text-heading text-truncate"><span class="fw-medium">${name}</span></a>` +
+    `<a href="${userView}${full?.id}" class="text-heading text-truncate"><span class="fw-medium">${name}</span></a>` +
     `<small>${email}</small>` +
     '</div>' +
     '</div>'
@@ -486,6 +486,47 @@ window.generarBottomEnd = function (valor = 'paging') {
   return { features: toArray(valor) };
 };
 
+/**
+ * Reinicia completamente un modal Bootstrap:
+ * - Limpia formularios internos
+ * - Quita clases de validación
+ * - Limpia textos y errores
+ * 
+ * @param {string|HTMLElement} modal - ID o elemento del modal
+ */
+window.reiniciarModal = function (modal) {
+  // Si se pasa un selector o id, obtener el elemento
+  if (typeof modal === 'string') {
+    modal = document.getElementById(modal) || document.querySelector(modal);
+  }
+  if (!modal) return;
+
+  // 🔹 Resetear todos los formularios dentro del modal
+  modal.querySelectorAll('form').forEach(form => {
+    form.reset();
+    form.classList.remove('was-validated');
+  });
+
+  // 🔹 Quitar clases de error, validaciones visuales, etc.
+  modal.querySelectorAll('.is-invalid, .is-valid, .invalid-feedback, .valid-feedback')
+       .forEach(el => el.classList.remove('is-invalid', 'is-valid', 'show'));
+
+  // 🔹 Limpiar mensajes o spans de error
+  modal.querySelectorAll('.error, .text-danger, .invalid-feedback')
+       .forEach(el => el.textContent = '');
+
+  // 🔹 Si hay algún input oculto tipo id o modo, poner en blanco
+  modal.querySelectorAll('input[type="hidden"]').forEach(el => el.value = '');
+
+  // 🔹 Si el modal tiene título dinámico, restaurarlo (ajusta según tus textos)
+  const titulo = modal.querySelector('.role-title, .modal-title');
+  if (titulo) titulo.textContent = 'Agregar Nuevo Rol';
+
+  // 🔹 Si hay un botón principal, reestablecer su texto
+  const boton = modal.querySelector('button[type="submit"], .btn-primary');
+  if (boton) boton.textContent = 'Guardar';
+}
+
 
 // Helper súper simple para usar en: responsive: modalDelaTabla('campo')
 // Si pasas una función, se usa para armar el título: modalDelaTabla(d => d.name + ' (#' + d.id + ')')
@@ -503,8 +544,9 @@ window.modalDetallesFilaTabla = function (txt_titulo = 'name') {
       display: DataTable.Responsive.display.modal({ header: buildHeader }),
       type: 'column',
       renderer: function (api, rowIdx, columns) {
+
         const filas = columns
-          .filter(col => col.title !== '' && col.title !== 'Acciones')
+          .filter(col => col.title !== '')
           .map(col => `
             <tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
               <td class="pe-3 text-muted">${window.escapeHtml(col.title)}:</td>

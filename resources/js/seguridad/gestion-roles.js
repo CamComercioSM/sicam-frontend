@@ -3,13 +3,12 @@
  */
 
 'use strict';
-
 // Datatable (js)
 document.addEventListener('DOMContentLoaded', function (e) {
   const dtUserTable = document.querySelector('.datatables-users');
 
   var dt_User,
-    userView = baseUrl + 'seguridad/usuarios/ver/cuenta/',
+    userView = baseUrl + 'seguridad/usuarios/ver/cuenta',
     recursoRolesURL = baseUrl + 'roles-gestion',
     recursoUsuariosURL = baseUrl + 'usuarios-gestion';
 
@@ -18,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     // Contexto para los helpers (ajusta según tus variables globales)
     const ctx = {
       baseUrl,            // ej: window.baseUrl
-      userView,           // ej: baseUrl + 'app/user/view/account'
+      userView,           // ej: baseUrl + 'seguridad/usuarios/ver/cuenta/'
       formatDate,         // tu formateador si existe (sino usan formatDateDefault)
       accionesTabla: accionesTablaRoles  // tu función existente para el último col
     };
@@ -39,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
       return `
         <div class="d-flex align-items-center">
-          <a href="javascript:;" data-id="${full['id']}" data-name="${full['name']}" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"><i class="icon-base ri ri-delete-bin-7-line icon-22px"></i></a>
+          <a href="javascript:;" data-id="${full['id']}" data-name="${full['name']}" data-role="${full['userRole']}" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"><i class="icon-base ri ri-delete-bin-7-line icon-22px"></i></a>
           <button
             type="button"
             class="btn btn-icon btn-text-secondary btn-sm rounded-pill view-record"
@@ -85,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       {
         targets: 3,
         responsivePriority: 4,
-        // Enlazamos contexto para baseUrl/userView
+        //Enlazamos contexto para baseUrl/userView
         render: withCtx(renderColumnaUsuario, ctx)
       },
       {
@@ -161,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     const configTopStart = generarTopStart('row mx-2', columnTopStart(true, botonesTopStart));
     const configTopEnd = generarTopEnd(columnTopEnd(true, 'Buscar Usuarios', '_INPUT_', [document.createElement('div').classList.add('user_role')]));
     const configBottomStart = generarBottomStart('row mx-3 justify-content-between', columnBottomStart(true, 'Mostrando del _START_ al _END_ de _TOTAL_ registros'));
-    const configBottomEnd = generarBottomEnd('paging');    
+    const configBottomEnd = generarBottomEnd('paging');
     function renderAlInicializarTablaRoles(settings, json) {
       this.api()
         .columns(6)
@@ -211,7 +210,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
       responsive: modalDetallesFilaTabla('name'),
       initComplete: renderAlInicializarTablaRoles
     });
-
   }
 
   setTimeout(() => {
@@ -248,6 +246,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     });
   }, 100);
 
+
   // On edit role click, update text
   const modalRolesHTML = document.getElementById('addRoleModal');
   const modalRoles = bootstrap.Modal.getOrCreateInstance(modalRolesHTML);
@@ -258,25 +257,149 @@ document.addEventListener('DOMContentLoaded', function (e) {
     roleSubTitle = document.querySelector('.role-subtitle'),
     formGestionRoles = document.getElementById('addRoleForm')
     ;
+  // Eventos agregar o editar un rol
+  agregarEvento('click', roleAdd, abriraModalNuevoRol);
+  agregarEvento('click', roleEditList, abrirModalEditarRol);
 
-  agregarEvento('click', roleAdd, abriraModalNuevoRol)
+  //Eventos de acciones de usuario
+  // Evento eliminar Rol del usuario
+  agregarEvento('click', document, eliminarRolDelUusuario);
+  // Evento mostrar datos de Rol para un usuario
+  agregarEvento('click', document, mostrarPermisosYrolUsuario);
+  // Evento editar Rol del usuario
+  agregarEvento('click', document, editarRolDeUsuario);
+  // evento ver detalles del usuario
 
+  // Evento al cerrar el modal
+  agregarEvento('hidden.bs.modal', addRoleModal, () => reiniciarModal(addRoleModal));
 
-  if (roleEditList) {
-    roleEditList.forEach(function (roleEditEl) {
-      roleEditEl.onclick = function () {
-        roleTitle.innerHTML = 'Edit Role'; // reset text
-      };
+  function abriraModalNuevoRol(evento) {
+    const btnNuevoRol = evento.target.closest('.add-new-role');
+    if (!btnNuevoRol) return;
+    resetearFormularios(formGestionRoles);
+    cambiarTituloModalRoles('Nuevo Rol', 'Defina los datos del nuevo rol.');
+    abrirModalRoles();
+  }
+  function abrirModalEditarRol(evento) {
+    const btnEditarRol = evento.target.closest('.role-edit-modal');
+    if (!btnEditarRol) return;
+    const roleName = btnEditarRol.dataset.name;
+    const roleId = btnEditarRol.dataset.id;
+    resetearFormularios(formGestionRoles);
+    cambiarTituloModalRoles('Editando rol', `Permisos del rol: ${roleName}`);
+    cargando(true, { text: 'Buscando datos...' });
+    mostrarInformacionDeUnRol(roleId);
+  }
+
+  function mostrarInformacionDeUnRol(roleId) {
+    ejecutarPeticion(`roles-gestion/${roleId}/edit`, 'GET', null, (data) => {
+      if (window.overlayCancelado) {
+        return;
+      }
+      mostrarSoloInput();
+      document.getElementById('modalRoleName').value = data?.nombre;
+      document.getElementById('add-role-roleID').value = data?.id;
+      marcarCheckboxesEnModal(data, '#addRoleModal');
+      abrirModalRoles();
+    }, (error) => {
+      abrirModalRoles(false);
+      console.log('Error al traer datos para editar', error);
     });
   }
 
-
-  function abriraModalNuevoRol() {
-    resetearFormularios(formGestionRoles);
-    cambiarTituloModalRoles('Nuevo Rol', 'defina los datos del nuevo rol.');
-    abrirModalRoles();
+  function crearOeditarRol(searchParams) {
+    ejecutarPeticion('roles-gestion', 'POST', searchParams,
+      (data) => {
+        alertaExito('Operacion exitosa!', 'El rol fue intervenido!');
+        desbloquearPantalla();
+        abrirModalRoles(false);
+      },
+      (error) => {
+        console.error('⚠️ Error al crear/editar el rol:', error);
+        desbloquearPantalla();
+      }
+    );
   }
 
+  function eliminarRolDelUusuario(evento) {
+    const btnEliminar = evento.target.closest('.delete-record');
+    if (!btnEliminar) return;
+    confirmarAccion(
+      '¿Estás seguro que quieres eliminar el rol del usuario?',
+      'Si quieres cambiarlo utiliza la opción editar',
+      function () {
+        const user_id = btnEliminar.dataset.id;
+        const roleName = btnEliminar.dataset.role;
+        console.log(roleName);
+        if (roleName === 'Sin Rol') {
+          alertaError('El usuario no tiene rol', 'El usuario que quieres editar no tiene rol');
+        } else {
+          cargando(true, { text: 'Buscando datos' });
+          quitaRoleAlUsuario(user_id);
+        }
+      }
+
+    );
+  }
+  function quitaRoleAlUsuario(user_id) {
+    ejecutarPeticion(
+      `roles-gestion/${user_id}`,
+      'DELETE', null,
+      () => {
+        alertaExito('Rol removido!', 'El usuario está sin rol!');
+        dtUserTable && new DataTable(dtUserTable).draw();
+      },
+      (error) => {
+        alertaError('Error al remover rol', error);
+      }
+    );
+  }
+
+  function mostrarPermisosYrolUsuario(evento) {
+    const btnMostrar = evento.target.closest('.view-record');
+    if (!btnMostrar) return;
+
+    const user_name = btnMostrar.dataset.name;
+    const user_id = btnMostrar.dataset.id;
+    console.log()
+    cargando(true, { text: 'Buscando datos' });
+    resetearFormularios(formGestionRoles);
+    cambiarTituloModalRoles('Rol del usuario', `Rol y permisos del usuario ${user_name}`);
+    ejecutarPeticion(`roles-gestion/${user_id}`,'GET',null, (data) => {
+      if (window.overlayCancelado) {
+        return;
+      }
+      mostrarSoloInput();
+      document.getElementById('modalRoleName').value = data.role?.nombre;
+      marcarCheckboxesEnModal(data.role, '#addRoleModal');
+      abrirModalRoles();
+    }, (error) => {
+      alertaError('Error al remover rol', error);
+    })
+  }
+
+  function editarRolDeUsuario(evento) {
+    const btnEditarRol = evento.target.closest('.edit-role-user');
+    if (!btnEditarRol) return;
+
+    const user_id = btnEditarRol.dataset.id;
+    const user_name = btnEditarRol.dataset.name;
+    resetearFormularios(formGestionRoles);
+    cambiarTituloModalRoles('Editando rol', `Rol y permisos del usuario: ${user_name}`);
+    ejecutarPeticion(`roles-gestion/${user_id}`, 'GET', null, (data) => {
+      if (window.overlayCancelado) {
+        return;
+      }
+      mostrarSoloSelect();
+      document.getElementById('modalRoleName').value = data?.name;
+      document.getElementById('add-role-roleID').value = data?.id;
+      marcarCheckboxesEnModal(data.role, '#addRoleModal');
+      abrirModalRoles();
+    }, (error) => {
+      abrirModalRoles(false);
+      console.log('Error al traer datos para editar', error);
+    });
+  }
   function cambiarTituloModalRoles(titulo, subtitulo) {
     if (roleTitle) roleTitle.innerHTML = titulo;
     if (roleSubTitle) roleSubTitle.innerHTML = subtitulo;
@@ -288,5 +411,74 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
 
 
+  window.armarDatosFormRoles = function () {
+    bloquearPantalla('enviando datos...');
+
+    const form = document.getElementById('addRoleForm');
+    const formData = new FormData(form);
+
+    // 🔹 Aseguramos incluir correctamente los checkboxes
+    // Solo se envían los marcados
+    form.querySelectorAll('input[type="checkbox"]').forEach(chk => {
+      if (chk.checked) {
+        // Si el name es tipo permisos[] o similar, FormData lo manejará bien
+        formData.append(chk.name, chk.value);
+      }
+    });
+
+    // 🔹 Convertir FormData a objeto plano
+    const formDataObj = {};
+    formData.forEach((value, key) => {
+      // Si el mismo nombre aparece varias veces (como los permisos[]), lo manejamos como array
+      if (formDataObj[key]) {
+        if (!Array.isArray(formDataObj[key])) formDataObj[key] = [formDataObj[key]];
+        formDataObj[key].push(value);
+      } else {
+        formDataObj[key] = value;
+      }
+    });
+
+    // 🔹 Convertir a URLSearchParams para enviar por POST
+    const searchParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(formDataObj)) {
+      if (Array.isArray(value)) {
+        value.forEach(v => searchParams.append(key + '[]', v)); // mantiene el formato array
+      } else {
+        searchParams.append(key, value);
+      }
+    }
+    crearOeditarRol(searchParams);
+  };
+
+  function mostrarSoloInput() {
+    // Ocultar select y su label
+    const select = document.getElementById('add-role-userRole');
+    const labelSelect = document.querySelector('label[for="user-role"]');
+    if (select) select.style.display = 'none';
+    if (labelSelect) labelSelect.style.display = 'none';
+
+    // Mostrar input y su label
+    const input = document.getElementById('modalRoleName');
+    const labelInput = document.querySelector('label[for="modalRoleName"]');
+    if (input) {
+      input.value = '';
+      input.style.display = 'block';
+    }
+    if (labelInput) labelInput.style.display = 'block';
+  }
+
+  function mostrarSoloSelect() {
+    // Ocultar input y su label
+    const input = document.getElementById('modalRoleName');
+    const labelInput = document.querySelector('label[for="modalRoleName"]');
+    if (input) input.style.display = 'none';
+    if (labelInput) labelInput.style.display = 'none';
+
+    // Mostrar select y su label
+    const select = document.getElementById('add-role-userRole');
+    const labelSelect = document.querySelector('label[for="user-role"]');
+    if (select) select.style.display = 'block';
+    if (labelSelect) labelSelect.style.display = 'block';
+  }
 
 });

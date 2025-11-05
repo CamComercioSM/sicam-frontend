@@ -54,7 +54,7 @@ class GestionRoles extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return response()->json('Created');
     }
 
     /**
@@ -62,59 +62,74 @@ class GestionRoles extends Controller
      */
     public function show($id)
     {
-        if (is_numeric($id)) {
-            $user = User::findOrFail($id);
-            $roleName = $user->getRoleNames()->first();
-        } else {
-            $user = null;
-            $roleName = $id;
-        }
-        if ($roleName) {
-            $role = Role::where('name', $roleName)->first();
+        // Buscar el usuario por ID
+        $user = User::findOrFail($id);
 
-            if ($role) {
-                $permissions = $role->permissions;
-                $coleccionPermisos = $permissions
-                    ->filter(fn($p) => str_contains($p->name, '.'))
-                    ->mapToGroups(function ($p) {
-                        [$grupo, $op] = explode('.', $p->name, 2);
-                        return [$grupo => $op];
-                    })
-                    ->map(fn($ops) => collect($ops)->unique()->values()->all());
+        // Obtener el primer rol asignado al usuario
+        $role = $user->roles()->first();
 
-                $rol = [
-                    'id' => $role->id,
-                    'nombre' => $role->name,
-                    'permisos' => $coleccionPermisos,
-                ];
-            } else {
-                $rol = [
-                    'nombre' => 'Sin Rol',
-                    'permisos' => collect(),
-                ];
-            }
+        if ($role) {
+            $permissions = $role->permissions;
+
+            $coleccionPermisos = $permissions
+                ->filter(fn($p) => str_contains($p->name, '.'))
+                ->mapToGroups(function ($p) {
+                    [$grupo, $op] = explode('.', $p->name, 2);
+                    return [$grupo => $op];
+                })
+                ->map(fn($ops) => collect($ops)->unique()->values()->all());
+
+            // Agregar el rol y sus permisos al objeto usuario
+            $user->role = [
+                'id'       => $role->id,
+                'nombre'   => $role->name,
+                'permisos' => $coleccionPermisos,
+            ];
         } else {
-            $rol = [
-                'nombre' => 'Sin Rol',
+            $user->role = [
+                'nombre'   => 'Sin Rol',
                 'permisos' => collect(),
             ];
         }
 
-        return response()->json([
-            'user' => $user,
-            'rol' => $rol,
-        ]);
+        // Retornar solo el usuario completo
+        return response()->json($user);
     }
+
 
 
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        // Buscar el rol por ID
+        $role = Role::findOrFail($id);
+
+        // Obtener los permisos asociados
+        $permissions = $role->permissions;
+
+        // Agrupar los permisos por módulo (antes del punto)
+        $coleccionPermisos = $permissions
+            ->filter(fn($p) => str_contains($p->name, '.'))
+            ->mapToGroups(function ($p) {
+                [$grupo, $op] = explode('.', $p->name, 2);
+                return [$grupo => $op];
+            })
+            ->map(fn($ops) => collect($ops)->unique()->values()->all());
+
+        // Estructurar la respuesta del rol
+        $rol = [
+            'id'       => $role->id,
+            'nombre'   => $role->name,
+            'permisos' => $coleccionPermisos,
+        ];
+
+        // Devolver respuesta JSON
+        return response()->json($rol);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -131,7 +146,9 @@ class GestionRoles extends Controller
     {
         $user = User::findOrFail($id);
         $roleName = $user->getRoleNames()->first();
-        if($roleName){$user->removeRole($roleName);}
+        if ($roleName) {
+            $user->removeRole($roleName);
+        }
         return response()->json('Rol removido');
     }
 }
