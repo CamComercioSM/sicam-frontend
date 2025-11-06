@@ -78,7 +78,7 @@ window.renderColumnaId = function (data, type, full) {
 };
 
 window.renderColumnaUsuario = function (data, type, full, meta, ctx = {}) {
-  const { baseUrl , userView} = ctx;
+  const { baseUrl, userView } = ctx;
   const name = escapeHtml(full?.name);
   const email = escapeHtml(full?.email);
   const image = full?.userProfilePhoto;
@@ -509,11 +509,11 @@ window.reiniciarModal = function (modal) {
 
   // 🔹 Quitar clases de error, validaciones visuales, etc.
   modal.querySelectorAll('.is-invalid, .is-valid, .invalid-feedback, .valid-feedback')
-       .forEach(el => el.classList.remove('is-invalid', 'is-valid', 'show'));
+    .forEach(el => el.classList.remove('is-invalid', 'is-valid', 'show'));
 
   // 🔹 Limpiar mensajes o spans de error
   modal.querySelectorAll('.error, .text-danger, .invalid-feedback')
-       .forEach(el => el.textContent = '');
+    .forEach(el => el.textContent = '');
 
   // 🔹 Si hay algún input oculto tipo id o modo, poner en blanco
   modal.querySelectorAll('input[type="hidden"]').forEach(el => el.value = '');
@@ -525,8 +525,33 @@ window.reiniciarModal = function (modal) {
   // 🔹 Si hay un botón principal, reestablecer su texto
   const boton = modal.querySelector('button[type="submit"], .btn-primary');
   if (boton) boton.textContent = 'Guardar';
-}
 
+  // 🔹 Siempre desbloquear el modal (modo editable)
+  modal.querySelectorAll('input, select, textarea, button').forEach(el => el.disabled = false);
+};
+
+window.desactivarUsuario = function (user_id) {
+  fetch(`${baseUrl}usuarios-gestion/${user_id}`, {
+    method: 'PATCH', // o PUT, ambos funcionan
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+    },
+    body: JSON.stringify({
+      estado: 'desactivo' // o 'activo', 'borrado'
+    })
+  }).then(response => {
+    if (response.ok) {
+
+    } else {
+      throw new Error('Deactivation failed');
+    }
+  })
+    .catch(error => {
+      console.log(error);
+    });
+}
 
 // Helper súper simple para usar en: responsive: modalDelaTabla('campo')
 // Si pasas una función, se usa para armar el título: modalDelaTabla(d => d.name + ' (#' + d.id + ')')
@@ -563,6 +588,22 @@ window.modalDetallesFilaTabla = function (txt_titulo = 'name') {
           <table class="table table-sm mb-0">
             <tbody>${filas}</tbody>
           </table>`;
+
+        // 👇 Agregamos el cierre automático del modal responsive
+        // Espera un tick para que DataTables inserte el modal en el DOM
+        setTimeout(() => {
+          const modalResponsive = document.querySelector('.dtr-bs-modal');
+          if (modalResponsive) {
+            // Escuchamos clicks dentro del modal
+            modalResponsive.addEventListener('click', (e) => {
+              // Si el clic viene de un botón de acción, lo cerramos
+              if (e.target.closest('.btn, [data-action], .delete-record, .edit-record')) {
+                const btnClose = modalResponsive.querySelector('.btn-close');
+                btnClose?.click(); // dispara el cierre del modal
+              }
+            }, { once: true }); // se adjunta una vez por render
+          }
+        }, 100);
         return div;
       }
     }

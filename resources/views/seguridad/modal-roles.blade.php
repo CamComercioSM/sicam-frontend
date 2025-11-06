@@ -18,7 +18,7 @@
                 <select id="add-role-userRole" name="userRole" class="form-select">
                   <option id="add-user-userRole-select" value="">Selecciona un rol...</option>
                   @foreach ($roles as $role)
-                      <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
+                      <option data-id="{{$role->id}}" value="{{ $role->name }}" >{{ ucfirst($role->name) }}</option>
                   @endforeach
                 </select>
               <label for="user-role">Rol de Usuario</label>

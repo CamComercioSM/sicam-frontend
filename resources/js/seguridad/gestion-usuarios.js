@@ -906,31 +906,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
       null,
       function () {
         desactivarUsuario(user_id);
-      }
-    );
-  }
-  window.desactivarUsuario = function (user_id) {
-    fetch(`${baseUrl}usuarios-gestion/${user_id}`, {
-      method: 'PATCH', // o PUT, ambos funcionan
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-      },
-      body: JSON.stringify({
-        estado: 'desactivo' // o 'activo', 'borrado'
-      })
-    }).then(response => {
-      if (response.ok) {
         dt_user_table && new DataTable(dt_user_table).draw();
         alertaExito('Usuario Desactivado!', 'El usuario ha sido desactivado!');
-      } else {
-        throw new Error('Deactivation failed');
       }
-    })
-      .catch(error => {
-        console.log(error);
-      });
+    );
   }
   window.confirmarActivarUsuario = function (user_id) {
     ocultarModalUsuarios();
