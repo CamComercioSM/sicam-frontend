@@ -862,7 +862,7 @@ body:not(.modal-open) {
   }
 
   .layout-content-navbar .layout-navbar {
-    z-index: 0;
+    z-index: 1000;
   }
 }
 

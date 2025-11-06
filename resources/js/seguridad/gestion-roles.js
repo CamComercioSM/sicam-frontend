@@ -129,31 +129,34 @@ document.addEventListener('DOMContentLoaded', function (e) {
         text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-user-settings-line icon-16px me-1"></i><span class="d-none d-sm-inline-block">Cambiar rol</span></span>',
         className: 'btn btn-primary',
         action: function () {
-          resetModal();
-          const ids = getSelectedUserIds();
-          if (ids.length === 0) {
-            alertaError('Sin selección', 'Selecciona al menos un usuario.');
-            return;
-          }
-          document.getElementById('add-role-userIDs').value = ids;
-          cambiarTituloModalRoles('Cambiando roles', `Usuarios seleccionados: ${ids.length}`);
-          mostrarSelect();
-          abrirModal(true);
-        }
+    const ids = getSelectedRowIds(dt_User); // [{id, name}, ...]
+    if (!ids || ids.length === 0) {
+      alertaError('Sin selección para cambio de rol', 'Selecciona al menos un usuario.');
+      return;
+    }
+    document.getElementById('add-role-userIDs').value = ids;
+
+    // 🔹 2) Pintar y mostrar la lista
+    mostrarUsuariosSeleccionados(ids);
+    cambiarTituloModalRoles('Cambiando roles', `Usuarios seleccionados: ${ids.length}`);
+    mostrarSoloSelect();
+    modalRoles._element.querySelectorAll('input, textarea, button:not([data-bs-dismiss])').forEach(el => el.disabled = true);
+    abrirModalRoles();
+  }
       },
       {
         text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-delete-bin-7-line icon-16px me-1"></i><span class="d-none d-sm-inline-block">Eliminar rol</span></span>',
         className: 'btn btn-outline-danger',
         action: function () {
-          const ids = getSelectedUserIds();
+          const ids = getSelectedRowIds(dt_User);
           if (ids.length === 0) {
-            alertaError('Sin selección', 'Selecciona al menos un usuario.');
+            alertaError('Sin selección para eliminar rol', 'Selecciona al menos un usuario.');
             return;
           }
           confirmarAccion(
             '¿Eliminar rol de los usuarios seleccionados?',
             `Se removerá el rol de ${ids.length} usuario(s).`,
-            function () { bulkRemoveRoles(ids); }
+            function () { quitaRoleAlUsuario(ids); }
           );
         }
       }
@@ -212,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       initComplete: renderAlInicializarTablaRoles
     });
   }
-  
+
 
   setTimeout(() => {
     const elementsToModify = [
@@ -263,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
   agregarEvento('click', roleAdd, abriraModalNuevoRol);
   agregarEvento('click', roleEditList, abrirModalEditarRol);
 
-  //Eventos de acciones de usuario
+  // Eventos de acciones de usuario
   // Evento eliminar Rol del usuario
   agregarEvento('click', document, eliminarRolDelUusuario);
   // Evento mostrar datos de Rol para un usuario
@@ -387,13 +390,16 @@ document.addEventListener('DOMContentLoaded', function (e) {
   function cambiarRoleUsuarioParaEditar(evento) {
     const selectRole = evento.target.closest('#add-role-userRole');
     if (!selectRole) return;
+    if (selectRole.value === "") {
+      resetearFormularios(formGestionRoles);
+      return;
+    }
     const selectedOption = selectRole.options[selectRole.selectedIndex];
     const roleId = selectedOption.dataset.id;
     infoDeRolParaEditar(roleId);
   }
 
   function infoDeRolParaEditar(roleId) {
-
     ejecutarPeticion(`roles-gestion/${roleId}/edit`, 'GET', null, (data) => {
       if (window.overlayCancelado) {
         return;
@@ -532,4 +538,49 @@ document.addEventListener('DOMContentLoaded', function (e) {
     if (select) select.style.display = 'block';
     if (labelSelect) labelSelect.style.display = 'block';
   }
+
+function mostrarUsuariosSeleccionados(ids) {
+  const wrap = document.getElementById('bloqueChipsSeleccion');
+  const list = document.getElementById('chipsSeleccion');
+  const btnToggle = document.getElementById('chipsClear');
+  if (!wrap || !list || !btnToggle) return;
+  // Limpiar lista anterior
+  list.innerHTML = '';
+  // Crear chips
+  ids.forEach(u => {
+    const li = document.createElement('li');
+    li.className = 'chip';
+    li.dataset.id = u.id;
+    li.innerHTML = `
+      <span class="chip-name">${u.name}</span>
+      <button type="button" class="chip-remove" title="Quitar">&times;</button>
+    `;
+    list.appendChild(li);
+  });
+
+  // Mostrar bloque si hay usuarios
+  wrap.classList.toggle('d-none', ids.length === 0);
+  list.classList.remove('d-none');
+  btnToggle.textContent = 'Ocultar';
+  // 🎯 Una sola vez: manejadores globales
+
+// Quitar individual
+document.getElementById('#chipsSeleccion')?.addEventListener('click', function (e) {
+  if (e.target.classList.contains('chip-remove')) {
+    const li = e.target.closest('.chip');
+    li?.remove();
+  }
+});
+
+// Ocultar / mostrar lista
+document.getElementById('#chipsClear')?.addEventListener('click', function () {
+  const list = document.getElementById('chipsSeleccion');
+  if (!list) return;
+  const oculto = list.classList.toggle('d-none');
+  this.textContent = oculto ? 'Mostrar' : 'Ocultar';
+});
+}
+
+
+
 });

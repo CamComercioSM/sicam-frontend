@@ -610,4 +610,40 @@ window.modalDetallesFilaTabla = function (txt_titulo = 'name') {
   };
 };
 
+/**
+ * Helper global para obtener los IDs seleccionados de una DataTable.
+ */
+window.getSelectedRowIds = function (dataTable, tableSelector = '.datatables-users', checkboxColumnIndex = 1) {
+  const seleccionados = [];
+
+  try {
+    // Si usa la extensión "Select"
+    const data = dataTable.rows({ selected: true }).data();
+    return data.map(d => ({
+      id: d.id,
+      name: d.name ?? null
+    })).toArray();
+
+  } catch (error) {
+    // Fallback: detección manual por checkboxes
+    const filas = document.querySelectorAll(`${tableSelector} tbody tr`);
+    filas.forEach(tr => {
+      const chk = tr.querySelector(`td:nth-child(${checkboxColumnIndex + 1}) input[type="checkbox"]`);
+      if (chk && chk.checked) {
+        const rowData = dataTable.row(tr).data();
+        const nameEl = tr.querySelector('.fw-medium');
+        const name = rowData?.name ?? (nameEl ? nameEl.textContent.trim() : null);
+
+        if (rowData?.id != null) {
+          seleccionados.push({ id: rowData.id, name: name });
+        }
+      }
+    });
+
+    return seleccionados;
+  }
+};
+
+
+
 console.info('[Renderizadores globales] cargados correctamente');
