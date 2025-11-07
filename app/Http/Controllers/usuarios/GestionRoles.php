@@ -9,10 +9,42 @@ use Illuminate\Contracts\View\View;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
+use function PHPSTORM_META\map;
 
 class GestionRoles extends Controller
 {
+
+    function operacionesMasivaRolesUsuarios(Request $request)
+    {
+        $roleID = $request->input('roleID');
+        if ($roleID) {
+            $userIDs = json_decode($request->input('userIDs', []), true);
+            $role = Role::findOrFail($roleID);
+            foreach ($userIDs as $userID) {
+                $user = User::findOrFail($userID);
+                $user->syncRoles([$role->name]);
+            }
+            $respuesta = [
+                'message'  => 'Roles asignados correctamente',
+                'roleName' => $role->name,
+            ];
+        } else {
+            $userIDsForDeleteRole = json_decode($request->input()[0], true);
+            foreach ($userIDsForDeleteRole as $userID) {
+                $user = User::findOrFail($userID);
+                $roleName = $user->getRoleNames()->first();
+                if ($roleName) {
+                    $user->removeRole($roleName);
+                }
+            }
+            $respuesta = [
+                'message'  => 'Roles removidos correctamente',
+            ];
+        }
+        return response()->json($respuesta);
+    }
 
     function GestionRoles(): View
     {
@@ -54,8 +86,58 @@ class GestionRoles extends Controller
      */
     public function store(Request $request)
     {
-        return response()->json('Created');
+        $roleID    = $request->input('roleID');
+        $roleName  = trim($request->input('modalRoleName'));
+        $permisos = $request->input('permisos', []);
+
+        // 🔎 Validar nombre duplicado
+        $nombreExistente = Role::where('name', $roleName)
+            ->when($roleID, fn($q) => $q->where('id', '!=', $roleID))
+            ->value('name');
+
+        if ($nombreExistente) {
+            return response()->json([
+                'TIPO'    => 'ERROR',
+                'MENSAJE' => "El nombre del rol ya existe [{$nombreExistente}]'."
+            ]);
+        }
+
+        $permisosparaAsignar = $this->convertirPermisosArrayALista($permisos);
+        // Crear o editar según corresponda
+        if ($roleID) {
+            // Editar rol existente
+            $role = Role::findOrFail($roleID);
+            $role->update([
+                'name'       => $roleName,
+                'guard_name' => 'web',
+            ]);
+            $respuesta = 'Updated';
+        } else {
+            // Crear nuevo rol
+            $role = Role::create([
+                'name'       => $roleName,
+                'guard_name' => 'web',
+            ]);
+
+            $respuesta = 'Created';
+        }
+
+        $role->syncPermissions($permisosparaAsignar);
+
+        return response()->json($respuesta);
     }
+
+    function convertirPermisosArrayALista(array $permisos): array
+    {
+        $permisosLista = [];
+        foreach ($permisos as $grupo => $acciones) {
+            foreach ($acciones as $accion) {
+                $permisosLista[] = "{$grupo}.{$accion}";
+            }
+        }
+        return $permisosLista;
+    }
+
 
     /**
      * Display the specified resource.
@@ -96,9 +178,6 @@ class GestionRoles extends Controller
         return response()->json($user);
     }
 
-
-
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -136,7 +215,13 @@ class GestionRoles extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $roleID = $request->input()[0];
+
+        $role = Role::findOrFail($roleID);
+        $user->syncRoles([$role->name]);
+
+        return response()->json('Updated');
     }
 
     /**

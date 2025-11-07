@@ -175,6 +175,8 @@ Route::middleware([
   Route::get('/seguridad/roles', [GestionRoles::class, 'GestionRoles'])
     ->name('gestion.roles');
   Route::resource('/roles-gestion', GestionRoles::class);
+  Route::post('/roles-gestion/operaciones-masivas', [GestionRoles::class, 'operacionesMasivaRolesUsuarios'])
+    ->name('gestion.roles');
 
   Route::get('/seguridad/permisos', [AccessPermission::class, 'index'])
     ->name('gestion.permisos');

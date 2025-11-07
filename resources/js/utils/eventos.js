@@ -62,13 +62,16 @@ window.ejecutarPeticion = async function (ruta, metodo = 'GET', data = null, onS
     const opciones = {
       method: metodo.toUpperCase(),
       headers: {
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        'Content-Type': 'application/json'
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
       }
     };
-
-    // 👇 Solo agregamos el body si hay data y el método lo permite
-    if (data && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(opciones.method)) {
+    // ⚙️ Si es FormData, no agregues Content-Type manualmente (el navegador lo hace)
+    if (data instanceof FormData) {
+      opciones.body = data;
+    }
+    // ⚙️ Si es un objeto normal, envíalo como JSON
+    else if (data && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(opciones.method)) {
+      opciones.headers['Content-Type'] = 'application/json';
       opciones.body = JSON.stringify(data);
     }
 

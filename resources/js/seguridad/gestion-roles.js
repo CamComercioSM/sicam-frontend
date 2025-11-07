@@ -129,26 +129,24 @@ document.addEventListener('DOMContentLoaded', function (e) {
         text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-user-settings-line icon-16px me-1"></i><span class="d-none d-sm-inline-block">Cambiar rol</span></span>',
         className: 'btn btn-primary',
         action: function () {
-    const ids = getSelectedRowIds(dt_User); // [{id, name}, ...]
-    if (!ids || ids.length === 0) {
-      alertaError('Sin selección para cambio de rol', 'Selecciona al menos un usuario.');
-      return;
-    }
-    document.getElementById('add-role-userIDs').value = ids;
-
-    // 🔹 2) Pintar y mostrar la lista
-    mostrarUsuariosSeleccionados(ids);
-    cambiarTituloModalRoles('Cambiando roles', `Usuarios seleccionados: ${ids.length}`);
-    mostrarSoloSelect();
-    modalRoles._element.querySelectorAll('input, textarea, button:not([data-bs-dismiss])').forEach(el => el.disabled = true);
-    abrirModalRoles();
-  }
+          const ids = getSelectedRowIds(dt_User);
+          if (!ids || ids.length === 0) {
+            alertaError('Sin selección para cambio de rol', 'Selecciona al menos un usuario.');
+            return;
+          }
+          const soloIds = ids.map(u => u.id);
+          document.getElementById('add-role-userIDs').value = JSON.stringify(soloIds);
+          cambiarTituloModalRoles('Cambiando roles', `Usuarios seleccionados: ${ids.length}`);
+          mostrarSoloSelect();
+          abrirModalRoles();
+        }
       },
       {
         text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ri ri-delete-bin-7-line icon-16px me-1"></i><span class="d-none d-sm-inline-block">Eliminar rol</span></span>',
         className: 'btn btn-outline-danger',
         action: function () {
           const ids = getSelectedRowIds(dt_User);
+          const soloIds = JSON.stringify(ids.map(u => u.id));
           if (ids.length === 0) {
             alertaError('Sin selección para eliminar rol', 'Selecciona al menos un usuario.');
             return;
@@ -156,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           confirmarAccion(
             '¿Eliminar rol de los usuarios seleccionados?',
             `Se removerá el rol de ${ids.length} usuario(s).`,
-            function () { quitaRoleAlUsuario(ids); }
+            function () { quitarRolDeVariosUsuarios(soloIds); }
           );
         }
       }
@@ -216,7 +214,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
     });
   }
 
-
   setTimeout(() => {
     const elementsToModify = [
       { selector: '.dt-length', classToAdd: 'my-md-5 my-0 me-2' },
@@ -272,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
   // Evento mostrar datos de Rol para un usuario
   agregarEvento('click', document, mostrarPermisosYrolUsuario);
   // Evento editar Rol del usuario 
-  agregarEvento('click', document, editarRolDeUsuario);
+  agregarEvento('click', document, mostrarEditarRolDeUsuario);
   agregarEvento('change', selectRoles, cambiarRoleUsuarioParaEditar);
   // Evento suspender Usuario
   agregarEvento('click', document, suspenderUsuario);
@@ -321,9 +318,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
   function crearOeditarRol(searchParams) {
     ejecutarPeticion('roles-gestion', 'POST', searchParams,
       (data) => {
-        alertaExito('Operacion exitosa!', 'El rol fue intervenido!');
+        alertaExito('Operacion exitosa!', 'Es necesario recargar la pagina');
         desbloquearPantalla();
         abrirModalRoles(false);
+        setTimeout(() => location.reload(), 1200);
       },
       (error) => {
         console.error('⚠️ Error al crear/editar el rol:', error);
@@ -357,13 +355,22 @@ document.addEventListener('DOMContentLoaded', function (e) {
       'DELETE', null,
       () => {
         alertaExito('Rol removido!', 'El usuario está sin rol!');
-        dtUserTable && new DataTable(dtUserTable).draw();
+        dt_User.ajax.reload();
       },
       (error) => {
         alertaError('Error al remover rol', error);
       }
     );
   }
+  function quitarRolDeVariosUsuarios(ids) {
+
+    ejecutarPeticion('roles-gestion/operaciones-masivas', 'POST', ids, (data) => {
+      alertaExito(`${data.message}`, 'Usuarios sin rol')
+      dt_User.ajax.reload();
+    }, (error) => {
+      console.log('Error al quitar rol a los usuarios');
+    });
+  };
 
   function mostrarPermisosYrolUsuario(evento) {
     const btnMostrar = evento.target.closest('.view-record');
@@ -406,6 +413,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       }
       mostrarSoloSelect();
       document.getElementById('add-role-userRole').value = data?.nombre;
+      document.getElementById('modalRoleName').value = data.role?.nombre;
       document.getElementById('add-role-roleID').value = data?.id;
       marcarCheckboxesEnModal(data, '#addRoleModal');
       abrirModalRoles();
@@ -415,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     });
   }
 
-  function editarRolDeUsuario(evento) {
+  function mostrarEditarRolDeUsuario(evento) {
     const btnEditarRol = evento.target.closest('.edit-role-user');
     if (!btnEditarRol) return;
 
@@ -429,13 +437,37 @@ document.addEventListener('DOMContentLoaded', function (e) {
       }
       mostrarSoloSelect();
       document.getElementById('add-role-userRole').value = data.role?.nombre;
-      document.getElementById('add-role-roleID').value = data?.id;
+      document.getElementById('modalRoleName').value = data.role?.nombre;
+      document.getElementById('add-role-roleID').value = data.role?.id;
+      document.getElementById('add-role-userID').value = data.id;
+      document.getElementById('add-role-userRoleName').value = data.role?.nombre;
+
       marcarCheckboxesEnModal(data.role, '#addRoleModal');
       abrirModalRoles();
     }, (error) => {
       abrirModalRoles(false);
       console.log('Error al traer datos para editar', error);
     });
+  }
+
+  function editarRolDeUnUsuario(user_id, data) {
+    ejecutarPeticion(`roles-gestion/${user_id}`,'PATCH',data, (data)=>{
+      dt_User.ajax.reload();
+      abrirModalRoles(false);
+    },(error)=>{
+      console.log(error);
+    })
+  }
+
+  function cambiarRolVariosUsuarios(searchParams) {
+    ejecutarPeticion('roles-gestion/operaciones-masivas', 'POST',searchParams, (data)=>{
+      console.log(data);
+      alertaExito(`${data.message}`, `Todos son ${data.roleName}`)
+      setTimeout(() => dt_User.ajax.reload(), 500);
+      abrirModalRoles(false);
+    }, (error)=>{ 
+      console.log(error);
+    })
   }
 
   function suspenderUsuario(evento) {
@@ -451,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           alertaError('El usuario esta desactivado', 'El usuario ya esta desactivado');
         } else {
           desactivarUsuario(user_id);
-          dtUserTable && new DataTable(dtUserTable).draw();
+          dt_User.ajax.reload();
           alertaExito('El usuario fue Desactivado', 'Puedes activarlo en Gestion de Usuarios');
         }
       }
@@ -475,37 +507,19 @@ document.addEventListener('DOMContentLoaded', function (e) {
     const form = document.getElementById('addRoleForm');
     const formData = new FormData(form);
 
-    // 🔹 Aseguramos incluir correctamente los checkboxes
-    // Solo se envían los marcados
-    form.querySelectorAll('input[type="checkbox"]').forEach(chk => {
-      if (chk.checked) {
-        // Si el name es tipo permisos[] o similar, FormData lo manejará bien
-        formData.append(chk.name, chk.value);
-      }
-    });
+    const roleID = formData.get('roleID');
+    const userID = formData.get('userID');
+    const userRoleName = formData.get('userRoleName');
+    const ids = formData.get('userIDs');
 
-    // 🔹 Convertir FormData a objeto plano
-    const formDataObj = {};
-    formData.forEach((value, key) => {
-      // Si el mismo nombre aparece varias veces (como los permisos[]), lo manejamos como array
-      if (formDataObj[key]) {
-        if (!Array.isArray(formDataObj[key])) formDataObj[key] = [formDataObj[key]];
-        formDataObj[key].push(value);
-      } else {
-        formDataObj[key] = value;
-      }
-    });
-
-    // 🔹 Convertir a URLSearchParams para enviar por POST
-    const searchParams = new URLSearchParams();
-    for (const [key, value] of Object.entries(formDataObj)) {
-      if (Array.isArray(value)) {
-        value.forEach(v => searchParams.append(key + '[]', v)); // mantiene el formato array
-      } else {
-        searchParams.append(key, value);
-      }
+    if((roleID || userRoleName === 'Sin rol') && userID){
+      editarRolDeUnUsuario(userID, roleID);
     }
-    crearOeditarRol(searchParams);
+    else if (ids){
+      cambiarRolVariosUsuarios(formData);
+    }else{
+      crearOeditarRol(formData);
+    }
   };
 
   function mostrarSoloInput() {
@@ -538,49 +552,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
     if (select) select.style.display = 'block';
     if (labelSelect) labelSelect.style.display = 'block';
   }
-
-function mostrarUsuariosSeleccionados(ids) {
-  const wrap = document.getElementById('bloqueChipsSeleccion');
-  const list = document.getElementById('chipsSeleccion');
-  const btnToggle = document.getElementById('chipsClear');
-  if (!wrap || !list || !btnToggle) return;
-  // Limpiar lista anterior
-  list.innerHTML = '';
-  // Crear chips
-  ids.forEach(u => {
-    const li = document.createElement('li');
-    li.className = 'chip';
-    li.dataset.id = u.id;
-    li.innerHTML = `
-      <span class="chip-name">${u.name}</span>
-      <button type="button" class="chip-remove" title="Quitar">&times;</button>
-    `;
-    list.appendChild(li);
-  });
-
-  // Mostrar bloque si hay usuarios
-  wrap.classList.toggle('d-none', ids.length === 0);
-  list.classList.remove('d-none');
-  btnToggle.textContent = 'Ocultar';
-  // 🎯 Una sola vez: manejadores globales
-
-// Quitar individual
-document.getElementById('#chipsSeleccion')?.addEventListener('click', function (e) {
-  if (e.target.classList.contains('chip-remove')) {
-    const li = e.target.closest('.chip');
-    li?.remove();
-  }
-});
-
-// Ocultar / mostrar lista
-document.getElementById('#chipsClear')?.addEventListener('click', function () {
-  const list = document.getElementById('chipsSeleccion');
-  if (!list) return;
-  const oculto = list.classList.toggle('d-none');
-  this.textContent = oculto ? 'Mostrar' : 'Ocultar';
-});
-}
-
 
 
 });

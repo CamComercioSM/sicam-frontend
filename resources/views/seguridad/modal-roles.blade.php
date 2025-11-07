@@ -12,13 +12,13 @@
         <form id="addRoleForm" class="row g-3" onsubmit="return false">
           @csrf
           <!-- Lista de usuarios seleccionados-->
-          <div class="col-md-6">
+          <!-- <div class="col-md-6">
             <div class="form-floating form-floating-outline">
               <input id="TagifyUserList" name="TagifyUserList" class="form-control h-auto"
                 value="abatisse2@nih.gov, Justinian Hattersley" />
               <label for="TagifyUserList">Users List</label>
             </div>
-          </div>
+          </div> -->
 
           <div class="col-12 form-control-validation mb-3">
             <div class="form-floating form-floating-outline">
@@ -86,6 +86,7 @@
           </div>
           <input type="hidden" name="roleID" value="" id="add-role-roleID" />
           <input type="hidden" name="userID" value="" id="add-role-userID" />
+          <input type="hidden" name="userRoleName" value="" id="add-role-userRoleName" />
           <input type="hidden" name="userIDs" value="" id="add-role-userIDs" />
         </form>
         <!--/ Add role form -->
