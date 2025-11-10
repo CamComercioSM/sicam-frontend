@@ -11,7 +11,7 @@
 @endsection
 
 @section('page-script')
-@vite(['resources/js/seguridad/gestion-permisos.js', 'resources/js/seguridad/modal-permisos.js', 'resources/assets/js/modal-edit-permission.js'])
+@vite(['resources/js/seguridad/gestion-permisos.js', 'resources/js/seguridad/modal-permisos.js', 'resources/js/seguridad/modal-editar-permisos.js'])
 @endsection
 
 @section('content')
@@ -23,10 +23,10 @@
         <tr>
           <th></th>
           <th></th>
-          <th>Name</th>
-          <th>Assigned To</th>
-          <th>Created Date</th>
-          <th>Actions</th>
+          <th>Nombre</th>
+          <th>Asignado a</th>
+          <th>Fecha de creacion</th>
+          <th>Acciones</th>
         </tr>
       </thead>
     </table>
@@ -35,7 +35,7 @@
 <!--/ Permission Table -->
 
 <!-- Modal -->
-@include('_partials/_modals/modal-add-permission')
-@include('_partials/_modals/modal-edit-permission')
+@include('seguridad/modal-permisos')
+@include('seguridad/modal-editar-permisos')
 <!-- /Modal -->
 @endsection

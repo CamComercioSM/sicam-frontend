@@ -37,7 +37,7 @@
                                     @endphp
                                     <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top"
                                         title="{{ $user->name }}" class="avatar pull-up">
-                                        <img class="rounded-circle" src="{{ asset($avatar) }}" alt="{{ $user->name }}"
+                                        <img class="rounded-circle" src="{{ asset('storage/' . $avatar) }}" alt="{{ $user->name }}"
                                             style="width: 36px; height: 36px; object-fit: cover;">
                                     </li>
                                 @endforeach

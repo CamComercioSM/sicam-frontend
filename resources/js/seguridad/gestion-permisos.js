@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
   // Users List datatable
   if (dataTablePermissions) {
     dt_permission = new DataTable(dataTablePermissions, {
-      ajax: assetsPath + 'json/permissions-list.json', // JSON file to add data
+      ajax: baseURI + 'permisos-gestion', 
       columns: [
         // columns according to JSON
         { data: 'id' },

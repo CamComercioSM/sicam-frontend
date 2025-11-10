@@ -3,8 +3,6 @@
  */
 
 'use strict';
-import { functions } from 'lodash';
-import { act } from 'react';
 // Datatable (js)
 var dt_user_table;
 
@@ -65,7 +63,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
         // columns according to JSON
         { data: 'id' },
         { data: 'id', orderable: false, render: DataTable.render.select() },
-        { data: 'id' },
         { data: 'name' },
         { data: 'identificacion' },
         { data: 'email_verified_at' },
@@ -81,37 +78,27 @@ document.addEventListener('DOMContentLoaded', function (e) {
           className: 'control',
           searchable: false,
           orderable: false,
-          responsivePriority: 2,
+          responsivePriority: 1,
           targets: 0,
           render: function (data, type, full, meta) {
             return '';
           }
         },
         {
-          // For Checkboxes
           targets: 1,
           orderable: false,
           searchable: false,
           responsivePriority: 4,
           checkboxes: true,
-          render: function () {
-            return '<input type="checkbox" class="dt-checkboxes form-check-input">';
-          },
+          render: renderColumnaCheckbox,
           checkboxes: {
             selectAllRender: '<input type="checkbox" class="form-check-input">'
           }
         },
         {
-          searchable: false,
-          orderable: false,
+          //Usuario
           targets: 2,
-          render: function (data, type, full, meta) {
-            return `<span>${full.id}</span>`;
-          }
-        },
-        {
-          targets: 3,
-          responsivePriority: 4,
+          responsivePriority: 2,
           render: function (data, type, full, meta) {
             var name = full['name'];
             var email = full['email'];
@@ -119,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
             var avatar;
             if (image) {
               // For Avatar image
-              avatar = '<img src="' + baseUrl + image + '" alt="Foto de perfil" class="rounded-circle">';
+              avatar = '<img src="' + image + '" alt="Foto de perfil" class="rounded-circle">';
             }
 
             // Creates full output for row
@@ -143,8 +130,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         },
         {
-          // User email
-          targets: 4,
+          // User identificacion
+          targets: 3,
+          responsivePriority: 5,
           render: function (data, type, full, meta) {
             const identificacion = full['identificacion'];
             return '<span class="d-flex align-items-center">' +
@@ -154,8 +142,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         },
         {
-          // email verify
-          targets: 5,
+          // fecha de verificacion de email
+          targets: 4,
+          responsivePriority: 8,
           className: 'text-center',
           render: function (data, type, full, meta) {
             let email_verified_at = full['email_verified_at'];
@@ -183,7 +172,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
         },
         {
           //User Role
-          targets: 6,
+          targets: 5,
+          responsivePriority: 7,
           render: function (data, type, full, meta) {
             var userRole = full['userRole'];
             var roleBadgeObj = {
@@ -206,7 +196,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
         },
         {
           //User Status
-          targets: 7,
+          targets: 6,
+          responsivePriority: 8,
           render: function (data, type, full, meta) {
             var estado = full['estado'];
             var roleBadgeObj = {
@@ -227,7 +218,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
         },
         {
           // updated_at
-          targets: 8,
+          targets: 7,
+          responsivePriority: 10,
           className: 'text-center',
           render: function (data, type, full, meta) {
             let updated_at = full['updated_at'];
@@ -249,8 +241,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         },
         {
-          // updated_at
-          targets: 9,
+          // updated_by
+          targets: 8,
+          responsivePriority: 11,
           className: 'text-center',
           render: function (data, type, full, meta) {
             let updated_by = full['updated_by'];
@@ -275,6 +268,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           // Actions
           targets: -1,
           title: 'Acciones',
+          responsivePriority: 0,
           searchable: false,
           orderable: false,
           render: function (data, type, full, meta) {
@@ -282,6 +276,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         }
       ],
+      select: {
+        style: 'multi',
+        selector: 'td:nth-child(2)'
+      },
       order: [[2, 'desc']],
       layout: {
         topStart: {
@@ -541,7 +539,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
         },
         bottomEnd: 'paging'
       },
-      displayLength: 7,
       language: {
         paginate: {
           next: '<i class="icon-base ri ri-arrow-right-s-line scaleX-n1-rtl icon-22px"></i>',
@@ -556,7 +553,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           display: DataTable.Responsive.display.modal({
             header: function (row) {
               const data = row.data();
-              return 'Details of ' + data['name'];
+              return 'Detalles de ' + data['name'];
             }
           }),
           type: 'column',
@@ -620,8 +617,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
         };
 
         // // Role filter
-        createFilter(6, '.user_role', 'UserRole', 'Seleccionar Rol');
-        createFilter(7, '.user_estado', 'UserEstado', 'Seleccionar Estado');
+        createFilter(5, '.user_role', 'UserRole', 'Seleccionar Rol');
+        createFilter(6, '.user_estado', 'UserEstado', 'Seleccionar Estado');
       }
     });
 

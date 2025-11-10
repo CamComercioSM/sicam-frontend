@@ -11,6 +11,7 @@ use Illuminate\Auth\Events\Registered;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Str;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\UploadedFile;
 
 class GestionUsuarios extends Controller
 {
@@ -99,7 +100,7 @@ class GestionUsuarios extends Controller
         $query->whereNull('estado');
       } else {
         // Usuarios con un rol específico
-        $query->where('estado',$orderEstado);
+        $query->where('estado', $orderEstado);
       }
     }
 
@@ -126,7 +127,7 @@ class GestionUsuarios extends Controller
         'email_verified_at' => $user->email_verified_at,
         'updated_at' => $user->updated_at,
         'updated_by' => User::find($user->updated_by)?->name ?? 'N/A',
-        'userProfilePhoto' => $user->profile_photo_path,
+        'userProfilePhoto' => $user->profile_photo_url,
       ];
     }
 
@@ -168,7 +169,7 @@ class GestionUsuarios extends Controller
     $userID = $request->id;
     $emailExists = User::where('email', $request->email)
       ->where('id', '!=', $userID)
-      ->value('name');       
+      ->value('name');
     if ($emailExists) {
       return response()->json([
         'TIPO' => 'ERROR',
@@ -223,7 +224,11 @@ class GestionUsuarios extends Controller
 
       // Asignar rol
       $user->syncRoles($request->userRole);
-
+      // Asignar foto de perfil por defecto
+      $path = storage_path('app/public/profile-photos/LDw6lSVCckvjWKAjzAHjlLOOQteHHiFvpSRXW0ds.png');
+      $file = new UploadedFile($path, basename($path), null, null, true);
+      $user->updateProfilePhoto($file);
+      
       // Lanzar evento de registro (para disparar listeners como verificación, etc)
       event(new Registered($user));
 

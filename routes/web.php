@@ -156,6 +156,7 @@ use App\Http\Controllers\tables\DatatableExtensions;
 use App\Http\Controllers\charts\ApexCharts;
 use App\Http\Controllers\charts\ChartJs;
 use App\Http\Controllers\maps\Leaflet;
+use App\Http\Controllers\usuarios\GestionPermisos;
 use App\Http\Controllers\usuarios\GestionRoles;
 use App\Http\Controllers\usuarios\GestionUsuarios;
 
@@ -175,11 +176,11 @@ Route::middleware([
   Route::get('/seguridad/roles', [GestionRoles::class, 'GestionRoles'])
     ->name('gestion.roles');
   Route::resource('/roles-gestion', GestionRoles::class);
-  Route::post('/roles-gestion/operaciones-masivas', [GestionRoles::class, 'operacionesMasivaRolesUsuarios'])
-    ->name('gestion.roles');
-
-  Route::get('/seguridad/permisos', [AccessPermission::class, 'index'])
+  Route::post('/roles-gestion/operaciones-masivas', [GestionRoles::class, 'operacionesMasivaRolesUsuarios']);
+  
+  Route::get('/seguridad/permisos', [GestionPermisos::class, 'GestionPermisos'])
     ->name('gestion.permisos');
+  Route::resource('/permisos-gestion', GestionPermisos::class);
 });
 
 
@@ -189,8 +190,8 @@ Route::middleware([
   'verified',
 ])->group(function () {
 
-  Route::get('/', [Analytics::class, 'index'])->name('dashboard-ejecutivo');
-  Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-general');
+  Route::get('/', [Analytics::class, 'index'])->name('dashboard.ejecutivo');
+  Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard.general');
 
   Route::get('/pages/faq', [Faq::class, 'index'])->name('ayuda-faq');
   Route::get('/app/academy/course', [AcademyCourse::class, 'index'])->name('ayuda-video-guias');

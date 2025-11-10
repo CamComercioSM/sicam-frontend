@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           <a href="javascript:;" class="btn btn-sm btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0 waves-effect" data-bs-toggle="dropdown"><i class="icon-base ri ri-more-2-line icon-22px"></i></a>
           <div class="dropdown-menu dropdown-menu-end m-0">
             <a href="javascript:;" data-id="${full['id']}" data-name="${full['name']}" class="dropdown-item edit-role-user">Editar</a>
-            <a href="javascript:;" data-id="${full['id']}" data-estado="${full['estado']}" class="dropdown-item">Suspender</a>
+            <a href="javascript:;" data-id="${full['id']}" data-estado="${full['estado']}" class="dropdown-item suspend-status-user">Suspender</a>
           </div>
         </div>
       `;
@@ -471,7 +471,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
   }
 
   function suspenderUsuario(evento) {
-    const btnSuspender = evento.target.closest('.dropdown-item');
+    const btnSuspender = evento.target.closest('.suspend-status-user');
     if (!btnSuspender) return;
     confirmarAccion(
       '¿Estás seguro que quieres suspender el usuario?',

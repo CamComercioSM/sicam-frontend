@@ -8,10 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
-use function PHPSTORM_META\map;
 
 class GestionRoles extends Controller
 {

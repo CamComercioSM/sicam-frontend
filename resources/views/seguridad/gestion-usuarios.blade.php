@@ -119,14 +119,13 @@
                     <tr>
                         <th></th>
                         <th></th>
-                        <th>Id</th>
                         <th>Usuario</th>
                         <th>Identificacion</th>
                         <th>Verificacion</th>
                         <th>Rol</th>
                         <th>Estado</th>
                         <th>Actualizacion</th>
-                        <th>Acrtualizado por</th>
+                        <th>Actualizado por</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>

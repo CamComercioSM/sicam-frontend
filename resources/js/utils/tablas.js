@@ -31,9 +31,9 @@ window.escapeHtml = function (s) {
     .replace(/'/g, '&#039;');
 };
 
-window.avatarHtml = function (baseUrl, image) {
+window.avatarHtml = function (image) {
   if (!image) return '';
-  return `<img src="${baseUrl}${image}" alt="Foto de perfil" class="rounded-circle">`;
+  return `<img src="${image}" alt="Foto de perfil" class="rounded-circle">`;
 };
 
 const roleIcon = {
@@ -81,13 +81,12 @@ window.renderColumnaUsuario = function (data, type, full, meta, ctx = {}) {
   const { baseUrl, userView } = ctx;
   const name = escapeHtml(full?.name);
   const email = escapeHtml(full?.email);
-  const image = full?.userProfilePhoto;
-  const avatar = avatarHtml(baseUrl, image);
+  const image = avatarHtml(full?.userProfilePhoto);
 
   return (
     '<div class="d-flex justify-content-start align-items-center user-name">' +
     '<div class="avatar-wrapper">' +
-    '<div class="avatar avatar-sm me-4">' + avatar + '</div>' +
+    '<div class="avatar avatar-sm me-4">' + image + '</div>' +
     '</div>' +
     '<div class="d-flex flex-column">' +
     `<a href="${userView}${full?.id}" class="text-heading text-truncate"><span class="fw-medium">${name}</span></a>` +

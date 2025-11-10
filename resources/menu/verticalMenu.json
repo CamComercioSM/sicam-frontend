@@ -11,7 +11,8 @@
         {
           "url": "dashboard-general",
           "name": "Dashboard General",
-          "slug": "dashboard-general",
+          "slug": "dashboard.general",
+          "alias":"dashboard.general",
           "role": [
             "Invitado"
           ]
@@ -19,7 +20,8 @@
         {
           "url": "dashboard-ejecutivo",
           "name": "Dashboard ejecutivo",
-          "slug": "dashboard-ejecutivo",
+          "slug": "dashboard.ejecutivo",
+          "alias":"dashboard.ejecutivo",
           "role": [
             "Administrador",
             "Soporte"

@@ -465,14 +465,14 @@ use Illuminate\Support\Facades\Route;
             <span class="align-middle">Mi perfil</span>
           </a>
         </li>
-        @if (Auth::check() && Laravel\Jetstream\Jetstream::hasApiFeatures())
+        <!-- @if (Auth::check() && Laravel\Jetstream\Jetstream::hasApiFeatures())
         <li>
           <a class="dropdown-item" href="{{ route('api-tokens.index') }}">
             <i class="icon-base ri ri-key-2-line icon-md me-3"></i><span>API Tokens</span>
           </a>
         </li>
-        @endif
-        <li>
+        @endif -->
+        <!-- <li>
           <a class="dropdown-item" href="{{ url('pages/account-settings-billing') }}">
             <span class="d-flex align-items-center align-middle">
               <i class="flex-shrink-0 icon-base ri ri-file-text-line icon-22px me-2"></i>
@@ -481,7 +481,7 @@ use Illuminate\Support\Facades\Route;
                 class="flex-shrink-0 badge badge-center rounded-pill bg-danger h-px-20 d-flex align-items-center justify-content-center">4</span>
             </span>
           </a>
-        </li>
+        </li> -->
         @if (Auth::User() && Laravel\Jetstream\Jetstream::hasTeamFeatures())
         <li>
           <div class="dropdown-divider my-1"></div>
