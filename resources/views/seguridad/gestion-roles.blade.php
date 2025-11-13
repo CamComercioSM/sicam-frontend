@@ -15,7 +15,7 @@
 @endsection
 
 @section('page-script')
-    @vite(['resources/js/seguridad/gestion-roles.js', 'resources/js/seguridad/modal-roles.js'])
+    @vite(['resources/assets/vendor/js/iconos-iconify.js','resources/js/seguridad/gestion-roles.js', 'resources/js/seguridad/modal-roles.js'])
 @endsection
 
 @section('content')
@@ -88,7 +88,6 @@
                             <tr>
                                 <th></th>
                                 <th></th>
-                                <th>Id</th>
                                 <th>Usuario</th>
                                 <th>Identificacion</th>
                                 <th>Verificacion</th>

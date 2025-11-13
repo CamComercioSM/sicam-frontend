@@ -2,12 +2,28 @@
 
 @section('title', 'Remix - Icons')
 
+
+@section('page-script')
+  @vite('resources/assets/vendor/js/iconos-iconify.js')
+@endsection
+
 @section('page-style')
 @vite( 'resources/assets/vendor/scss/pages/page-icons.scss')
 @endsection
 
 @section('content')
 <p>You can check complete list of Remix Icons from <a href="https://icon-sets.iconify.design/ri/" target="_blank">https://icon-sets.iconify.design/ri</a></p>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    
+    renderIconSelect('#div_select_icon_add_role');
+    
+  });
+</script> 
+
+
+<div id="div_select_icon_add_role"></div>
 
 <!-- Icon Container -->
 <div class="d-flex flex-wrap" id="icons-container">
@@ -162,4 +178,5 @@
   <a href="https://icon-sets.iconify.design/ri/" target="_blank" class="btn btn-primary">View All Icons</a>
   <a href="{{config('variables.documentation')}}/Icons.html" class="btn btn-primary" target="_blank">How to use icons?</a>
 </div>
+
 @endsection

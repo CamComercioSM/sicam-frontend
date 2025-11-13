@@ -147,14 +147,14 @@
                         <label for="add-user-fullname">Nombre completo</label>
                     </div>
                     <div class="form-floating form-floating-outline mb-5 form-control-validation">
-                        <input type="email" id="add-user-email" class="form-control" placeholder="john.doe@example.com"
-                            aria-label="john.doe@example.com" name="email" />
+                        <input type="email" id="add-user-email" class="form-control" placeholder="napellido@ccsm.org.co"
+                            aria-label="napellido@ccsm.org.co" name="email" />
                         <label for="add-user-email">Correo electronico</label>
                     </div>
                     <div class="form-floating form-floating-outline mb-5 form-control-validation">
                         <input type="number" id="add-user-personaIDENTIFICACION" class="form-control" placeholder="CC"
                             name="personaIDENTIFICACION" />
-                        <label for="add-user-personaIDEaria-label="john.doe@example.com"NTIFICACION">Cedula</label>
+                        <label for="add-user-personaIDE aria-label="napellido@ccsm.org.co"NTIFICACION">Cedula</label>
                     </div>
                     <div class="form-floating form-floating-outline mb-5 form-control-validation">
                         <select id="add-user-userRole" name="userRole" class="form-select">

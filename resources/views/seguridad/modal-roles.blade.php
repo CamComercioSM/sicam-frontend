@@ -30,6 +30,7 @@
                 <option data-id="{{$role->id}}" value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
                 @endforeach
               </select>
+              <div id="select_icon_add_role"></div>
               <label for="user-role">Rol de Usuario</label>
             </div>
           </div>
@@ -94,4 +95,12 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    
+    renderIconSelect('#select_icon_add_role');
+    
+  });
+</script> 
 <!--/ Add Role Modal -->

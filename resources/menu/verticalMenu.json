@@ -1,543 +1,596 @@
 {
   "menu": [
-    {
-      "menuHeader": "General"
-    },
-    {
-      "name": "Inicio",
-      "icon": "menu-icon icon-base ri ri-home-smile-line",
-      "slug": "dashboard",
-      "submenu": [
-        {
-          "url": "dashboard-general",
-          "name": "Dashboard General",
-          "slug": "dashboard.general",
-          "alias":"dashboard.general",
-          "role": [
-            "Invitado"
-          ]
-        },
-        {
-          "url": "dashboard-ejecutivo",
-          "name": "Dashboard ejecutivo",
-          "slug": "dashboard.ejecutivo",
-          "alias":"dashboard.ejecutivo",
-          "role": [
-            "Administrador",
-            "Soporte"
-          ]
-        }
-      ]
-    },
-    {
-      "menuHeader": "User Management",
-      "role": [
-        "Administrador",
-        "Soporte"
-      ]
-    },
-    {
-      "name": "Usuarios",
-      "icon": "menu-icon icon-base ri ri-database-2-line",
-      "slug": "usuarios",
-      "role": [
-        "Administrador",
-        "Soporte"
-      ],
-      "submenu": [
-        {
-          "url": "laravel/user-management",
-          "alias":"usuarios.lista",
-          "name": "Lista",
-          "slug": "usuarios.lista",
-          "role": [
-            "Administrador",
-            "Soporte"
-          ]
-        },
-        {
-          "url": "usuarios-crear",
-          "name": "Crear nuevo usuario",
-          "slug": "usuarios-crear",
-          "role": [
-            "Administrador",
-            "Soporte"
-          ]
-        },
-        {
-          "url": "usuarios-restaurar",
-          "name": "Restaurar usuarios",
-          "slug": "usuarios-restaurar",
-          "role": [
-            "Administrador",
-            "Soporte"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Respaldos",
-          "slug": "",
-          "role": [
-            "Administrador",
-            "Soporte"
-          ]
-        },
-        {
+  {
+    "menuHeader": "General"
+  },
+  {
+    "name": "Inicio",
+    "icon": "menu-icon icon-base ri ri-home-smile-line",
+    "slug": "dashboard",
+    "submenu": [
+      {
+        "url": "dashboard-general",
+        "name": "Dashboard General",
+        "slug": "dashboard.general",
+        "alias": "dashboard.general",
+        "role": [
+          "Invitado"
+        ]
+      },
+      {
+        "url": "dashboard-ejecutivo",
+        "name": "Dashboard ejecutivo",
+        "slug": "dashboard.ejecutivo",
+        "alias": "dashboard.ejecutivo",
+        "role": [
+          "Administrador",
+          "Soporte"
+        ]
+      }
+    ]
+  },
+  {
+    "menuHeader": "User Management",
+    "role": [
+      "Administrador",
+      "Soporte"
+    ]
+  },
+  {
+    "name": "Usuarios",
+    "icon": "menu-icon icon-base ri ri-database-2-line",
+    "slug": "usuarios",
+    "role": [
+      "Administrador",
+      "Soporte"
+    ],
+    "submenu": [
+      {
+        "url": "laravel/user-management",
+        "alias": "usuarios.lista",
+        "name": "Lista",
+        "slug": "usuarios.lista",
+        "role": [
+          "Administrador",
+          "Soporte"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Crear nuevo usuario",
+        "slug": "usuarios-crear",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador",
+          "Soporte"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Restaurar usuarios",
+        "alias": "pages-misc-under-maintenance",
+        "slug": "usuarios-restaurar",
+        "role": [
+          "Administrador",
+          "Soporte"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Respaldos",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador",
+          "Soporte"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
         "name": "Indicadores",
         "icon": "ri-home-7-line",
-        "url": "indicadores",
-        "slug":""
-        }
-      ]
-    },
-    {
-      "name": "roles & Permissions",
-      "icon": "menu-icon icon-base ri ri-lock-2-line",
-      "slug": "gestion",
-      "role": [
-        "Administrador",
-        "Soporte"
-      ],
-      "submenu": [
-        {
-          "url": "app/access-roles", 
-          "alias": "gestion.roles",
-          "name": "roles",
-          "slug": "gestion.roles",
-          "role": [
-            "Administrador",
-            "Soporte"
-          ]
-        },
-        {
-          "url": "app/access-permission",
-          "alias": "gestion.permisos",
-          "name": "Permission",
-          "slug": "gestion.permisos",
-          "role": [
-            "Administrador",
-            "Soporte"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Auditorias",
-      "icon": "menu-icon icon-base ri ri-lock-2-line",
-      "slug": "app-access",
-      "role": [
-        "Soporte"
-      ],
-      "any": [
-        "ejemplos.ver"
-      ],
-      "submenu": [
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Registro de cambios",
-          "slug": "",
-          "role": [
-            "Soporte"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Sesiones activas",
-          "slug": "",
-          "role": [
-            "Soporte"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Historial de inicios de sesión",
-          "slug": "",
-          "role": [
-            "Soporte"
-          ]
-        }
-      ]
-    },
-    {
-      "menuHeader": "Procesos empresariales",
-      "role": [
-        "Administrador"
-      ],
-      "any": [
-        "ejemplos.ver"
-      ]
-    },
-    {
-      "name": "Talento humano",
-      "icon": "menu-icon icon-base ri ri-user-line",
-      "slug": "",
-      "role": [
-        "Administrador"
-      ],
-      "any": [
-        "ejemplos.ver"
-      ],
-      "submenu": [
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Colaboradores",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Nomina",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Permisos y vacaciones",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Asistencia",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Ausentismos",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Reclutamiento",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Capacitaciones",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Compras",
-      "icon": "menu-icon icon-base ri ri-shopping-bag-3-line",
-      "slug": "",
-      "role": [
-        "Administrador"
-      ],
-      "submenu": [
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Cotizaciones",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Pedidos",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "proveedores",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Reportes de Compras",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Gestion Documental",
-      "icon": "menu-icon icon-base ri ri-file-copy-line",
-      "slug": "",
-      "role": [
-        "Administrador"
-      ],
-      "submenu": [
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Repositorio general",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Reportes documentales",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Precidencia",
-      "icon": "menu-icon icon-base ri ri-tv-2-line",
-      "slug": "",
-      "role": [
-        "Administrador"
-      ],
-      "submenu": [
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Reportes ejecutivos",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Seguimiento a proyectos",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Financiera",
-      "icon": "menu-icon icon-base ri ri-bill-line",
-      "slug": "",
-      "role": [
-        "Administrador"
-      ],
-      "submenu": [
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Contabilidad general",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Bancos",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Reportes financieros",
-          "slug": "",
-          "role": [
-            "Administrador"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Servicios empresariales",
-      "icon": "menu-icon icon-base ri ri-bar-chart-2-line",
-      "slug": "sevicios",
-      "role": [
-        "Administrador"
-      ],
-      "submenu": [
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Formalización",
-          "slug": ""
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Fortalecimiento y crecimiento empresarial",
-          "slug": ""
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Formación y capacitació",
-          "slug": ""
-        }
-      ]
-    },
-    {
-      "menuHeader": "Ajustes del sistema",
-      "role": [
-        "Administrador",
-        "Soporte"
-      ],
-      "any": [
-        "ejemplos.ver"
-      ]
-    },
-    {
-      "name": "Configuraciones",
-      "icon": "menu-icon icon-base ri ri-lock-2-line",
-      "slug": "",
-      "role": [
-        "Soporte",
-        "Administrador"
-      ],
-      "any": [
-        "ejemplos.ver"
-      ],
-      "submenu": [
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Parámetros del sistema",
-          "slug": "",
-          "role": [
-            "Soporte"
-          ],
-          "any": [
-            "ejemplos.ver"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Parametros visuales",
-          "slug": "",
-          "any": [
-            "ejemplos.ver"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Preferencias regionales",
-          "slug": "",
-          "any": [
-            "ejemplos.ver"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "seguridad",
-          "slug": "",
-          "role": [
-            "Soporte"
-          ],
-          "any": [
-            "ejemplos.ver"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Seguridad",
-      "icon": "menu-icon icon-base ri ri-lock-2-line",
-      "slug": "",
-      "role": [
-        "Soporte"
-      ],
-      "any": [
-        "ejemplos.ver"
-      ],
-      "submenu": [
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Políticas de contraseñas",
-          "slug": "",
-          "any": [
-            "ejemplos.ver"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Logs del sistema",
-          "slug": "",
-          "any": [
-            "ejemplos.ver"
-          ]
-        }
-      ]
-    },
-    {
-      "menuHeader": "Ayuda y Soporte",
-      "any": [
-        "ejemplos.ver"
-      ]
-    },
-    {
-      "name": "Centro de ayuda ",
-      "icon": "menu-icon icon-base ri ri-lock-2-line",
-      "slug": "ayuda",
-      "any": [
-        "ejemplos.ver"
-      ],
-      "submenu": [
-        {
-          "url": "ayuda-faq",
-          "name": "Preguntas frecuentes",
-          "slug": "ayuda-faq",
-          "any": [
-            "ejemplos.ver"
-          ]
-        },
-        {
-          "url": "ayuda-video-guias",
-          "name": "Video guias",
-          "slug": "ayuda-video-guias",
-          "any": [
-            "ejemplos.ver"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Soporte tecnico",
-      "icon": "menu-icon icon-base ri ri-lifebuoy-line",
-      "slug": "",
-      "any": [
-        "ejemplos.ver"
-      ],
-      "submenu": [
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Contactar soporte",
-          "slug": "",
-          "any": [
-            "ejemplos.ver"
-          ]
-        },
-        {
-          "url": "pages/misc-under-maintenance",
-          "name": "Preguntas frecuentes",
-          "slug": "",
-          "any": [
-            "ejemplos.ver"
-          ]
-        }
-      ]
-    },
+        "alias": "pages-misc-under-maintenance",
+        "slug": ""
+      }
+    ]
+  },
+  {
+    "name": "Roles & Permissions",
+    "icon": "menu-icon icon-base ri ri-lock-2-line",
+    "slug": "gestion",
+    "role": [
+      "Administrador",
+      "Soporte"
+    ],
+    "submenu": [
+      {
+        "url": "app/access-roles",
+        "alias": "gestion.roles",
+        "name": "Roles",
+        "slug": "gestion.roles",
+        "role": [
+          "Administrador",
+          "Soporte"
+        ]
+      },
+      {
+        "url": "app/access-permission",
+        "alias": "gestion.permisos",
+        "name": "Permission",
+        "slug": "gestion.permisos",
+        "role": [
+          "Administrador",
+          "Soporte"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Auditorias",
+    "icon": "menu-icon icon-base ri ri-lock-2-line",
+    "slug": "app-access",
+    "role": [
+      "Soporte"
+    ],
+    "any": [
+      "ejemplos.ver"
+    ],
+    "submenu": [
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Registro de cambios",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Soporte"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Sesiones activas",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Soporte"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Historial de inicios de sesión",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Soporte"
+        ]
+      }
+    ]
+  },
+  {
+    "menuHeader": "Procesos empresariales",
+    "role": [
+      "Administrador"
+    ],
+    "any": [
+      "ejemplos.ver"
+    ]
+  },
+  {
+    "name": "Talento humano",
+    "icon": "menu-icon icon-base ri ri-user-line",
+    "slug": "empresarial",
+    "role": [
+      "Administrador"
+    ],
+    "any": [
+      "ejemplos.ver"
+    ],
+    "submenu": [
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Colaboradores",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Nomina",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Permisos y vacaciones",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Asistencia",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Ausentismos",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Reclutamiento",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Capacitaciones",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Compras",
+    "icon": "menu-icon icon-base ri ri-shopping-bag-3-line",
+    "slug": "",
+    "role": [
+      "Administrador"
+    ],
+    "submenu": [
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Cotizaciones",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Pedidos",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "proveedores",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Reportes de Compras",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Gestion Documental",
+    "icon": "menu-icon icon-base ri ri-file-copy-line",
+    "slug": "",
+    "role": [
+      "Administrador"
+    ],
+    "submenu": [
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Repositorio general",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Reportes documentales",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Precidencia",
+    "icon": "menu-icon icon-base ri ri-tv-2-line",
+    "slug": "",
+    "role": [
+      "Administrador"
+    ],
+    "submenu": [
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Reportes ejecutivos",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Seguimiento a proyectos",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Financiera",
+    "icon": "menu-icon icon-base ri ri-bill-line",
+    "slug": "",
+    "role": [
+      "Administrador"
+    ],
+    "submenu": [
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Contabilidad general",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Bancos",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Reportes financieros",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Administrador"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Servicios empresariales",
+    "icon": "menu-icon icon-base ri ri-bar-chart-2-line",
+    "slug": "sevicios",
+    "role": [
+      "Administrador"
+    ],
+    "submenu": [
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Formalización",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance"
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Fortalecimiento y crecimiento empresarial",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance"
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Formación y capacitació",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance"
+      }
+    ]
+  },
+  {
+    "menuHeader": "Ajustes del sistema",
+    "role": [
+      "Administrador",
+      "Soporte"
+    ],
+    "any": [
+      "ejemplos.ver"
+    ]
+  },
+  {
+    "name": "Configuraciones",
+    "icon": "menu-icon icon-base ri ri-lock-2-line",
+    "slug": "",
+    "role": [
+      "Soporte",
+      "Administrador"
+    ],
+    "any": [
+      "ejemplos.ver"
+    ],
+    "submenu": [
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Parámetros del sistema",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Soporte"
+        ],
+        "any": [
+          "ejemplos.ver"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Parametros visuales",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "any": [
+          "ejemplos.ver"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Preferencias regionales",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "any": [
+          "ejemplos.ver"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "seguridad",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "role": [
+          "Soporte"
+        ],
+        "any": [
+          "ejemplos.ver"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Seguridad",
+    "icon": "menu-icon icon-base ri ri-lock-2-line",
+    "slug": "",
+    "role": [
+      "Soporte"
+    ],
+    "any": [
+      "ejemplos.ver"
+    ],
+    "submenu": [
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Políticas de contraseñas",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "any": [
+          "ejemplos.ver"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Logs del sistema",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "any": [
+          "ejemplos.ver"
+        ]
+      }
+    ]
+  },
+  {
+    "menuHeader": "Ayuda y Soporte",
+    "any": [
+      "ejemplos.ver"
+    ]
+  },
+  {
+    "name": "Centro de ayuda ",
+    "icon": "menu-icon icon-base ri ri-lock-2-line",
+    "slug": "ayuda",
+    "any": [
+      "ejemplos.ver"
+    ],
+    "submenu": [
+      {
+        "url": "ayuda-faq",
+        "name": "Preguntas frecuentes",
+        "slug": "ayuda-faq",
+        "alias": "ayuda-faq",
+        "any": [
+          "ejemplos.ver"
+        ]
+      },
+      {
+        "url": "ayuda-video-guias",
+        "name": "Video guias",
+        "slug": "ayuda-video-guias",
+        "alias": "ayuda-video-guias",
+        "any": [
+          "ejemplos.ver"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Soporte tecnico",
+    "icon": "menu-icon icon-base ri ri-lifebuoy-line",
+    "slug": "",
+    "any": [
+      "ejemplos.ver"
+    ],
+    "submenu": [
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Contactar soporte",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "any": [
+          "ejemplos.ver"
+        ]
+      },
+      {
+        "url": "pages/misc-under-maintenance",
+        "name": "Preguntas frecuentes",
+        "slug": "pages-misc-under-maintenance",
+        "alias": "pages-misc-under-maintenance",
+        "any": [
+          "ejemplos.ver"
+        ]
+      }
+    ]
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     {
       "menuHeader": "Plantilla materio"
     },

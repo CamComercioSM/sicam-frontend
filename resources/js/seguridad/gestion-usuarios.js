@@ -5,7 +5,6 @@
 'use strict';
 // Datatable (js)
 var dt_user_table;
-
 document.addEventListener('DOMContentLoaded', function (e) {
   let borderColor, bodyBg, headingColor;
 
@@ -39,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
   // Users datatable
   if (dt_user_table) {
 
-    const dt_user = new DataTable(dt_user_table, {
+    var dt_user = new DataTable(dt_user_table, {
       processing: true,
       serverSide: true,
       ajax: {
@@ -99,122 +98,32 @@ document.addEventListener('DOMContentLoaded', function (e) {
           //Usuario
           targets: 2,
           responsivePriority: 2,
-          render: function (data, type, full, meta) {
-            var name = full['name'];
-            var email = full['email'];
-            var image = full['userProfilePhoto'];
-            var avatar;
-            if (image) {
-              // For Avatar image
-              avatar = '<img src="' + image + '" alt="Foto de perfil" class="rounded-circle">';
-            }
-
-            // Creates full output for row
-            var row_output =
-              '<div class="d-flex justify-content-start align-items-center user-name">' +
-              '<div class="avatar-wrapper">' +
-              '<div class="avatar avatar-sm me-4">' +
-              avatar +
-              '</div>' +
-              '</div>' +
-              '<div class="d-flex flex-column">' +
-              '<a href="' + userView + '/' + full['id'] + '" class="text-heading text-truncate"><span class="fw-medium">' +
-              name +
-              '</span></a>' +
-              '<small>' +
-              email +
-              '</small>' +
-              '</div>' +
-              '</div>';
-            return row_output;
-          }
+          render: withCtx(renderColumnaUsuario, { userView })
         },
         {
           // User identificacion
           targets: 3,
           responsivePriority: 5,
-          render: function (data, type, full, meta) {
-            const identificacion = full['identificacion'];
-            return '<span class="d-flex align-items-center">' +
-              '<i class="icon-base ri ri-id-card-line"></i> ' +
-              '<span>' + identificacion + '</span>' +
-              '</span>';
-          }
+          render: renderColumnaIdentificacion
         },
         {
           // fecha de verificacion de email
           targets: 4,
           responsivePriority: 8,
           className: 'text-center',
-          render: function (data, type, full, meta) {
-            let email_verified_at = full['email_verified_at'];
-            let iconHtml;
-            if (email_verified_at && email_verified_at !== 'null') {
-              // Formato dd/mm/aaaa
-              let formattedDate = formatDate(email_verified_at);
-              iconHtml = '<i class="icon-base ri ri-mail-check-fill text-success icon-22px text-primary me-2"></i>';
-              return (
-                '<span class="d-flex align-items-center">' +
-                iconHtml +
-                '<span>' + formattedDate + '</span>' +
-                '</span>'
-              );
-            } else {
-              iconHtml = '<i class="icon-base ri fs-4 ri-shield-line text-danger icon-22px text-primary me-2"></i>';
-              return (
-                '<span class="d-flex align-items-center">' +
-                iconHtml +
-                '<span>No verificado</span>' +
-                '</span>'
-              );
-            }
-          }
+          render: withCtx(renderColumnaEmailVerificado)
         },
         {
           //User Role
           targets: 5,
           responsivePriority: 7,
-          render: function (data, type, full, meta) {
-            var userRole = full['userRole'];
-            var roleBadgeObj = {
-              Asesor: '<i class="icon-base ri ri-user-line icon-22px text-primary me-2"></i>',
-              Administrador: '<i class="icon-base ri ri-vip-crown-line icon-22px text-warning me-2"></i>',
-              Presidencia: '<i class="icon-base ri ri-pie-chart-line icon-22px text-success me-2"></i>',
-              Invitado: '<i class="icon-base ri ri-edit-box-line icon-22px text-info me-2"></i>',
-              Soporte: '<i class="icon-base ri ri-computer-line icon-22px text-danger me-2"></i>'
-            };
-            if (!userRole || userRole === 'null') {
-              return "<span class='text-truncate d-flex align-items-center text-heading'>-</span>";
-            }
-            return (
-              "<span class='text-truncate d-flex align-items-center text-heading'>" +
-              (roleBadgeObj[userRole] || '') + // Ensures badge exists for the role
-              userRole +
-              '</span>'
-            );
-          }
+          render: renderColumnaUserRole
         },
         {
           //User Status
           targets: 6,
           responsivePriority: 8,
-          render: function (data, type, full, meta) {
-            var estado = full['estado'];
-            var roleBadgeObj = {
-              activo: '<i class="icon-base ri ri-user-line icon-22px text-primary me-2"></i>',
-              desactivo: '<i class="icon-base ri ri-vip-crown-line icon-22px text-warning me-2"></i>',
-              borrado: '<i class="icon-base ri ri-pie-chart-line icon-22px text-success me-2"></i>',
-            };
-            if (!estado || estado === 'null') {
-              return "<span class='text-truncate d-flex align-items-center text-heading'>-</span>";
-            }
-            return (
-              "<span class='text-truncate d-flex align-items-center text-heading'>" +
-              (roleBadgeObj[estado] || '') + // Ensures badge exists for the role
-              estado +
-              '</span>'
-            );
-          }
+          render: renderColumnaEstado
         },
         {
           // updated_at
@@ -280,6 +189,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         style: 'multi',
         selector: 'td:nth-child(2)'
       },
+      rowId: 'id',
       order: [[2, 'desc']],
       layout: {
         topStart: {
@@ -622,6 +532,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
       }
     });
 
+    SeleccionesDT.init('roles', dt_user, {
+      keyField: 'id',
+    });
+
     // Delete Record
     document.addEventListener('click', function (e, o) {
       if (e.target.closest('.delete-record')) {
@@ -635,6 +549,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     document.addEventListener('click', function (e) {
       if (e.target.closest('.edit-record')) {
         const editBtn = e.target.closest('.edit-record');
+        resetearFormularios(offCanvasForm);
         const user_id = editBtn.dataset.id;
         abrirOffCanvasUsuariosParaEditar(user_id);
       }
@@ -645,6 +560,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     if (addNewBtn) {
       addNewBtn.addEventListener('click', function () {
         document.getElementById('user_id').value = ''; //resetting input field
+        resetearFormularios(offCanvasForm);
         cambiarTituloOffCanvasUsuarios('Creando Nuevo Usuario');
       });
     }
@@ -698,14 +614,14 @@ document.addEventListener('DOMContentLoaded', function (e) {
         name: {
           validators: {
             notEmpty: {
-              message: 'Please enter fullname'
+              message: 'Por favor, ingrese nombre completo'
             }
           }
         },
         email: {
           validators: {
             notEmpty: {
-              message: 'Please enter your email'
+              message: 'Por favor, ingrese su correo'
             },
             emailAddress: {
               message: 'The value is not a valid email address'
@@ -715,14 +631,14 @@ document.addEventListener('DOMContentLoaded', function (e) {
         personaIDENTIFICACION: {
           validators: {
             notEmpty: {
-              message: 'Por favor ingresar la cedula'
+              message: 'Por favor, ingresar la cedula'
             }
           }
         },
         userRole: {
           validators: {
             notEmpty: {
-              message: 'Please enter your company'
+              message: 'Por favor, seleccione un rol'
             }
           }
         }
@@ -756,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   function accionesTablaUsuarios(full) {
 
-    let accionButtons = '<a href="' + userView + '/' + full['id'] + '" class="dropdown-item">Ver Detalles</a>';
+    let accionButtons = '<a href="' + userView + full['id'] + '" class="dropdown-item">Ver Detalles</a>';
     switch (full['estado']) {
       case 'activo':
         // Acciones para usuario activo
@@ -785,10 +701,15 @@ document.addEventListener('DOMContentLoaded', function (e) {
     );
   }
 
-  function ocultarOffCanvasUsuarios() {
+  function ocultarOffCanvasUsuarios(op = true) {
     const offcanvasInstance = bootstrap.Offcanvas.getInstance(offCanvasForm);
-    offcanvasInstance && offcanvasInstance.hide();
-  }
+    if(op){
+      offcanvasInstance && offcanvasInstance.hide();
+    }else{
+      offcanvasInstance && offcanvasInstance.show();
+    }
+    }
+    
 
   function ocultarModalUsuarios() {
     const dtrModal = document.querySelector('.dtr-bs-modal.show');
@@ -806,6 +727,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
   }
   function traerDatosUsuario(user_id) {
     // get data
+    bloquearPantalla('Buscando datos...');
     fetch(`${baseUrl}usuarios-gestion/${user_id}/edit`)
       .then(response => response.json())
       .then(data => {
@@ -814,9 +736,11 @@ document.addEventListener('DOMContentLoaded', function (e) {
         document.getElementById('add-user-email').value = data.email;
         document.getElementById('add-user-personaIDENTIFICACION').value = data.identificacion;
         document.getElementById('add-user-userRole').value = data.userRole;
+        desbloquearPantalla();
       });
   }
   function enviarDatosUsuario() {
+    bloquearPantalla('enviando datos...');
     // adding or updating user when form successfully validate
     const formData = new FormData(addNewUserForm);
     const formDataObj = {};
@@ -830,7 +754,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
     for (const [key, value] of Object.entries(formDataObj)) {
       searchParams.append(key, value);
     }
-
     guardarUsuario(searchParams);
   }
   function guardarUsuario(searchParams) {
@@ -838,28 +761,43 @@ document.addEventListener('DOMContentLoaded', function (e) {
       method: 'POST',
       headers: {
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        'Accept': 'application/json', // ¡Esto hace que Laravel devuelva JSON!
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: searchParams.toString()
     })
       .then(async response => {
-        let data = await response.json();
+        let data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          // 422 u otro código
+          console.log('Status:', response.status);
+          console.log('Errores:', data?.errors || data);
+          console.log('Mensaje:', data?.message || data);
+          alertaError('Error de Validación de Datos', data?.message);
+          desbloquearPantalla();
+          return true;
+        }
+
         if (response.ok) {
           switch (data.TIPO) {
             case 'ERROR':
               alertaError('Error creando el usuario', data.MENSAJE);
+              desbloquearPantalla();
               break;
             default:
               alertaExito('Usuario Creado', data.MENSAJE || 'Operación completada.');
+              desbloquearPantalla();
               ocultarOffCanvasUsuarios();
           }
-          dt_user_table && new DataTable(dt_user_table).draw();
+          dt_user.ajax.reload();
         }
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
       })
       .catch(err => {
+        ca
         ocultarOffCanvasUsuarios();
         console.log('There has been a problem with your fetch operation: ', err);
       });
@@ -885,7 +823,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     })
       .then(response => {
         if (response.ok) {
-          dt_user_table && new DataTable(dt_user_table).draw();
+          dt_user.ajax.reload();
           // success sweetalert
           alertaExito('Deleted!', 'The user has been deleted!');
         } else {
@@ -903,7 +841,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       null,
       function () {
         desactivarUsuario(user_id);
-        dt_user_table && new DataTable(dt_user_table).draw();
+        dt_user.ajax.reload();
         alertaExito('Usuario Desactivado!', 'El usuario ha sido desactivado!');
       }
     );
@@ -931,7 +869,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       })
     }).then(response => {
       if (response.ok) {
-        dt_user_table && new DataTable(dt_user_table).draw();
+        dt_user.ajax.reload();
         alertaExito('Usuario activado!', 'El usuario ha sido activado!');
       } else {
         throw new Error('Activacion failed');

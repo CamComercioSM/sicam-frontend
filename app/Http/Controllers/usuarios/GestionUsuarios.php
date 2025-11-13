@@ -63,8 +63,8 @@ class GestionUsuarios extends Controller
     $limit = $request->input('length');
     $start = $request->input('start');
     $order = $columns[$request->input('order.0.column')] ?? 'id';
-    $orderRole = $request->input('columns')[6]['search']['value'] ?? null;
-    $orderEstado = $request->input('columns')[7]['search']['value'] ?? null;
+    $orderRole = $request->input('columns')[5]['search']['value'] ?? null;
+    $orderEstado = $request->input('columns')[6]['search']['value'] ?? null;
     $dir = $request->input('order.0.dir') ?? 'desc';
 
 
@@ -159,12 +159,18 @@ class GestionUsuarios extends Controller
   public function store(Request $request)
   {
 
-    $validacion = $request->validate([
-      'name'      => 'required|string|max:255',
-      'email'     => 'required|email',
-      'userRole'  => 'required|string|exists:roles,name',
-      'personaIDENTIFICACION' => 'required|string|min:4|max:12',
-    ]);
+    $request->validate(
+      [
+        'name'      => 'required|string|max:255',
+        'email'     => 'required|email',
+        'userRole'  => 'required|string|exists:roles,name',
+        'personaIDENTIFICACION' => 'required|string|min:4|max:12',
+      ],
+      [
+        'personaIDENTIFICACION.min' => 'La identificación debe tener al menos 4 caracteres.',
+        'personaIDENTIFICACION.max' => 'La identificación no debe exceder los 12 caracteres.',
+      ]
+    );
 
     $userID = $request->id;
     $emailExists = User::where('email', $request->email)
@@ -228,7 +234,7 @@ class GestionUsuarios extends Controller
       $path = storage_path('app/public/profile-photos/LDw6lSVCckvjWKAjzAHjlLOOQteHHiFvpSRXW0ds.png');
       $file = new UploadedFile($path, basename($path), null, null, true);
       $user->updateProfilePhoto($file);
-      
+
       // Lanzar evento de registro (para disparar listeners como verificación, etc)
       event(new Registered($user));
 

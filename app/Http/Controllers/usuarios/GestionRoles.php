@@ -15,6 +15,7 @@ class GestionRoles extends Controller
 
     function operacionesMasivaRolesUsuarios(Request $request)
     {
+        
         $roleID = $request->input('roleID');
         if ($roleID) {
             $userIDs = json_decode($request->input('userIDs', []), true);

@@ -78,7 +78,7 @@ window.renderColumnaId = function (data, type, full) {
 };
 
 window.renderColumnaUsuario = function (data, type, full, meta, ctx = {}) {
-  const { baseUrl, userView } = ctx;
+  const { userView } = ctx;
   const name = escapeHtml(full?.name);
   const email = escapeHtml(full?.email);
   const image = avatarHtml(full?.userProfilePhoto);
@@ -643,6 +643,139 @@ window.getSelectedRowIds = function (dataTable, tableSelector = '.datatables-use
   }
 };
 
+// Helper global para manejar selecciones en múltiples DataTables
+window.SeleccionesDT = (function () {
+  const tablas = new Map();
+  // key -> { dt, seleccionados: Map, keyField, labelField }
+
+  function init(key, dtInstance, options = {}) {
+    const keyField = options.keyField || 'id';
+    const labelField = options.labelField || null;
+
+    if (!dtInstance || typeof dtInstance.on !== 'function') {
+      console.error('[SeleccionesDT] dtInstance no es un DataTable válido');
+      return;
+    }
+
+    if (tablas.has(key)) {
+      console.warn(`[SeleccionesDT] La clave "${key}" ya está inicializada. Se reutiliza el estado existente.`);
+      return;
+    }
+
+    const state = {
+      dt: dtInstance,
+      seleccionados: new Map(),
+      keyField,
+      labelField
+    };
+
+    tablas.set(key, state);
+
+    // Cuando se seleccionan filas
+    dtInstance.on('select', function (e, dt, type, indexes) {
+      const data = dt.rows(indexes).data().toArray();
+      data.forEach(row => {
+        const id = row[keyField];
+        if (id == null) return;
+        const label = labelField ? row[labelField] : null;
+        state.seleccionados.set(id, label);
+      });
+    });
+
+    // Cuando se deseleccionan filas
+    dtInstance.on('deselect', function (e, dt, type, indexes) {
+      const data = dt.rows(indexes).data().toArray();
+      data.forEach(row => {
+        const id = row[keyField];
+        if (id == null) return;
+        state.seleccionados.delete(id);
+      });
+    });
+
+    // Al redibujar (cambio de página, filtro, etc.) re-aplica selección
+    dtInstance.on('draw', function () {
+      dtInstance.rows().every(function () {
+        const rowData = this.data();
+        const id = rowData[keyField];
+        if (id == null) return;
+
+        if (state.seleccionados.has(id) && !this.selected()) {
+          this.select();
+        }
+      });
+    });
+  }
+
+  // Devuelve [{ id, label }, ...]
+  function getSeleccionados(key) {
+    const state = tablas.get(key);
+    if (!state) return [];
+    return Array.from(state.seleccionados.entries()).map(([id, label]) => ({
+      id,
+      label
+    }));
+  }
+
+  // Solo IDs [id1, id2, ...]
+  function getIds(key) {
+    const state = tablas.get(key);
+    if (!state) return [];
+    return Array.from(state.seleccionados.keys());
+  }
+
+  // ¿Está seleccionado un ID?
+  function isSelected(key, id) {
+    const state = tablas.get(key);
+    if (!state) return false;
+    return state.seleccionados.has(id);
+  }
+
+  // Quitar uno o todos
+  function eliminar(key, id = null) {
+    const state = tablas.get(key);
+    if (!state) return;
+
+    const { dt, seleccionados, keyField } = state;
+
+    // Limpiar todos
+    if (id === null) {
+      seleccionados.clear();
+      dt.rows({ selected: true }).deselect();
+      return;
+    }
+
+    // Quitar uno
+    if (!seleccionados.has(id)) return;
+
+    seleccionados.delete(id);
+
+    const filas = dt.rows().indexes().filter(idx => {
+      const data = dt.row(idx).data();
+      return data && data[keyField] === id;
+    });
+
+    if (filas.length > 0) {
+      dt.rows(filas).deselect();
+    }
+  }
+
+  // Limpiar completamente el registro de una tabla
+  function reset(key) {
+    const state = tablas.get(key);
+    if (!state) return;
+    state.seleccionados.clear();
+    state.dt.rows({ selected: true }).deselect();
+  }
+
+  return {
+    init,
+    getSeleccionados,
+    getIds,
+    isSelected,
+    eliminar,
+    reset
+  };
+})();
 
 
 console.info('[Renderizadores globales] cargados correctamente');
