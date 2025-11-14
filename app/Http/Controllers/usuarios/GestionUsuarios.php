@@ -77,7 +77,8 @@ class GestionUsuarios extends Controller
       $query->where(function ($q) use ($search) {
         $q->where('id', 'LIKE', "%{$search}%")
           ->orWhere('name', 'LIKE', "%{$search}%")
-          ->orWhere('email', 'LIKE', "%{$search}%");
+          ->orWhere('email', 'LIKE', "%{$search}%")
+          ->orWhere('identificacion', 'LIKE', "%{$search}%");
       });
     }
 
@@ -128,6 +129,7 @@ class GestionUsuarios extends Controller
         'updated_at' => $user->updated_at,
         'updated_by' => User::find($user->updated_by)?->name ?? 'N/A',
         'userProfilePhoto' => $user->profile_photo_url,
+        'icon_role' => $user->roles()->first()?->icon_role ?? null,
       ];
     }
 
@@ -217,7 +219,7 @@ class GestionUsuarios extends Controller
         $user->password = bcrypt($request->personaIDENTIFICACION);
         $user->save();
       }
-      return response()->json('Updated');
+      return response()->json(['message' => 'Usuario actualizado correctamente.']);
     } else {
 
       // Crear usuario
@@ -239,7 +241,7 @@ class GestionUsuarios extends Controller
       event(new Registered($user));
 
       // user created
-      return response()->json('Created');
+      return response()->json(['message' => 'Usuario creado correctamente.']);
     }
   }
 
@@ -321,6 +323,8 @@ class GestionUsuarios extends Controller
       $oBJuSER->save();
     }
 
-    return response()->json('Desactivated');
+    return response()->json([
+      'message' => "Usuario {$oBJuSER->name} ahora esta {$oBJuSER->estado}",
+    ]);
   }
 }

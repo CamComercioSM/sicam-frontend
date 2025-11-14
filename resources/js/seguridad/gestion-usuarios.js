@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       },
       columns: [
         // columns according to JSON
-        { data: 'id' },
+        { data: 'id', orderable: false },
         { data: 'id', orderable: false, render: DataTable.render.select() },
         { data: 'name' },
         { data: 'identificacion' },
@@ -97,12 +97,15 @@ document.addEventListener('DOMContentLoaded', function (e) {
         {
           //Usuario
           targets: 2,
+          orderable: false,
           responsivePriority: 2,
           render: withCtx(renderColumnaUsuario, { userView })
         },
         {
           // User identificacion
           targets: 3,
+          orderable: false,
+          searchable: true, 
           responsivePriority: 5,
           render: renderColumnaIdentificacion
         },
@@ -128,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         {
           // updated_at
           targets: 7,
+          orderable: false,
           responsivePriority: 10,
           className: 'text-center',
           render: function (data, type, full, meta) {
@@ -152,6 +156,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         {
           // updated_by
           targets: 8,
+          orderable: false,
           responsivePriority: 11,
           className: 'text-center',
           render: function (data, type, full, meta) {
@@ -703,13 +708,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   function ocultarOffCanvasUsuarios(op = true) {
     const offcanvasInstance = bootstrap.Offcanvas.getInstance(offCanvasForm);
-    if(op){
+    if (op) {
       offcanvasInstance && offcanvasInstance.hide();
-    }else{
+    } else {
       offcanvasInstance && offcanvasInstance.show();
     }
-    }
-    
+  }
+
 
   function ocultarModalUsuarios() {
     const dtrModal = document.querySelector('.dtr-bs-modal.show');
@@ -771,9 +776,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
         if (!response.ok) {
           // 422 u otro código
-          console.log('Status:', response.status);
-          console.log('Errores:', data?.errors || data);
-          console.log('Mensaje:', data?.message || data);
           alertaError('Error de Validación de Datos', data?.message);
           desbloquearPantalla();
           return true;
@@ -782,11 +784,11 @@ document.addEventListener('DOMContentLoaded', function (e) {
         if (response.ok) {
           switch (data.TIPO) {
             case 'ERROR':
-              alertaError('Error creando el usuario', data.MENSAJE);
+              alertaError('Error en la operación', data.MENSAJE);
               desbloquearPantalla();
               break;
             default:
-              alertaExito('Usuario Creado', data.MENSAJE || 'Operación completada.');
+              alertaExito(data.message, 'Operación completada.');
               desbloquearPantalla();
               ocultarOffCanvasUsuarios();
           }
@@ -825,9 +827,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
         if (response.ok) {
           dt_user.ajax.reload();
           // success sweetalert
-          alertaExito('Deleted!', 'The user has been deleted!');
+          alertaExito('Usuario Eliminado', 'Se marco al usuario como borrado');
         } else {
-          throw new Error('Delete failed');
+          throw new Error('Eliminacion fallida');
         }
       })
       .catch(error => {
@@ -842,7 +844,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
       function () {
         desactivarUsuario(user_id);
         dt_user.ajax.reload();
-        alertaExito('Usuario Desactivado!', 'El usuario ha sido desactivado!');
       }
     );
   }
@@ -867,14 +868,15 @@ document.addEventListener('DOMContentLoaded', function (e) {
       body: JSON.stringify({
         estado: 'activo' // o 'activo', 'borrado'
       })
-    }).then(response => {
-      if (response.ok) {
-        dt_user.ajax.reload();
-        alertaExito('Usuario activado!', 'El usuario ha sido activado!');
-      } else {
-        throw new Error('Activacion failed');
-      }
-    })
+    }).then(response => response.json())
+      .then(data => {
+        if (data) {
+          alertaExito('Usuario activado!', data.message);
+          dt_user.ajax.reload();
+        } else {
+          throw new Error('Activacion failed');
+        }
+      })
       .catch(error => {
         console.log(error);
       });

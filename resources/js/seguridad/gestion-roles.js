@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         className: 'control',
         searchable: false,
         orderable: false,
-        responsivePriority: 2,
+        responsivePriority: 1,
         targets: 0,
         render: renderColumnaControl
       },
@@ -77,12 +77,16 @@ document.addEventListener('DOMContentLoaded', function (e) {
       },
       {
         targets: 2,
-        responsivePriority: 4,
+        orderable: false,
+        responsivePriority: 2,
         //Enlazamos contexto para baseUrl/userView
         render: withCtx(renderColumnaUsuario, ctx)
       },
       {
         targets: 3,
+        orderable: false,
+        searchable: true, 
+        responsivePriority: 3,
         render: renderColumnaIdentificacion
       },
       {
@@ -92,15 +96,18 @@ document.addEventListener('DOMContentLoaded', function (e) {
       },
       {
         targets: 5,
+        responsivePriority: 6,
         render: renderColumnaUserRole
       },
       {
         targets: 6,
+        responsivePriority: 7,
         render: renderColumnaEstado
       },
       {
         targets: -1,
         title: 'Acciones',
+        responsivePriority: 0,
         searchable: false,
         orderable: false,
         render: withCtx(renderColumnaAcciones, ctx)
@@ -306,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       mostrarSoloInput();
       document.getElementById('modalRoleName').value = data?.nombre;
       document.getElementById('add-role-roleID').value = data?.id;
-      document.getElementById('selectIcono').value = data?.iconRole || '';
+      document.getElementById('selectIcono').value = data?.icon_role || '';
       marcarCheckboxesEnModal(data, '#addRoleModal');
       abrirModalRoles();
     }, (error) => {
@@ -389,6 +396,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
       }
       mostrarSoloInput();
       document.getElementById('modalRoleName').value = data.role?.nombre;
+      document.getElementById('selectIcono').value = data.role?.icon_role;
       marcarCheckboxesEnModal(data.role, '#addRoleModal');
       modalRoles._element.querySelectorAll('input, select, textarea, button:not([data-bs-dismiss])').forEach(el => el.disabled = true);
       abrirModalRoles();
@@ -418,6 +426,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
       document.getElementById('add-role-userRole').value = data?.nombre;
       document.getElementById('modalRoleName').value = data.role?.nombre;
       document.getElementById('add-role-roleID').value = data?.id;
+      document.getElementById('selectIcono').value = data.role?.icon_role || '';
+
       marcarCheckboxesEnModal(data, '#addRoleModal');
       abrirModalRoles();
     }, (error) => {
@@ -546,6 +556,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
     const form = document.getElementById('addRoleForm');
     const formData = new FormData(form);
 
+    const iconRole = document.getElementById('selectIcono');
+    formData.append('iconRole', iconRole.value);
     const roleID = formData.get('roleID');
     const userID = formData.get('userID');
     const userRoleName = formData.get('userRoleName');

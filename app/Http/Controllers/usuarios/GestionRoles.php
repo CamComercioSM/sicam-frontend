@@ -87,6 +87,7 @@ class GestionRoles extends Controller
         $roleID    = $request->input('roleID');
         $roleName  = trim($request->input('modalRoleName'));
         $permisos = $request->input('permisos', []);
+        $iconRole = $request->input('iconRole', null);
 
         // 🔎 Validar nombre duplicado
         $nombreExistente = Role::where('name', $roleName)
@@ -107,6 +108,7 @@ class GestionRoles extends Controller
             $role = Role::findOrFail($roleID);
             $role->update([
                 'name'       => $roleName,
+                'icon_role'  => $iconRole,
                 'guard_name' => 'web',
             ]);
             $respuesta = 'Updated';
@@ -114,6 +116,7 @@ class GestionRoles extends Controller
             // Crear nuevo rol
             $role = Role::create([
                 'name'       => $roleName,
+                'icon_role'  => $iconRole,
                 'guard_name' => 'web',
             ]);
 
@@ -163,6 +166,7 @@ class GestionRoles extends Controller
             $user->role = [
                 'id'       => $role->id,
                 'nombre'   => $role->name,
+                'icon_role' => $role->icon_role,
                 'permisos' => $coleccionPermisos,
             ];
         } else {
@@ -200,6 +204,7 @@ class GestionRoles extends Controller
         $rol = [
             'id'       => $role->id,
             'nombre'   => $role->name,
+            'icon_role' => $role->icon_role,
             'permisos' => $coleccionPermisos,
         ];
 

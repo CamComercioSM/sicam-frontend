@@ -30,7 +30,7 @@
                 <option data-id="{{$role->id}}" value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
                 @endforeach
               </select>
-              <div id="select_icon_add_role"></div>
+              <div class="mb-3 my-1" id="select_icon_add_role"></div>
               <label for="user-role">Rol de Usuario</label>
             </div>
           </div>

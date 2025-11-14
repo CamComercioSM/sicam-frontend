@@ -132,11 +132,22 @@ window.renderColumnaEmailVerificado = function (data, type, full, meta, ctx = {}
 
 window.renderColumnaUserRole = function (data, type, full) {
   const userRole = full?.userRole;
+  const iconRole = full?.icon_role; // <- este es el nombre correcto de la columna
+
   if (!userRole || userRole === 'null') {
-    return "<span class='text-truncate d-flex align-items-center text-heading'>-</span>";
+    return `<span class='text-truncate d-flex align-items-center text-heading'>-</span>`;
   }
-  const icon = roleIcon[userRole] || '';
-  return `<span class='text-truncate d-flex align-items-center text-heading'>${icon}${escapeHtml(userRole)}</span>`;
+
+  // Crear el HTML del icono si existe
+  const iconHtml = iconRole
+    ? `<i class="me-1 icon-base ri ri-${iconRole} "></i>`
+    : `<i class="me-1 icon-base ri ri-close-fill"></i>`;
+
+  return `
+    <span class="text-truncate d-flex align-items-center text-heading">
+      ${iconHtml}${escapeHtml(userRole)}
+    </span>
+  `;
 };
 
 window.renderColumnaEstado = function (data, type, full) {
@@ -527,6 +538,10 @@ window.reiniciarModal = function (modal) {
 
   // 🔹 Siempre desbloquear el modal (modo editable)
   modal.querySelectorAll('input, select, textarea, button').forEach(el => el.disabled = false);
+
+  if (modal.contains(document.activeElement)) {
+    document.activeElement.blur();
+  }
 };
 
 window.desactivarUsuario = function (user_id) {
@@ -540,11 +555,12 @@ window.desactivarUsuario = function (user_id) {
     body: JSON.stringify({
       estado: 'desactivo' // o 'activo', 'borrado'
     })
-  }).then(response => {
-    if (response.ok) {
-
+  }).then(response => response.json()) 
+  .then(data => {
+    if (data) {
+    alertaExito('Operacion Completada', data.message );
     } else {
-      throw new Error('Deactivation failed');
+      throw new Error('Deactivacion Fallida');
     }
   })
     .catch(error => {
@@ -588,7 +604,7 @@ window.modalDetallesFilaTabla = function (txt_titulo = 'name') {
             <tbody>${filas}</tbody>
           </table>`;
 
-        // 👇 Agregamos el cierre automático del modal responsive
+        // Agregamos el cierre automático del modal responsive
         // Espera un tick para que DataTables inserte el modal en el DOM
         setTimeout(() => {
           const modalResponsive = document.querySelector('.dtr-bs-modal');
@@ -596,11 +612,11 @@ window.modalDetallesFilaTabla = function (txt_titulo = 'name') {
             // Escuchamos clicks dentro del modal
             modalResponsive.addEventListener('click', (e) => {
               // Si el clic viene de un botón de acción, lo cerramos
-              if (e.target.closest('.btn, [data-action], .delete-record, .edit-record')) {
+              if (e.target.closest('[data-action], .delete-record, .view-record, .suspend-status-user, .edit-role-user ')) {
                 const btnClose = modalResponsive.querySelector('.btn-close');
                 btnClose?.click(); // dispara el cierre del modal
               }
-            }, { once: true }); // se adjunta una vez por render
+            });
           }
         }, 100);
         return div;
